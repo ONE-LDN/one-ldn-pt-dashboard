@@ -395,10 +395,9 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 
 </div><!-- /app -->
 
-<!-- CDN Scripts -->
+<!-- CDN Scripts — Chart.js and PapaParse only; Supabase uses native fetch() -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
 <script>
 'use strict';
@@ -409,7 +408,37 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 const SUPABASE_URL  = 'https://ljjwssicvvyyueyznmou.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxqandzc2ljdnZ5eXVleXpubW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NTQ4NzgsImV4cCI6MjA5MTIzMDg3OH0.SAlIZNi5Ex4U4kAs7v1-omAjigRFRYSlXBpSdCI0DqM';
 
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+// ── Supabase REST helpers (no CDN required — uses native browser fetch) ────
+const SB_HEADERS = {
+  'apikey': SUPABASE_ANON,
+  'Authorization': 'Bearer ' + SUPABASE_ANON,
+  'Content-Type': 'application/json',
+};
+
+async function sbGet(table, params = '') {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, { headers: SB_HEADERS });
+  if (!res.ok) throw new Error(`DB read failed (${table}): ${res.status} ${res.statusText}`);
+  return res.json();
+}
+
+async function sbUpsert(table, row, onConflict) {
+  const url = `${SUPABASE_URL}/rest/v1/${table}?on_conflict=${encodeURIComponent(onConflict)}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify(row),
+  });
+  if (!res.ok) { const t = await res.text(); throw new Error(`DB upsert failed (${table}): ${t}`); }
+}
+
+async function sbInsert(table, row) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
+    body: JSON.stringify(row),
+  });
+  if (!res.ok) { const t = await res.text(); throw new Error(`DB insert failed (${table}): ${t}`); }
+}
 
 // ── Forecast targets (static from Revenue Tracker sheet) ────────
 const FORECAST = {
@@ -490,18 +519,16 @@ const actMonths = () => MONTHS_H1.filter(mk => DB.revenue[mk]);
 async function loadData() {
   setLoading('Fetching revenue data…');
 
-  const [revRes, costRes, txnRes, logRes] = await Promise.all([
-    sb.from('pt_revenue').select('*').order('month'),
-    sb.from('pt_costs').select('*').order('month'),
-    sb.from('pt_coach_transactions').select('*').order('month'),
-    sb.from('pt_upload_log').select('*').order('uploaded_at', { ascending: false }).limit(20),
+  const [revenue, costs, coachTxns, uploadLog] = await Promise.all([
+    sbGet('pt_revenue',            'order=month'),
+    sbGet('pt_costs',              'order=month'),
+    sbGet('pt_coach_transactions', 'order=month'),
+    sbGet('pt_upload_log',         'order=uploaded_at.desc&limit=20'),
   ]);
-
-  if (revRes.error) throw revRes.error;
 
   // ── Revenue ─────────────────────────────────────────────────
   DB.revenue = {};
-  for (const row of revRes.data) {
+  for (const row of revenue) {
     const mk = row.month.slice(0, 7);
     if (!DB.revenue[mk]) DB.revenue[mk] = {};
     DB.revenue[mk][row.line] = parseFloat(row.amount);
@@ -509,7 +536,7 @@ async function loadData() {
 
   // ── Costs ───────────────────────────────────────────────────
   DB.costs = {};
-  for (const row of (costRes.data || [])) {
+  for (const row of costs) {
     const mk = row.month.slice(0, 7);
     if (!DB.costs[mk]) DB.costs[mk] = { total: 0 };
     DB.costs[mk][row.cost_line] = parseFloat(row.amount);
@@ -518,14 +545,14 @@ async function loadData() {
 
   // ── Coach transactions ───────────────────────────────────────
   DB.coachTxns = {};
-  for (const row of (txnRes.data || [])) {
+  for (const row of coachTxns) {
     const mk = row.month.slice(0, 7);
     if (!DB.coachTxns[mk]) DB.coachTxns[mk] = [];
     DB.coachTxns[mk].push(row);
   }
 
   // ── Upload log ───────────────────────────────────────────────
-  DB.uploadLog = logRes.data || [];
+  DB.uploadLog = uploadLog;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1086,10 +1113,8 @@ async function processUpload(filename, rows) {
   statusEl.textContent = `Detected month: ${monthLabel} — uploading…`;
 
   // ── Check if already uploaded ──
-  const { data: existing } = await sb.from('pt_upload_log')
-    .select('id, uploaded_at')
-    .eq('filename', filename)
-    .limit(1);
+  const existing = await sbGet('pt_upload_log',
+    `filename=eq.${encodeURIComponent(filename)}&select=id,uploaded_at&limit=1`);
 
   if (existing && existing.length > 0) {
     statusEl.className = 'upload-status warn';
@@ -1123,13 +1148,12 @@ async function processUpload(filename, rows) {
   }
 
   // ── Upsert revenue ──
-  let inserted = 0, skipped = 0;
+  let inserted = 0;
   for (const [line, amount] of Object.entries(revenueAccum)) {
-    const { error } = await sb.from('pt_revenue')
-      .upsert({ month: isoDate, line, amount: Math.round(amount*100)/100, source_file: filename },
-               { onConflict: 'month,line', ignoreDuplicates: false });
-    if (error) console.warn('Revenue upsert error:', error);
-    else inserted++;
+    await sbUpsert('pt_revenue',
+      { month: isoDate, line, amount: Math.round(amount*100)/100, source_file: filename },
+      'month,line');
+    inserted++;
   }
 
   // ── Upsert coach transactions ──
@@ -1142,14 +1166,14 @@ async function processUpload(filename, rows) {
     coachAgg[k].quantity += 1;
   }
   for (const t of Object.values(coachAgg)) {
-    await sb.from('pt_coach_transactions')
-      .upsert({ month: isoDate, coach_name: t.coach, product_name: t.product, amount: Math.round(t.amount*100)/100, quantity: t.quantity, source_file: filename },
-               { onConflict: 'month,product_name,coach_name', ignoreDuplicates: false });
+    await sbUpsert('pt_coach_transactions',
+      { month: isoDate, coach_name: t.coach, product_name: t.product, amount: Math.round(t.amount*100)/100, quantity: t.quantity, source_file: filename },
+      'month,product_name,coach_name');
   }
 
   // ── Log upload ──
-  await sb.from('pt_upload_log')
-    .insert({ filename, month_covered: isoDate, rows_inserted: inserted, rows_skipped: skipped, uploaded_by: 'web-upload' });
+  await sbInsert('pt_upload_log',
+    { filename, month_covered: isoDate, rows_inserted: inserted, rows_skipped: 0, uploaded_by: 'web-upload' });
 
   // ── Reload data and re-render ──
   statusEl.textContent = 'Refreshing dashboard…';
@@ -1187,18 +1211,29 @@ function hideLoading() {
 // INIT
 // ═══════════════════════════════════════════════════════════════
 
-(async function init() {
+window.addEventListener('load', async function init() {
   try {
-    await loadData();
+    setLoading('Connecting to database…');
+
+    // 12-second timeout — shows a clear message instead of hanging forever
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Connection timed out. Check your internet connection and refresh.')), 12000)
+    );
+    await Promise.race([loadData(), timeout]);
+
     setLoading('Rendering dashboard…');
     renderAll();
     hideLoading();
   } catch (err) {
-    document.getElementById('loadingText').textContent = 'Failed to connect: ' + err.message;
+    const txt = document.getElementById('loadingText');
+    txt.textContent = '⚠ ' + err.message;
+    txt.style.color = '#f87171';
+    txt.style.maxWidth = '480px';
+    txt.style.textAlign = 'center';
     document.querySelector('.loader').style.display = 'none';
-    console.error(err);
+    console.error('Dashboard init error:', err);
   }
-})();
+});
 </script>
 </body>
 </html>
