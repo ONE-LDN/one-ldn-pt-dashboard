@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ONE LDN — PT Profitability Dashboard H1 2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0a0a0a;
+  color: #f0f0f0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+
+.app { max-width: 1200px; margin: 0 auto; padding: 28px 24px 60px; }
+
+/* ── HEADER ── */
+.header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 28px; border-bottom: 1px solid #1c1c1c; padding-bottom: 22px;
+}
+.eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #e8c547; margin-bottom: 5px; }
+.title { font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+.header-meta { font-size: 11px; color: #444; text-align: right; line-height: 1.8; }
+
+/* ── KPI STRIP ── */
+.kpi-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 26px; }
+.kpi { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 18px 20px; }
+.kpi-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4a4a4a; margin-bottom: 10px; }
+.kpi-val { font-size: 22px; font-weight: 700; line-height: 1; }
+.kpi-sub { font-size: 11px; color: #3a3a3a; margin-top: 6px; }
+
+/* colour helpers */
+.white  { color: #fff; }
+.amber  { color: #e8c547; }
+.red    { color: #f87171; }
+.green  { color: #4ade80; }
+.blue   { color: #60a5fa; }
+.purple { color: #a78bfa; }
+.muted  { color: #4a4a4a; }
+
+/* ── LOADING ── */
+#loadingOverlay {
+  position: fixed; inset: 0; background: #0a0a0a;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 999; gap: 16px;
+}
+.loader { width: 36px; height: 36px; border: 3px solid #1e1e1e; border-top-color: #e8c547; border-radius: 50%; animation: spin 0.75s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-text { font-size: 13px; color: #444; }
+
+/* ── INSIGHT BANNER ── */
+.insight {
+  background: #0c1400; border: 1px solid #1f2d00; border-radius: 10px;
+  padding: 12px 18px; margin-bottom: 24px; font-size: 12px; color: #9bc547; line-height: 1.7;
+}
+.insight strong { color: #c8e060; }
+
+/* ── UPLOAD BAR ── */
+.upload-row {
+  background: #111; border: 1px solid #1e1e1e; border-radius: 12px;
+  padding: 14px 20px; display: flex; align-items: center; gap: 14px;
+  margin-bottom: 22px; flex-wrap: wrap;
+}
+.upload-icon {
+  width: 32px; height: 32px; background: #1a1500; border: 1px solid #342500;
+  border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.upload-info { flex: 1; min-width: 180px; }
+.upload-info strong { display: block; font-size: 12px; font-weight: 600; color: #c8a830; margin-bottom: 2px; }
+.upload-info span { font-size: 11px; color: #3a3a3a; }
+.upload-btn {
+  background: #e8c547; color: #0a0a0a; border: none; border-radius: 7px;
+  padding: 8px 16px; font-size: 12px; font-weight: 700; cursor: pointer;
+  white-space: nowrap; transition: opacity 0.15s;
+}
+.upload-btn:hover { opacity: 0.82; }
+.upload-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.upload-status { font-size: 11px; color: #3a3a3a; }
+.upload-status.ok  { color: #4ade80; }
+.upload-status.err { color: #f87171; }
+.upload-status.warn { color: #e8c547; }
+#csvFile { display: none; }
+
+/* ── TABS ── */
+.tabs {
+  display: flex; gap: 2px; background: #111; border: 1px solid #1e1e1e;
+  border-radius: 12px; padding: 4px; margin-bottom: 22px;
+}
+.tab {
+  flex: 1; padding: 10px 16px; border: none; background: transparent; color: #4a4a4a;
+  font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 9px; transition: all 0.15s;
+}
+.tab.on { background: #1e1e1e; color: #fff; }
+.tab:hover:not(.on) { color: #888; }
+.panel { display: none; }
+.panel.on { display: block; }
+
+/* ── CARD ── */
+.card { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 22px 24px; margin-bottom: 16px; }
+.card-ttl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #4a4a4a; margin-bottom: 4px; }
+.card-sub { font-size: 12px; color: #383838; margin-bottom: 20px; }
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+
+/* ── MODEL CARDS ── */
+.model-card { background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 12px; padding: 20px 22px; }
+.model-card-ttl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #4a4a4a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.model-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dot-old { background: #4ade80; }
+.dot-new { background: #60a5fa; }
+.dot-mem { background: #a78bfa; }
+.model-rev { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.model-cost { font-size: 13px; color: #555; margin-bottom: 8px; }
+.model-profit { font-size: 17px; font-weight: 700; margin-top: 12px; padding-top: 12px; border-top: 1px solid #1e1e1e; }
+.model-margin { font-size: 11px; margin-top: 3px; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  padding: 9px 11px; color: #4a4a4a; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid #1e1e1e;
+  text-align: left; white-space: nowrap;
+}
+th.r { text-align: right; }
+td { padding: 10px 11px; border-bottom: 1px solid #151515; color: #b0b0b0; vertical-align: middle; }
+td.r { text-align: right; }
+td.dim { color: #2e2e2e; }
+td.lbl { color: #555; font-size: 12px; }
+tr.tot td { border-top: 1px solid #2a2a2a; font-weight: 700; color: #fff; border-bottom: none; }
+tr.sec-hdr td { padding: 14px 11px 4px; color: #383838; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; border-bottom: none; }
+tr:last-child td { border-bottom: none; }
+tr.sub td { color: #555; }
+tr.highlight td { color: #e8c547; }
+tr.fct td { color: #2e2e2e; font-style: italic; }
+
+/* ── BADGES ── */
+.badge { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; }
+.bg  { background: #0c1f14; color: #4ade80; }
+.br  { background: #1f0d0d; color: #f87171; }
+.ba  { background: #1a1400; color: #e8c547; }
+.bb  { background: #0c1828; color: #60a5fa; }
+.bp  { background: #130f1f; color: #a78bfa; }
+.bc  { background: #101010; color: #888; }
+
+/* ── COACH GRID ── */
+.coach-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
+.coach-card { background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 10px; padding: 14px 16px; text-align: center; }
+.coach-name { font-size: 11px; font-weight: 700; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em; }
+.coach-rev { font-size: 19px; font-weight: 700; color: #60a5fa; }
+.coach-cost { font-size: 11px; color: #444; margin-top: 4px; }
+.coach-eff { font-size: 12px; font-weight: 700; margin-top: 6px; }
+
+/* ── FOOTNOTE ── */
+.fn { font-size: 11px; color: #252525; margin-top: 16px; line-height: 1.7; }
+
+/* ── DB STATUS DOT ── */
+.db-status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #333; }
+.db-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
+.db-dot.err { background: #f87171; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .g2 { grid-template-columns: 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr; }
+  .kpi-strip { grid-template-columns: repeat(3, 1fr); }
+  .coach-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+  .kpi-val { font-size: 18px; }
+  .g3 { grid-template-columns: 1fr; }
+  .coach-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div id="loadingOverlay">
+  <div class="loader"></div>
+  <div class="loader-text" id="loadingText">Connecting to database…</div>
+</div>
+
+<div class="app" id="appRoot" style="display:none">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="eyebrow">ONE LDN · Personal Training</div>
+      <div class="title">PT Profitability Dashboard — H1 2026</div>
+    </div>
+    <div class="header-meta" id="hDate"></div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="kpi-strip" id="kpiStrip"></div>
+
+  <!-- INSIGHT BANNER -->
+  <div class="insight" id="insightBanner"></div>
+
+  <!-- UPLOAD BAR -->
+  <div class="upload-row">
+    <div class="upload-icon">
+      <svg width="14" height="14" fill="none" stroke="#e8c547" stroke-width="2.2" viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+      </svg>
+    </div>
+    <div class="upload-info">
+      <strong>Update from WodBoard Export</strong>
+      <span>Upload monthly income statement CSV — data syncs to cloud instantly for all users</span>
+    </div>
+    <input type="file" id="csvFile" accept=".csv">
+    <button class="upload-btn" id="uploadBtn" onclick="document.getElementById('csvFile').click()">Upload CSV</button>
+    <div class="upload-status" id="uploadStatus">Live · <span id="lastUpload">loading…</span></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab on"  onclick="showTab('overview',this)">Overview</button>
+    <button class="tab"     onclick="showTab('pnl',this)">Model P&amp;L</button>
+    <button class="tab"     onclick="showTab('coaches',this)">Coach Breakdown</button>
+    <button class="tab"     onclick="showTab('trends',this)">Trends</button>
+  </div>
+
+  <!-- ══════════ TAB 1: OVERVIEW ══════════ -->
+  <div class="panel on" id="panel-overview">
+    <div class="g3" id="modelCards"></div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">Revenue by Line — Forecast vs Actuals</div>
+          <div class="card-sub">Monthly PT revenue across all four lines · actuals loaded from database · forecast Apr–Jun</div>
+        </div>
+        <span class="badge ba">H1 2026</span>
+      </div>
+      <div style="position:relative"><canvas id="cOverview" height="200"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">Monthly Revenue Summary</div>
+          <div class="card-sub">All four PT revenue lines — actuals vs forecast</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto"><table id="overviewTbl"></table></div>
+      <div class="fn">* Apr–Jun = forecast. Upload a WodBoard CSV each month to replace forecast with actuals.</div>
+    </div>
+  </div>
+
+  <!-- ══════════ TAB 2: MODEL P&L ══════════ -->
+  <div class="panel" id="panel-pnl">
+    <div class="g2">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-ttl">Old Model (PAYG) — Monthly Revenue</div>
+            <div class="card-sub">PT Credits + PT Rent · zero cost · 100% margin</div>
+          </div>
+          <span class="badge bg">Pure Margin</span>
+        </div>
+        <div style="position:relative"><canvas id="cOldModel" height="220"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-ttl">New Model (PAYE) — Revenue vs Cost</div>
+            <div class="card-sub">Named PT packages vs payroll + Head of Fitness</div>
+          </div>
+          <span class="badge bb">Investment Phase</span>
+        </div>
+        <div style="position:relative"><canvas id="cNewModel" height="220"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">Model P&amp;L — Side by Side</div>
+          <div class="card-sub">Revenue, costs and profit margin by model · actuals from database</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto"><table id="pnlTbl"></table></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">New Model Cost Breakdown</div>
+          <div class="card-sub">Head of Fitness (fixed £5k/mo) + PAYE payroll + Employer Tax/NI</div>
+        </div>
+        <span class="badge bb">Actuals</span>
+      </div>
+      <div style="overflow-x:auto"><table id="costTbl"></table></div>
+      <div class="fn">† Head of Fitness allocated entirely to New Model. Old Model (self-managed contractors) bears zero overhead.</div>
+    </div>
+  </div>
+
+  <!-- ══════════ TAB 3: COACH BREAKDOWN ══════════ -->
+  <div class="panel" id="panel-coaches">
+    <div class="coach-grid" id="coachCards"></div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-ttl">Most Recent Month — Revenue by Coach</div>
+            <div class="card-sub">New PT Model revenue by coach from latest WodBoard data</div>
+          </div>
+          <span class="badge bb" id="coachMonthBadge">—</span>
+        </div>
+        <div style="position:relative"><canvas id="cCoachRev" height="220"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-ttl">Most Recent Month — Payroll Cost</div>
+            <div class="card-sub">PAYE payroll only (exc. Head of Fitness + Tax)</div>
+          </div>
+          <span class="badge br" id="coachCostBadge">—</span>
+        </div>
+        <div style="position:relative"><canvas id="cCoachCost" height="220"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">PAYE Coach Detail — Actuals to Date</div>
+          <div class="card-sub">Revenue generated vs payroll cost per coach</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto"><table id="coachTbl"></table></div>
+      <div class="fn">
+        * Revenue attribution uses WodBoard transaction data. Jan/Feb breakdown not available (transaction-level data starts Mar 26).<br>
+        † Harry Sheppard transitioned Self-Employed → PAYE February 2026.<br>
+        ‡ Mara Greenwood: appears in March WodBoard export (£960). Not on payroll — status to confirm.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">Old Model — Self-Employed PTs</div>
+          <div class="card-sub">PAYG coaches · ONE LDN receives 100% revenue, bears zero cost</div>
+        </div>
+        <span class="badge bg">Zero Cost</span>
+      </div>
+      <table id="selfEmpTbl"></table>
+    </div>
+  </div>
+
+  <!-- ══════════ TAB 4: TRENDS ══════════ -->
+  <div class="panel" id="panel-trends">
+    <div class="g2">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-ttl">Old vs New Model — Monthly Revenue Trend</div>
+            <div class="card-sub">Actuals (solid) · forecast (dashed)</div>
+          </div>
+        </div>
+        <div style="position:relative"><canvas id="cModelTrend" height="220"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-ttl">New Model: Revenue vs Cost — Path to Break-Even</div>
+            <div class="card-sub">Lines cross = break-even point</div>
+          </div>
+        </div>
+        <div style="position:relative"><canvas id="cBreakeven" height="220"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">Blended Margin % Trend</div>
+          <div class="card-sub">Overall PT margin (all revenue vs New Model costs) · actuals only</div>
+        </div>
+        <span class="badge ba">Actuals</span>
+      </div>
+      <div style="position:relative"><canvas id="cMarginTrend" height="180"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">H1 2026 — Full Period View</div>
+          <div class="card-sub">Actuals replace forecast as each month is uploaded</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto"><table id="h1ForecastTbl"></table></div>
+      <div class="fn">* Apr–Jun figures are forecast. Costs Apr–Jun: Head of Fitness £5k/month + projected PAYE at Mar run-rate + employer NI. Break-even on New Model projected Apr–May.</div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- CDN Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════════
+
+const SUPABASE_URL  = 'https://ljjwssicvvyyueyznmou.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxqandzc2ljdnZ5eXVleXpubW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NTQ4NzgsImV4cCI6MjA5MTIzMDg3OH0.SAlIZNi5Ex4U4kAs7v1-omAjigRFRYSlXBpSdCI0DqM';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ── Forecast targets (static from Revenue Tracker sheet) ────────
+const FORECAST = {
+  '2026-01': { pt_credits: 7380, pt_membership: 1590, pt_rent: 1740, new_model: 0      },
+  '2026-02': { pt_credits: 9040, pt_membership: 1590, pt_rent: 1740, new_model: 4158   },
+  '2026-03': { pt_credits: 9180, pt_membership: 1590, pt_rent: 1740, new_model: 10395  },
+  '2026-04': { pt_credits: 8520, pt_membership: 1272, pt_rent: 1740, new_model: 19127  },
+  '2026-05': { pt_credits: 6200, pt_membership:  954, pt_rent: 1740, new_model: 29106  },
+  '2026-06': { pt_credits: 4500, pt_membership:  636, pt_rent: 1740, new_model: 39085  },
+};
+
+// ── Projected costs Apr–Jun (Head of Fitness £5k + Mar payroll run-rate) ─
+const COST_FORECAST = { '2026-04': 15648, '2026-05': 20812, '2026-06': 25977 };
+
+const MONTHS_H1     = ['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06'];
+const MONTHS_LABELS = ['Jan 26','Feb 26','Mar 26','Apr 26','May 26','Jun 26'];
+const MONTHS_SHORT  = ['Jan','Feb','Mar','Apr','May','Jun'];
+
+const SELF_EMP = [
+  'Alice Farrow','Adrian Canaveral','Rich Harris','Lucas Cloves',
+  'Aimee Jeffs','Luke Mehson','Sam Pepys','Annie Hall','Adam Siddle',
+  'Max Wade (→ New Model Apr 26)',
+];
+
+// ── CSV upload item mapping ──────────────────────────────────────
+const ITEM_MAP = [
+  { re: /pt rental/i,                                       line: 'pt_credits',    coach: null              },
+  { re: /personal trainer memb/i,                           line: 'pt_membership', coach: null              },
+  { re: /craig/i,                                           line: 'new_model',     coach: 'Craig Clout'     },
+  { re: /jessica?(\s+donehue)?|jess\s*donehue|^jess\b/i,   line: 'new_model',     coach: 'Jess Donehue'    },
+  { re: /harry\s*sh?ep/i,                                   line: 'new_model',     coach: 'Harry Sheppard'  },
+  { re: /mara\s*(greenwood)?/i,                             line: 'new_model',     coach: 'Mara Greenwood'  },
+  { re: /joining fee|pt intro offer|intro pt session/i,     line: 'new_model',     coach: 'Intro / Other'   },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// DATA STORE (populated from Supabase on load)
+// ═══════════════════════════════════════════════════════════════
+
+let DB = {
+  revenue:      {},  // { 'YYYY-MM': { pt_credits, pt_membership, pt_rent, new_model } }
+  costs:        {},  // { 'YYYY-MM': { head_of_fitness, craig_clout, jess_donehue, harry_sheppard, tax_ni, total } }
+  coachTxns:    {},  // { 'YYYY-MM': [ { coach_name, product_name, amount } ] }
+  uploadLog:    [],  // [ { filename, month_covered, uploaded_at, rows_inserted } ]
+};
+
+// ═══════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════
+
+const £ = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0}) + (v < 0 ? ')' : '');
+const £d = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + (v < 0 ? ')' : '');
+const pct = v => v == null ? '—' : (v * 100).toFixed(1) + '%';
+const monthKey = d => d.toISOString().slice(0, 7);     // Date → 'YYYY-MM'
+const isoMonth = k => k + '-01';                        // 'YYYY-MM' → 'YYYY-MM-01'
+
+function oldModelRev(mk) {
+  const r = DB.revenue[mk];
+  if (!r) return null;
+  return (r.pt_credits || 0) + (r.pt_rent || 0);
+}
+function newModelRev(mk) { return DB.revenue[mk]?.new_model ?? null; }
+function memRev(mk)      { return DB.revenue[mk]?.pt_membership ?? null; }
+function totalCost(mk)   { return DB.costs[mk]?.total ?? null; }
+function totalRev(mk) {
+  const r = DB.revenue[mk];
+  if (!r) return null;
+  return (r.pt_credits||0) + (r.pt_membership||0) + (r.pt_rent||0) + (r.new_model||0);
+}
+
+// Actual months = those with revenue data
+const actMonths = () => MONTHS_H1.filter(mk => DB.revenue[mk]);
+
+// ═══════════════════════════════════════════════════════════════
+// LOAD DATA FROM SUPABASE
+// ═══════════════════════════════════════════════════════════════
+
+async function loadData() {
+  setLoading('Fetching revenue data…');
+
+  const [revRes, costRes, txnRes, logRes] = await Promise.all([
+    sb.from('pt_revenue').select('*').order('month'),
+    sb.from('pt_costs').select('*').order('month'),
+    sb.from('pt_coach_transactions').select('*').order('month'),
+    sb.from('pt_upload_log').select('*').order('uploaded_at', { ascending: false }).limit(20),
+  ]);
+
+  if (revRes.error) throw revRes.error;
+
+  // ── Revenue ─────────────────────────────────────────────────
+  DB.revenue = {};
+  for (const row of revRes.data) {
+    const mk = row.month.slice(0, 7);
+    if (!DB.revenue[mk]) DB.revenue[mk] = {};
+    DB.revenue[mk][row.line] = parseFloat(row.amount);
+  }
+
+  // ── Costs ───────────────────────────────────────────────────
+  DB.costs = {};
+  for (const row of (costRes.data || [])) {
+    const mk = row.month.slice(0, 7);
+    if (!DB.costs[mk]) DB.costs[mk] = { total: 0 };
+    DB.costs[mk][row.cost_line] = parseFloat(row.amount);
+    DB.costs[mk].total = (DB.costs[mk].total || 0) + parseFloat(row.amount);
+  }
+
+  // ── Coach transactions ───────────────────────────────────────
+  DB.coachTxns = {};
+  for (const row of (txnRes.data || [])) {
+    const mk = row.month.slice(0, 7);
+    if (!DB.coachTxns[mk]) DB.coachTxns[mk] = [];
+    DB.coachTxns[mk].push(row);
+  }
+
+  // ── Upload log ───────────────────────────────────────────────
+  DB.uploadLog = logRes.data || [];
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CHART DEFAULTS
+// ═══════════════════════════════════════════════════════════════
+
+Chart.defaults.color = '#4a4a4a';
+Chart.defaults.borderColor = '#1a1a1a';
+Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+
+const GRID = { color: '#161616', borderColor: '#1e1e1e' };
+const TICK = { color: '#383838', font: { size: 11 } };
+function mkY() { return { ticks: { callback: v => £(v), ...TICK }, grid: GRID, beginAtZero: true }; }
+
+let charts = {};
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — HEADER
+// ═══════════════════════════════════════════════════════════════
+
+function renderHeader() {
+  const lastUp = DB.uploadLog[0];
+  document.getElementById('hDate').innerHTML =
+    `<span class="db-status"><span class="db-dot"></span> Live database</span><br>` +
+    `Last upload: ${lastUp ? new Date(lastUp.uploaded_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}<br>` +
+    `Actuals: ${actMonths().map(mk=>MONTHS_LABELS[MONTHS_H1.indexOf(mk)]).join(', ') || 'none'}`;
+
+  const lastUpEl = document.getElementById('lastUpload');
+  if (lastUpEl) lastUpEl.textContent = lastUp ? `Last upload: ${lastUp.filename}` : 'No uploads yet';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — KPI STRIP
+// ═══════════════════════════════════════════════════════════════
+
+function renderKPIs() {
+  const ams = actMonths();
+  const oldYTD  = ams.reduce((s,mk) => s + (oldModelRev(mk) || 0), 0);
+  const newYTD  = ams.reduce((s,mk) => s + (newModelRev(mk) || 0), 0);
+  const memYTD  = ams.reduce((s,mk) => s + (memRev(mk) || 0), 0);
+  const costYTD = ams.reduce((s,mk) => s + (totalCost(mk) || 0), 0);
+  const revYTD  = oldYTD + newYTD + memYTD;
+  const profYTD = revYTD - costYTD;
+  const margin  = profYTD / revYTD;
+
+  const fctYTD = ams.reduce((s,mk) => {
+    const f = FORECAST[mk];
+    return s + (f ? f.pt_credits + f.pt_membership + f.pt_rent + f.new_model : 0);
+  }, 0);
+  const ach = fctYTD > 0 ? revYTD / fctYTD : null;
+
+  const kpis = [
+    { lbl: 'Old Model Rev YTD', val: £(Math.round(oldYTD)), sub: 'PT Credits + Rent · 100% margin', cls: 'green'  },
+    { lbl: 'New Model Rev YTD', val: £(Math.round(newYTD)), sub: 'PAYE named packages',              cls: 'blue'   },
+    { lbl: 'Total PT Costs YTD',val: £(Math.round(costYTD)),sub: 'Payroll + tax + HoF',              cls: 'red'    },
+    { lbl: 'Blended Margin %',  val: pct(margin),            sub: `Profit: ${£(Math.round(profYTD))}`,cls: margin>=0.3?'green':margin>=0.15?'amber':'red' },
+    { lbl: 'Rev vs Forecast',   val: ach ? pct(ach) : '—',  sub: `${ams.length}/${MONTHS_H1.length} months reported`, cls: ach&&ach>=1?'green':ach&&ach>=0.85?'amber':'red' },
+  ];
+
+  document.getElementById('kpiStrip').innerHTML = kpis.map(k =>
+    `<div class="kpi"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val ${k.cls}">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — INSIGHT BANNER
+// ═══════════════════════════════════════════════════════════════
+
+function renderInsight() {
+  const ams = actMonths();
+  const oldYTD = ams.reduce((s,mk)=>s+(oldModelRev(mk)||0),0);
+  const newYTD = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
+  const costYTD= ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
+  const newMargin = (newYTD - costYTD) / newYTD;
+  const newProfit = newYTD - costYTD;
+  document.getElementById('insightBanner').innerHTML =
+    `<strong>Key insight:</strong> Old Model (PAYG) generates <strong>${£(Math.round(oldYTD))} at 100% margin</strong> — effectively subsidising the New Model's investment phase. ` +
+    `New Model currently runs at <strong>${pct(newMargin)} margin (${£(Math.round(newProfit))} YTD)</strong> as payroll and Head of Fitness front-load the build. ` +
+    `Break-even projected <strong>Apr–May 2026</strong> as named packages scale.`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — MODEL CARDS
+// ═══════════════════════════════════════════════════════════════
+
+function renderModelCards() {
+  const ams = actMonths();
+  const oldRev = ams.reduce((s,mk)=>s+(oldModelRev(mk)||0),0);
+  const newRev = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
+  const memRevTotal = ams.reduce((s,mk)=>s+(memRev(mk)||0),0);
+  const costTotal = ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
+  const newProfit = newRev - costTotal;
+  const newMarg = newProfit / newRev;
+
+  document.getElementById('modelCards').innerHTML = `
+    <div class="model-card">
+      <div class="model-card-ttl"><span class="model-dot dot-old"></span>Old Model (PAYG)</div>
+      <div class="model-rev green">${£(Math.round(oldRev))}</div>
+      <div class="model-cost">Revenue · ${ams.length} months actuals</div>
+      <div class="model-cost">Cost: £0 · independent contractors</div>
+      <div class="model-profit green">Profit: ${£(Math.round(oldRev))}</div>
+      <div class="model-margin green">100% margin</div>
+    </div>
+    <div class="model-card">
+      <div class="model-card-ttl"><span class="model-dot dot-new"></span>New Model (PAYE)</div>
+      <div class="model-rev blue">${£(Math.round(newRev))}</div>
+      <div class="model-cost">Revenue · ${ams.length} months actuals</div>
+      <div class="model-cost">Cost: ${£(Math.round(costTotal))} · payroll + HoF + tax</div>
+      <div class="model-profit ${newProfit>=0?'green':'red'}">Profit: ${£(Math.round(newProfit))}</div>
+      <div class="model-margin ${newProfit>=0?'green':'red'}">${pct(newMarg)} margin · investment phase</div>
+    </div>
+    <div class="model-card">
+      <div class="model-card-ttl"><span class="model-dot dot-mem"></span>PT Membership</div>
+      <div class="model-rev purple">${£(Math.round(memRevTotal))}</div>
+      <div class="model-cost">Revenue · ${ams.length} months actuals</div>
+      <div class="model-cost">Cost: £0 · separate from delivery models</div>
+      <div class="model-profit purple">Profit: ${£(Math.round(memRevTotal))}</div>
+      <div class="model-margin purple">100% margin</div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — OVERVIEW CHART
+// ═══════════════════════════════════════════════════════════════
+
+function renderOverviewChart() {
+  destroyChart('cOverview');
+  const labels = MONTHS_SHORT;
+  const makeDataset = (key, colorAct, colorFct, label) => ([
+    {
+      label: `${label} (act)`,
+      data: MONTHS_H1.map(mk => DB.revenue[mk]?.[key] ?? null),
+      backgroundColor: colorAct, stack: 'act',
+    },
+    {
+      label: `${label} (fct)`,
+      data: MONTHS_H1.map(mk => DB.revenue[mk] ? null : (FORECAST[mk]?.[key] ?? null)),
+      backgroundColor: colorFct, stack: 'fct',
+    }
+  ]);
+
+  charts['cOverview'] = new Chart(document.getElementById('cOverview'), {
+    type: 'bar',
+    data: { labels, datasets: [
+      ...makeDataset('pt_credits',    '#14532d','#14532d55','PT Credits'),
+      ...makeDataset('pt_membership', '#2d1b69','#2d1b6955','PT Membership'),
+      ...makeDataset('new_model',     '#1e3a5f','#1e3a5f55','New Model'),
+    ]},
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: true, position: 'bottom', labels: { color:'#555', font:{size:11}, boxWidth:12, padding:14 } }, tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${£(c.raw)}` } } },
+      scales: { x: { stacked: true, grid: GRID, ticks: TICK }, y: { stacked: true, ...mkY() } },
+    },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — OVERVIEW TABLE
+// ═══════════════════════════════════════════════════════════════
+
+function renderOverviewTable() {
+  const lines = ['pt_credits','pt_membership','pt_rent','new_model'];
+  const lbls  = { pt_credits:'PT Credits', pt_membership:'PT Membership', pt_rent:'PT Rent', new_model:'New PT Model' };
+  let html = `<thead><tr><th>Line</th>${MONTHS_SHORT.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th><th class="r">H1 Fct</th><th class="r">Ach%</th></tr></thead><tbody>`;
+
+  for (const line of lines) {
+    const vals = MONTHS_H1.map(mk => DB.revenue[mk]?.[line] ?? null);
+    const fcts = MONTHS_H1.map(mk => FORECAST[mk]?.[line] ?? 0);
+    const ytd  = vals.reduce((s,v) => s+(v||0), 0);
+    const h1   = fcts.reduce((s,v) => s+v, 0);
+    const ytdF = actMonths().reduce((s,mk) => s+(FORECAST[mk]?.[line]||0), 0);
+    const ach  = ytdF > 0 ? ytd/ytdF : null;
+    html += `<tr><td>${lbls[line]}</td>${MONTHS_H1.map((mk,i)=>{
+      const v = vals[i];
+      return v!=null ? `<td class="r">${£(v)}</td>` : `<td class="r dim">${£(fcts[i])}</td>`;
+    }).join('')}<td class="r white">${£(Math.round(ytd))}</td><td class="r">${£(Math.round(h1))}</td><td class="r ${ach&&ach>=1?'green':ach&&ach>=0.85?'amber':'red'}">${ach?pct(ach):'—'}</td></tr>`;
+  }
+
+  // Total row
+  const totAct = MONTHS_H1.map(mk => totalRev(mk));
+  const totFct = MONTHS_H1.map(mk => { const f=FORECAST[mk]; return f?f.pt_credits+f.pt_membership+f.pt_rent+f.new_model:0; });
+  const totYTD = totAct.reduce((s,v)=>s+(v||0),0);
+  const totH1  = totFct.reduce((s,v)=>s+v,0);
+  const totAch = actMonths().reduce((s,mk)=>s+(FORECAST[mk]?Object.values(FORECAST[mk]).reduce((a,b)=>a+b,0):0),0);
+  html += `<tr class="tot"><td>Total</td>${MONTHS_H1.map((mk,i)=>{
+    const v=totAct[i];
+    return v!=null?`<td class="r">${£(Math.round(v))}</td>`:`<td class="r dim">${£(Math.round(totFct[i]))}</td>`;
+  }).join('')}<td class="r">${£(Math.round(totYTD))}</td><td class="r">${£(Math.round(totH1))}</td><td class="r ${totAch>0&&totYTD/totAch>=1?'green':totAch>0&&totYTD/totAch>=0.85?'amber':'red'}">${totAch>0?pct(totYTD/totAch):'—'}</td></tr>`;
+  html += `</tbody>`;
+  document.getElementById('overviewTbl').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — MODEL CHARTS (P&L tab)
+// ═══════════════════════════════════════════════════════════════
+
+function renderModelCharts() {
+  destroyChart('cOldModel'); destroyChart('cNewModel');
+
+  // Old Model
+  charts['cOldModel'] = new Chart(document.getElementById('cOldModel'), {
+    type: 'bar',
+    data: { labels: MONTHS_SHORT, datasets: [
+      { label:'PT Credits (act)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?.pt_credits??null), backgroundColor:'#166534', stack:'act' },
+      { label:'PT Rent (act)',    data: MONTHS_H1.map(mk=>DB.revenue[mk]?.pt_rent??null),    backgroundColor:'#1a7a45', stack:'act' },
+      { label:'PT Credits (fct)',data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.pt_credits??null), backgroundColor:'#16653488', stack:'fct' },
+      { label:'PT Rent (fct)',   data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.pt_rent??null),    backgroundColor:'#1a7a4588', stack:'fct' },
+    ]},
+    options: { responsive:true, maintainAspectRatio:true,
+      plugins:{ legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${£(c.raw)}`}} },
+      scales:{ x:{stacked:true,grid:GRID,ticks:TICK}, y:{stacked:true,...mkY()} } },
+  });
+
+  // New Model
+  const costData = MONTHS_H1.map(mk => {
+    if (DB.costs[mk]) return DB.costs[mk].total;
+    if (COST_FORECAST[mk]) return COST_FORECAST[mk];
+    return null;
+  });
+  charts['cNewModel'] = new Chart(document.getElementById('cNewModel'), {
+    type: 'bar',
+    data: { labels: MONTHS_SHORT, datasets: [
+      { label:'Revenue (act)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?.new_model??null),    backgroundColor:'#1e3a5f' },
+      { label:'Total Cost',    data: costData,                                               backgroundColor: MONTHS_H1.map(mk=>DB.costs[mk]?'#5f1e1e':'#5f1e1e88') },
+      { label:'Revenue (fct)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.new_model??null), backgroundColor:'#1e3a5f66' },
+    ]},
+    options: { responsive:true, maintainAspectRatio:true,
+      plugins:{ legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${£(c.raw)}`}} },
+      scales:{ x:{grid:GRID,ticks:TICK}, y:{...mkY()} } },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — P&L TABLE
+// ═══════════════════════════════════════════════════════════════
+
+function renderPnLTable() {
+  const ams = actMonths();
+  const mHdrs = ams.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
+  let html = `<thead><tr><th>Line</th>${mHdrs.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th><th class="r">Margin</th></tr></thead><tbody>`;
+
+  // OLD MODEL
+  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">OLD MODEL (PAYG) — Self-Employed PTs</td></tr>`;
+  html += `<tr><td>PT Credits</td>${ams.map(mk=>`<td class="r">${£(DB.revenue[mk]?.pt_credits??null)}</td>`).join('')}<td class="r white">${£(Math.round(ams.reduce((s,mk)=>s+(DB.revenue[mk]?.pt_credits||0),0)))}</td><td class="r">—</td></tr>`;
+  html += `<tr><td>PT Rent</td>${ams.map(mk=>`<td class="r">${£(DB.revenue[mk]?.pt_rent??null)}</td>`).join('')}<td class="r white">${£(Math.round(ams.reduce((s,mk)=>s+(DB.revenue[mk]?.pt_rent||0),0)))}</td><td class="r">—</td></tr>`;
+  const oldYTD = ams.reduce((s,mk)=>s+(oldModelRev(mk)||0),0);
+  html += `<tr class="sub"><td>Cost</td>${ams.map(()=>`<td class="r dim">—</td>`).join('')}<td class="r dim">£0</td><td class="r">—</td></tr>`;
+  html += `<tr class="tot"><td>Old Model Profit</td>${ams.map(mk=>`<td class="r green">${£(Math.round(oldModelRev(mk)||0))}</td>`).join('')}<td class="r green">${£(Math.round(oldYTD))}</td><td class="r green">100.0%</td></tr>`;
+
+  // NEW MODEL
+  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">NEW MODEL (PAYE) — Employed Coaches</td></tr>`;
+  const newYTD = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
+  const costYTD = ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
+  html += `<tr><td>Revenue</td>${ams.map(mk=>`<td class="r blue">${£d(newModelRev(mk))}</td>`).join('')}<td class="r blue">${£(Math.round(newYTD))}</td><td class="r">—</td></tr>`;
+  const costLines = [
+    {key:'head_of_fitness',lbl:'Head of Fitness'},
+    {key:'craig_clout',    lbl:'Craig Clout'},
+    {key:'jess_donehue',   lbl:'Jess Donehue'},
+    {key:'harry_sheppard', lbl:'Harry Sheppard'},
+    {key:'tax_ni',         lbl:'Employer Tax/NI'},
+  ];
+  for (const cl of costLines) {
+    const cYTD = ams.reduce((s,mk)=>s+(DB.costs[mk]?.[cl.key]||0),0);
+    html += `<tr class="sub"><td>${cl.lbl}</td>${ams.map(mk=>{const v=DB.costs[mk]?.[cl.key];return `<td class="r dim">${v?`−${£d(v)}`:'—'}</td>`;}).join('')}<td class="r dim">−${£d(cYTD)}</td><td class="r dim">—</td></tr>`;
+  }
+  html += `<tr class="sub"><td>Total Cost</td>${ams.map(mk=>`<td class="r red">−${£(Math.round(totalCost(mk)||0))}</td>`).join('')}<td class="r red">−${£(Math.round(costYTD))}</td><td class="r dim">—</td></tr>`;
+  const newProfit = newYTD - costYTD;
+  const newMarg   = newProfit / newYTD;
+  html += `<tr class="tot"><td>New Model Profit</td>${ams.map(mk=>{const p=(newModelRev(mk)||0)-(totalCost(mk)||0);return `<td class="r ${p>=0?'green':'red'}">${£(Math.round(p))}</td>`;}).join('')}<td class="r ${newProfit>=0?'green':'red'}">${£(Math.round(newProfit))}</td><td class="r ${newProfit>=0?'green':'red'}">${pct(newMarg)}</td></tr>`;
+
+  // PT MEMBERSHIP
+  const memYTD = ams.reduce((s,mk)=>s+(memRev(mk)||0),0);
+  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">PT MEMBERSHIP — Separate Line</td></tr>`;
+  html += `<tr class="tot"><td>PT Membership</td>${ams.map(mk=>`<td class="r purple">${£(memRev(mk))}</td>`).join('')}<td class="r purple">${£(Math.round(memYTD))}</td><td class="r purple">100.0%</td></tr>`;
+
+  // COMBINED
+  const totRev = oldYTD + newYTD + memYTD;
+  const totProfit = totRev - costYTD;
+  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">COMBINED TOTAL</td></tr>`;
+  html += `<tr class="tot highlight"><td>Total PT Profit</td>${ams.map(mk=>{const tp=(totalRev(mk)||0)-(totalCost(mk)||0);return `<td class="r">${£(Math.round(tp))}</td>`;}).join('')}<td class="r">${£(Math.round(totProfit))}</td><td class="r">${pct(totProfit/totRev)}</td></tr>`;
+  html += `</tbody>`;
+  document.getElementById('pnlTbl').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — COST TABLE
+// ═══════════════════════════════════════════════════════════════
+
+function renderCostTable() {
+  const ams = actMonths();
+  const mHdrs = ams.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
+  const costLines = [
+    {key:'head_of_fitness', lbl:'Head of Fitness †'},
+    {key:'craig_clout',     lbl:'Craig Clout'},
+    {key:'jess_donehue',    lbl:'Jess Donehue'},
+    {key:'harry_sheppard',  lbl:'Harry Sheppard ‡'},
+    {key:'tax_ni',          lbl:'Employer Tax / NI'},
+  ];
+  let html = `<thead><tr><th>Cost Line</th>${mHdrs.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th></tr></thead><tbody>`;
+  for (const cl of costLines) {
+    const ytd = ams.reduce((s,mk)=>s+(DB.costs[mk]?.[cl.key]||0),0);
+    html += `<tr><td>${cl.lbl}</td>${ams.map(mk=>{const v=DB.costs[mk]?.[cl.key];return `<td class="r">${v?£d(v):'<span class="dim">—</span>'}</td>`;}).join('')}<td class="r white">${£d(ytd)}</td></tr>`;
+  }
+  const totYTD = ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
+  html += `<tr class="tot"><td>Total Cost</td>${ams.map(mk=>`<td class="r red">${£d(totalCost(mk)||0)}</td>`).join('')}<td class="r red">${£d(totYTD)}</td></tr></tbody>`;
+  document.getElementById('costTbl').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — COACH TAB
+// ═══════════════════════════════════════════════════════════════
+
+function renderCoaches() {
+  destroyChart('cCoachRev'); destroyChart('cCoachCost');
+
+  // Find most recent month with coach transaction data
+  const txnMonths = MONTHS_H1.filter(mk => DB.coachTxns[mk]?.length > 0);
+  const latestMk  = txnMonths[txnMonths.length - 1] || null;
+  const latestLbl = latestMk ? MONTHS_LABELS[MONTHS_H1.indexOf(latestMk)] : '—';
+
+  document.getElementById('coachMonthBadge').textContent = latestLbl;
+  document.getElementById('coachCostBadge').textContent  = latestLbl;
+
+  // Aggregate coach revenue by name for latest month
+  const coachRevMap = {};
+  if (latestMk && DB.coachTxns[latestMk]) {
+    for (const t of DB.coachTxns[latestMk]) {
+      coachRevMap[t.coach_name] = (coachRevMap[t.coach_name] || 0) + parseFloat(t.amount);
+    }
+  }
+
+  const coachNames = Object.keys(coachRevMap).sort((a,b) => coachRevMap[b]-coachRevMap[a]);
+
+  // Coach cards (fixed PAYE coaches)
+  const payeCoaches = [
+    { name:'Craig Clout',    key:'craig_clout'    },
+    { name:'Jess Donehue',   key:'jess_donehue'   },
+    { name:'Harry Sheppard', key:'harry_sheppard'  },
+    { name:'Mara Greenwood', key:null              },
+  ];
+  const ams = actMonths();
+
+  document.getElementById('coachCards').innerHTML = payeCoaches.map(c => {
+    const costYTD = c.key ? ams.reduce((s,mk)=>s+(DB.costs[mk]?.[c.key]||0),0) : 0;
+    const revLatest = coachRevMap[c.name] || 0;
+    const roi = (c.key && DB.costs[latestMk]?.[c.key] > 0) ? (revLatest / DB.costs[latestMk][c.key]) : null;
+    return `<div class="coach-card">
+      <div class="coach-name">${c.name}</div>
+      <div class="coach-rev">${£d(revLatest)}</div>
+      <div class="coach-cost">${latestLbl} revenue</div>
+      <div class="coach-cost">YTD payroll: ${costYTD>0?£d(costYTD):'—'}</div>
+      <div class="coach-eff ${roi?roi>=1?'green':'red':'amber'}">${roi?roi.toFixed(2)+'x rev/cost':c.key?'See below':'No payroll'}</div>
+    </div>`;
+  }).join('');
+
+  // Coach revenue bar chart
+  charts['cCoachRev'] = new Chart(document.getElementById('cCoachRev'), {
+    type:'bar',
+    data:{ labels:coachNames, datasets:[{ label:'Revenue', data:coachNames.map(n=>coachRevMap[n]), backgroundColor:'#1e3a5f', borderRadius:4 }] },
+    options:{ responsive:true, maintainAspectRatio:true, indexAxis:'y',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${£(c.raw)}`}}},
+      scales:{x:{...mkY()},y:{grid:GRID,ticks:{...TICK,color:'#888'}}} },
+  });
+
+  // Coach payroll bar (latest month PAYE only)
+  const payrollNames = ['Craig Clout','Jess Donehue','Harry Sheppard'];
+  const payrollKeys  = ['craig_clout','jess_donehue','harry_sheppard'];
+  const payrollVals  = payrollKeys.map(k => DB.costs[latestMk]?.[k] ?? 0);
+  charts['cCoachCost'] = new Chart(document.getElementById('cCoachCost'), {
+    type:'bar',
+    data:{ labels:payrollNames, datasets:[{ label:'Payroll', data:payrollVals, backgroundColor:'#5f1e1e', borderRadius:4 }] },
+    options:{ responsive:true, maintainAspectRatio:true, indexAxis:'y',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${£(c.raw)}`}}},
+      scales:{x:{...mkY()},y:{grid:GRID,ticks:{...TICK,color:'#888'}}} },
+  });
+
+  // Coach detail table
+  let html = `<thead><tr><th>Coach</th><th>Type</th>${MONTHS_SHORT.map(m=>`<th class="r">${m} Pay</th>`).join('')}<th class="r">YTD Pay</th><th class="r">${latestLbl} Rev</th><th class="r">ROI</th></tr></thead><tbody>`;
+  for (const c of payeCoaches) {
+    const paysByMonth = MONTHS_H1.map(mk => c.key ? (DB.costs[mk]?.[c.key] ?? null) : null);
+    const ytdPay = c.key ? ams.reduce((s,mk)=>s+(DB.costs[mk]?.[c.key]||0),0) : 0;
+    const rev = coachRevMap[c.name] || 0;
+    const latestPay = c.key ? (DB.costs[latestMk]?.[c.key] || 0) : 0;
+    const roi = latestPay > 0 ? rev/latestPay : null;
+    html += `<tr><td>${c.name}</td><td><span class="badge ${c.key?'bb':'bc'}">${c.key?'PAYE':'SE?'}</span></td>
+      ${paysByMonth.map(v=>`<td class="r">${v!=null&&v>0?£d(v):'<span class="dim">—</span>'}</td>`).join('')}
+      <td class="r white">${ytdPay>0?£d(ytdPay):'—'}</td>
+      <td class="r blue">${£d(rev)}</td>
+      <td class="r ${roi?roi>=1?'green':'red':'amber'}">${roi?roi.toFixed(2)+'x':'—'}</td></tr>`;
+  }
+  html += `</tbody>`;
+  document.getElementById('coachTbl').innerHTML = html;
+
+  // Self-employed table
+  document.getElementById('selfEmpTbl').innerHTML =
+    `<thead><tr><th>#</th><th>PT Name</th><th>Type</th><th>Cost to ONE LDN</th></tr></thead><tbody>` +
+    SELF_EMP.map((n,i)=>`<tr><td class="lbl">${i+1}</td><td>${n}</td><td><span class="badge bg">PAYG</span></td><td class="r green">£0</td></tr>`).join('') +
+    `</tbody>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — TRENDS
+// ═══════════════════════════════════════════════════════════════
+
+function renderTrends() {
+  destroyChart('cModelTrend'); destroyChart('cBreakeven'); destroyChart('cMarginTrend');
+
+  // Model trend
+  charts['cModelTrend'] = new Chart(document.getElementById('cModelTrend'), {
+    type:'line',
+    data:{ labels:MONTHS_SHORT, datasets:[
+      { label:'Old Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?oldModelRev(mk):null), borderColor:'#4ade80', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
+      { label:'Old Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?oldModelRev(mk):null):(FORECAST[mk]?.pt_credits||0)+(FORECAST[mk]?.pt_rent||0)), borderColor:'#4ade8055', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
+      { label:'New Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?newModelRev(mk):null), borderColor:'#60a5fa', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
+      { label:'New Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?newModelRev(mk):null):FORECAST[mk]?.new_model), borderColor:'#60a5fa55', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:true,
+      plugins:{legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${£(c.raw)}`}}},
+      scales:{x:{grid:GRID,ticks:TICK},y:{...mkY()}} },
+  });
+
+  // Break-even
+  const costAll = MONTHS_H1.map(mk => DB.costs[mk]?.total ?? COST_FORECAST[mk] ?? null);
+  const revAll  = MONTHS_H1.map(mk => DB.revenue[mk]?.new_model ?? FORECAST[mk]?.new_model ?? null);
+  charts['cBreakeven'] = new Chart(document.getElementById('cBreakeven'), {
+    type:'line',
+    data:{ labels:MONTHS_SHORT, datasets:[
+      { label:'New Model Revenue', data:revAll,  borderColor:'#60a5fa', backgroundColor:'#60a5fa11', borderWidth:2.5, pointRadius:4, fill:true, tension:0.3 },
+      { label:'Total Cost',        data:costAll, borderColor:'#f87171', backgroundColor:'#f8717111', borderWidth:2.5, pointRadius:4, fill:true, tension:0.3 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:true,
+      plugins:{legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${£(c.raw)}`}}},
+      scales:{x:{grid:GRID,ticks:TICK},y:{...mkY()}} },
+  });
+
+  // Margin trend (actuals only)
+  const ams = actMonths();
+  const margins = ams.map(mk => {
+    const r = totalRev(mk), c = totalCost(mk)||0;
+    return r ? (r-c)/r*100 : null;
+  });
+  charts['cMarginTrend'] = new Chart(document.getElementById('cMarginTrend'), {
+    type:'line',
+    data:{ labels:ams.map(mk=>MONTHS_LABELS[MONTHS_H1.indexOf(mk)]), datasets:[
+      { label:'Blended Margin %', data:margins, borderColor:'#e8c547', backgroundColor:'#e8c54722', borderWidth:2.5, pointRadius:5, fill:true, tension:0.3 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw?.toFixed(1)}%`}}},
+      scales:{x:{grid:GRID,ticks:TICK},y:{ticks:{callback:v=>v.toFixed(0)+'%',...TICK},grid:GRID,beginAtZero:true,max:80}} },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — H1 FORECAST TABLE
+// ═══════════════════════════════════════════════════════════════
+
+function renderH1Table() {
+  let html = `<thead><tr><th>Month</th><th class="r">Old Model</th><th class="r">New Model</th><th class="r">PT Membership</th><th class="r">Total Rev</th><th class="r">Total Cost</th><th class="r">Profit</th><th class="r">Margin</th><th>Status</th></tr></thead><tbody>`;
+  for (const mk of MONTHS_H1) {
+    const isAct = !!DB.revenue[mk];
+    const old  = isAct ? oldModelRev(mk) : (FORECAST[mk]?.pt_credits||0)+(FORECAST[mk]?.pt_rent||0);
+    const nw   = isAct ? newModelRev(mk) : (FORECAST[mk]?.new_model||0);
+    const mem  = isAct ? memRev(mk)      : (FORECAST[mk]?.pt_membership||0);
+    const rev  = (old||0)+(nw||0)+(mem||0);
+    const cost = isAct ? (totalCost(mk)||0) : (COST_FORECAST[mk]||0);
+    const prof = rev - cost;
+    const marg = rev > 0 ? prof/rev : null;
+    html += `<tr ${isAct?'':'class="fct"'}>
+      <td>${MONTHS_LABELS[MONTHS_H1.indexOf(mk)]}</td>
+      <td class="r ${isAct?'':'dim'}">${£(Math.round(old))}</td>
+      <td class="r ${isAct?'blue':'dim'}">${£(Math.round(nw))}</td>
+      <td class="r ${isAct?'':'dim'}">${£(Math.round(mem))}</td>
+      <td class="r ${isAct?'white':'dim'}">${£(Math.round(rev))}</td>
+      <td class="r ${isAct?'red':'dim'}">−${£(Math.round(cost))}</td>
+      <td class="r ${prof>=0?'green':'red'}">${£(Math.round(prof))}</td>
+      <td class="r ${marg&&marg>=0.3?'green':marg&&marg>=0.15?'amber':'red'}">${marg?pct(marg):'—'}</td>
+      <td><span class="badge ${isAct?'bg':'bc'}">${isAct?'Actual':'Forecast'}</span></td>
+    </tr>`;
+  }
+  const totRev  = MONTHS_H1.reduce((s,mk)=>{const f=FORECAST[mk];return s+(f?f.pt_credits+f.pt_membership+f.pt_rent+f.new_model:0);},0);
+  const totCost = MONTHS_H1.reduce((s,mk)=>s+(DB.costs[mk]?.total||COST_FORECAST[mk]||0),0);
+  html += `<tr class="tot"><td>H1 Total</td><td colspan="3"></td><td class="r white">${£(Math.round(totRev))}</td><td class="r red">−${£(Math.round(totCost))}</td><td class="r ${totRev-totCost>=0?'green':'red'}">${£(Math.round(totRev-totCost))}</td><td class="r ${((totRev-totCost)/totRev)>=0.3?'green':'amber'}">${pct((totRev-totCost)/totRev)}</td><td></td></tr>`;
+  html += `</tbody>`;
+  document.getElementById('h1ForecastTbl').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════════════════════════════
+
+function renderAll() {
+  renderHeader();
+  renderKPIs();
+  renderInsight();
+  renderModelCards();
+  renderOverviewChart();
+  renderOverviewTable();
+  renderModelCharts();
+  renderPnLTable();
+  renderCostTable();
+  renderCoaches();
+  renderTrends();
+  renderH1Table();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CSV UPLOAD FLOW
+// ═══════════════════════════════════════════════════════════════
+
+document.getElementById('csvFile').addEventListener('change', async function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const btn = document.getElementById('uploadBtn');
+  const statusEl = document.getElementById('uploadStatus');
+  btn.disabled = true;
+  statusEl.className = 'upload-status';
+  statusEl.textContent = 'Parsing CSV…';
+
+  Papa.parse(file, {
+    header: true, skipEmptyLines: true,
+    complete: async results => {
+      try {
+        await processUpload(file.name, results.data);
+      } catch(err) {
+        statusEl.className = 'upload-status err';
+        statusEl.textContent = 'Upload failed: ' + err.message;
+      } finally {
+        btn.disabled = false;
+        e.target.value = '';
+      }
+    },
+    error: err => {
+      statusEl.className = 'upload-status err';
+      statusEl.textContent = 'CSV parse error: ' + err.message;
+      btn.disabled = false;
+      e.target.value = '';
+    }
+  });
+});
+
+async function processUpload(filename, rows) {
+  const statusEl = document.getElementById('uploadStatus');
+
+  // ── Detect month from first valid date in CSV ──
+  const dateStr = rows.find(r => r.Date)?.Date;
+  if (!dateStr) throw new Error('No date column found in CSV');
+
+  // Parse DD/MM/YYYY
+  const parts = dateStr.split('/');
+  if (parts.length !== 3) throw new Error('Unexpected date format: ' + dateStr);
+  const monthDate = new Date(parseInt(parts[2]), parseInt(parts[1])-1, 1);
+  const mk = monthKey(monthDate);       // 'YYYY-MM'
+  const isoDate = isoMonth(mk);         // 'YYYY-MM-01'
+  const monthLabel = monthDate.toLocaleDateString('en-GB', {month:'short', year:'2-digit'});
+
+  statusEl.textContent = `Detected month: ${monthLabel} — uploading…`;
+
+  // ── Check if already uploaded ──
+  const { data: existing } = await sb.from('pt_upload_log')
+    .select('id, uploaded_at')
+    .eq('filename', filename)
+    .limit(1);
+
+  if (existing && existing.length > 0) {
+    statusEl.className = 'upload-status warn';
+    statusEl.textContent = `Already uploaded: ${filename} (${new Date(existing[0].uploaded_at).toLocaleDateString('en-GB')}). Re-uploading safely (duplicates skipped).`;
+  }
+
+  // ── Extract PT revenue from CSV rows ──
+  const revenueAccum = {};  // { line: total }
+  const coachTxns    = [];  // [{ coach, product, amount }]
+
+  for (const row of rows) {
+    const item   = (row.Item || row.item || '').trim();
+    const gross  = parseFloat((row['Gross Amount'] || row['Amount'] || '0').replace(/[£,]/g,''));
+    if (!item || isNaN(gross) || gross <= 0) continue;
+
+    for (const rule of ITEM_MAP) {
+      if (rule.re.test(item)) {
+        revenueAccum[rule.line] = (revenueAccum[rule.line] || 0) + gross;
+        if (rule.coach) {
+          coachTxns.push({ coach: rule.coach, product: item, amount: gross });
+        }
+        break;
+      }
+    }
+  }
+
+  if (Object.keys(revenueAccum).length === 0) {
+    statusEl.className = 'upload-status warn';
+    statusEl.textContent = `No PT revenue rows found in ${filename}. Is this the right CSV?`;
+    return;
+  }
+
+  // ── Upsert revenue ──
+  let inserted = 0, skipped = 0;
+  for (const [line, amount] of Object.entries(revenueAccum)) {
+    const { error } = await sb.from('pt_revenue')
+      .upsert({ month: isoDate, line, amount: Math.round(amount*100)/100, source_file: filename },
+               { onConflict: 'month,line', ignoreDuplicates: false });
+    if (error) console.warn('Revenue upsert error:', error);
+    else inserted++;
+  }
+
+  // ── Upsert coach transactions ──
+  // Aggregate by coach+product first (sum quantities)
+  const coachAgg = {};
+  for (const t of coachTxns) {
+    const k = `${t.coach}|${t.product}`;
+    coachAgg[k] = (coachAgg[k] || { ...t, quantity: 0, amount: 0 });
+    coachAgg[k].amount   += t.amount;
+    coachAgg[k].quantity += 1;
+  }
+  for (const t of Object.values(coachAgg)) {
+    await sb.from('pt_coach_transactions')
+      .upsert({ month: isoDate, coach_name: t.coach, product_name: t.product, amount: Math.round(t.amount*100)/100, quantity: t.quantity, source_file: filename },
+               { onConflict: 'month,product_name,coach_name', ignoreDuplicates: false });
+  }
+
+  // ── Log upload ──
+  await sb.from('pt_upload_log')
+    .insert({ filename, month_covered: isoDate, rows_inserted: inserted, rows_skipped: skipped, uploaded_by: 'web-upload' });
+
+  // ── Reload data and re-render ──
+  statusEl.textContent = 'Refreshing dashboard…';
+  await loadData();
+  renderAll();
+
+  statusEl.className = 'upload-status ok';
+  statusEl.textContent = `✓ ${monthLabel} uploaded — ${inserted} revenue lines, ${Object.keys(coachAgg).length} coach transactions`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TAB SWITCHER
+// ═══════════════════════════════════════════════════════════════
+
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('panel-' + id).classList.add('on');
+  btn.classList.add('on');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LOADING HELPERS
+// ═══════════════════════════════════════════════════════════════
+
+function setLoading(msg) {
+  document.getElementById('loadingText').textContent = msg;
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+  document.getElementById('appRoot').style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+
+(async function init() {
+  try {
+    await loadData();
+    setLoading('Rendering dashboard…');
+    renderAll();
+    hideLoading();
+  } catch (err) {
+    document.getElementById('loadingText').textContent = 'Failed to connect: ' + err.message;
+    document.querySelector('.loader').style.display = 'none';
+    console.error(err);
+  }
+})();
+</script>
+</body>
+</html>
