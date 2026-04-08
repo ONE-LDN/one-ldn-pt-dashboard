@@ -520,8 +520,8 @@ let DB = {
 // HELPERS
 // ═══════════════════════════════════════════════════════════════
 
-const £ = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0}) + (v < 0 ? ')' : '');
-const £d = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + (v < 0 ? ')' : '');
+const gbp = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0}) + (v < 0 ? ')' : '');
+const gbpd = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + (v < 0 ? ')' : '');
 const pct = v => v == null ? '—' : (v * 100).toFixed(1) + '%';
 const monthKey = d => d.toISOString().slice(0, 7);     // Date → 'YYYY-MM'
 const isoMonth = k => k + '-01';                        // 'YYYY-MM' → 'YYYY-MM-01'
@@ -596,7 +596,7 @@ Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', san
 
 const GRID = { color: '#161616', borderColor: '#1e1e1e' };
 const TICK = { color: '#383838', font: { size: 11 } };
-function mkY() { return { ticks: { callback: v => £(v), ...TICK }, grid: GRID, beginAtZero: true }; }
+function mkY() { return { ticks: { callback: v => gbp(v), ...TICK }, grid: GRID, beginAtZero: true }; }
 
 let charts = {};
 function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
@@ -637,10 +637,10 @@ function renderKPIs() {
   const ach = fctYTD > 0 ? revYTD / fctYTD : null;
 
   const kpis = [
-    { lbl: 'Old Model Rev YTD', val: £(Math.round(oldYTD)), sub: 'PT Credits + Rent · 100% margin', cls: 'green'  },
-    { lbl: 'New Model Rev YTD', val: £(Math.round(newYTD)), sub: 'PAYE named packages',              cls: 'blue'   },
-    { lbl: 'Total PT Costs YTD',val: £(Math.round(costYTD)),sub: 'Payroll + tax + HoF',              cls: 'red'    },
-    { lbl: 'Blended Margin %',  val: pct(margin),            sub: `Profit: ${£(Math.round(profYTD))}`,cls: margin>=0.3?'green':margin>=0.15?'amber':'red' },
+    { lbl: 'Old Model Rev YTD', val: gbp(Math.round(oldYTD)), sub: 'PT Credits + Rent · 100% margin', cls: 'green'  },
+    { lbl: 'New Model Rev YTD', val: gbp(Math.round(newYTD)), sub: 'PAYE named packages',              cls: 'blue'   },
+    { lbl: 'Total PT Costs YTD',val: gbp(Math.round(costYTD)),sub: 'Payroll + tax + HoF',              cls: 'red'    },
+    { lbl: 'Blended Margin %',  val: pct(margin),            sub: `Profit: ${gbp(Math.round(profYTD))}`,cls: margin>=0.3?'green':margin>=0.15?'amber':'red' },
     { lbl: 'Rev vs Forecast',   val: ach ? pct(ach) : '—',  sub: `${ams.length}/${MONTHS_H1.length} months reported`, cls: ach&&ach>=1?'green':ach&&ach>=0.85?'amber':'red' },
   ];
 
@@ -661,8 +661,8 @@ function renderInsight() {
   const newMargin = (newYTD - costYTD) / newYTD;
   const newProfit = newYTD - costYTD;
   document.getElementById('insightBanner').innerHTML =
-    `<strong>Key insight:</strong> Old Model (PAYG) generates <strong>${£(Math.round(oldYTD))} at 100% margin</strong> — effectively subsidising the New Model's investment phase. ` +
-    `New Model currently runs at <strong>${pct(newMargin)} margin (${£(Math.round(newProfit))} YTD)</strong> as payroll and Head of Fitness front-load the build. ` +
+    `<strong>Key insight:</strong> Old Model (PAYG) generates <strong>${gbp(Math.round(oldYTD))} at 100% margin</strong> — effectively subsidising the New Model's investment phase. ` +
+    `New Model currently runs at <strong>${pct(newMargin)} margin (${gbp(Math.round(newProfit))} YTD)</strong> as payroll and Head of Fitness front-load the build. ` +
     `Break-even projected <strong>Apr–May 2026</strong> as named packages scale.`;
 }
 
@@ -682,26 +682,26 @@ function renderModelCards() {
   document.getElementById('modelCards').innerHTML = `
     <div class="model-card">
       <div class="model-card-ttl"><span class="model-dot dot-old"></span>Old Model (PAYG)</div>
-      <div class="model-rev green">${£(Math.round(oldRev))}</div>
+      <div class="model-rev green">${gbp(Math.round(oldRev))}</div>
       <div class="model-cost">Revenue · ${ams.length} months actuals</div>
       <div class="model-cost">Cost: £0 · independent contractors</div>
-      <div class="model-profit green">Profit: ${£(Math.round(oldRev))}</div>
+      <div class="model-profit green">Profit: ${gbp(Math.round(oldRev))}</div>
       <div class="model-margin green">100% margin</div>
     </div>
     <div class="model-card">
       <div class="model-card-ttl"><span class="model-dot dot-new"></span>New Model (PAYE)</div>
-      <div class="model-rev blue">${£(Math.round(newRev))}</div>
+      <div class="model-rev blue">${gbp(Math.round(newRev))}</div>
       <div class="model-cost">Revenue · ${ams.length} months actuals</div>
-      <div class="model-cost">Cost: ${£(Math.round(costTotal))} · payroll + HoF + tax</div>
-      <div class="model-profit ${newProfit>=0?'green':'red'}">Profit: ${£(Math.round(newProfit))}</div>
+      <div class="model-cost">Cost: ${gbp(Math.round(costTotal))} · payroll + HoF + tax</div>
+      <div class="model-profit ${newProfit>=0?'green':'red'}">Profit: ${gbp(Math.round(newProfit))}</div>
       <div class="model-margin ${newProfit>=0?'green':'red'}">${pct(newMarg)} margin · investment phase</div>
     </div>
     <div class="model-card">
       <div class="model-card-ttl"><span class="model-dot dot-mem"></span>PT Membership</div>
-      <div class="model-rev purple">${£(Math.round(memRevTotal))}</div>
+      <div class="model-rev purple">${gbp(Math.round(memRevTotal))}</div>
       <div class="model-cost">Revenue · ${ams.length} months actuals</div>
       <div class="model-cost">Cost: £0 · separate from delivery models</div>
-      <div class="model-profit purple">Profit: ${£(Math.round(memRevTotal))}</div>
+      <div class="model-profit purple">Profit: ${gbp(Math.round(memRevTotal))}</div>
       <div class="model-margin purple">100% margin</div>
     </div>`;
 }
@@ -735,7 +735,7 @@ function renderOverviewChart() {
     ]},
     options: {
       responsive: true, maintainAspectRatio: true,
-      plugins: { legend: { display: true, position: 'bottom', labels: { color:'#555', font:{size:11}, boxWidth:12, padding:14 } }, tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${£(c.raw)}` } } },
+      plugins: { legend: { display: true, position: 'bottom', labels: { color:'#555', font:{size:11}, boxWidth:12, padding:14 } }, tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${gbp(c.raw)}` } } },
       scales: { x: { stacked: true, grid: GRID, ticks: TICK }, y: { stacked: true, ...mkY() } },
     },
   });
@@ -759,8 +759,8 @@ function renderOverviewTable() {
     const ach  = ytdF > 0 ? ytd/ytdF : null;
     html += `<tr><td>${lbls[line]}</td>${MONTHS_H1.map((mk,i)=>{
       const v = vals[i];
-      return v!=null ? `<td class="r">${£(v)}</td>` : `<td class="r dim">${£(fcts[i])}</td>`;
-    }).join('')}<td class="r white">${£(Math.round(ytd))}</td><td class="r">${£(Math.round(h1))}</td><td class="r ${ach&&ach>=1?'green':ach&&ach>=0.85?'amber':'red'}">${ach?pct(ach):'—'}</td></tr>`;
+      return v!=null ? `<td class="r">${gbp(v)}</td>` : `<td class="r dim">${gbp(fcts[i])}</td>`;
+    }).join('')}<td class="r white">${gbp(Math.round(ytd))}</td><td class="r">${gbp(Math.round(h1))}</td><td class="r ${ach&&ach>=1?'green':ach&&ach>=0.85?'amber':'red'}">${ach?pct(ach):'—'}</td></tr>`;
   }
 
   // Total row
@@ -771,8 +771,8 @@ function renderOverviewTable() {
   const totAch = actMonths().reduce((s,mk)=>s+(FORECAST[mk]?Object.values(FORECAST[mk]).reduce((a,b)=>a+b,0):0),0);
   html += `<tr class="tot"><td>Total</td>${MONTHS_H1.map((mk,i)=>{
     const v=totAct[i];
-    return v!=null?`<td class="r">${£(Math.round(v))}</td>`:`<td class="r dim">${£(Math.round(totFct[i]))}</td>`;
-  }).join('')}<td class="r">${£(Math.round(totYTD))}</td><td class="r">${£(Math.round(totH1))}</td><td class="r ${totAch>0&&totYTD/totAch>=1?'green':totAch>0&&totYTD/totAch>=0.85?'amber':'red'}">${totAch>0?pct(totYTD/totAch):'—'}</td></tr>`;
+    return v!=null?`<td class="r">${gbp(Math.round(v))}</td>`:`<td class="r dim">${gbp(Math.round(totFct[i]))}</td>`;
+  }).join('')}<td class="r">${gbp(Math.round(totYTD))}</td><td class="r">${gbp(Math.round(totH1))}</td><td class="r ${totAch>0&&totYTD/totAch>=1?'green':totAch>0&&totYTD/totAch>=0.85?'amber':'red'}">${totAch>0?pct(totYTD/totAch):'—'}</td></tr>`;
   html += `</tbody>`;
   document.getElementById('overviewTbl').innerHTML = html;
 }
@@ -794,7 +794,7 @@ function renderModelCharts() {
       { label:'PT Rent (fct)',   data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.pt_rent??null),    backgroundColor:'#1a7a4588', stack:'fct' },
     ]},
     options: { responsive:true, maintainAspectRatio:true,
-      plugins:{ legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${£(c.raw)}`}} },
+      plugins:{ legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${gbp(c.raw)}`}} },
       scales:{ x:{stacked:true,grid:GRID,ticks:TICK}, y:{stacked:true,...mkY()} } },
   });
 
@@ -812,7 +812,7 @@ function renderModelCharts() {
       { label:'Revenue (fct)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.new_model??null), backgroundColor:'#1e3a5f66' },
     ]},
     options: { responsive:true, maintainAspectRatio:true,
-      plugins:{ legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${£(c.raw)}`}} },
+      plugins:{ legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${gbp(c.raw)}`}} },
       scales:{ x:{grid:GRID,ticks:TICK}, y:{...mkY()} } },
   });
 }
@@ -828,17 +828,17 @@ function renderPnLTable() {
 
   // OLD MODEL
   html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">OLD MODEL (PAYG) — Self-Employed PTs</td></tr>`;
-  html += `<tr><td>PT Credits</td>${ams.map(mk=>`<td class="r">${£(DB.revenue[mk]?.pt_credits??null)}</td>`).join('')}<td class="r white">${£(Math.round(ams.reduce((s,mk)=>s+(DB.revenue[mk]?.pt_credits||0),0)))}</td><td class="r">—</td></tr>`;
-  html += `<tr><td>PT Rent</td>${ams.map(mk=>`<td class="r">${£(DB.revenue[mk]?.pt_rent??null)}</td>`).join('')}<td class="r white">${£(Math.round(ams.reduce((s,mk)=>s+(DB.revenue[mk]?.pt_rent||0),0)))}</td><td class="r">—</td></tr>`;
+  html += `<tr><td>PT Credits</td>${ams.map(mk=>`<td class="r">${gbp(DB.revenue[mk]?.pt_credits??null)}</td>`).join('')}<td class="r white">${gbp(Math.round(ams.reduce((s,mk)=>s+(DB.revenue[mk]?.pt_credits||0),0)))}</td><td class="r">—</td></tr>`;
+  html += `<tr><td>PT Rent</td>${ams.map(mk=>`<td class="r">${gbp(DB.revenue[mk]?.pt_rent??null)}</td>`).join('')}<td class="r white">${gbp(Math.round(ams.reduce((s,mk)=>s+(DB.revenue[mk]?.pt_rent||0),0)))}</td><td class="r">—</td></tr>`;
   const oldYTD = ams.reduce((s,mk)=>s+(oldModelRev(mk)||0),0);
   html += `<tr class="sub"><td>Cost</td>${ams.map(()=>`<td class="r dim">—</td>`).join('')}<td class="r dim">£0</td><td class="r">—</td></tr>`;
-  html += `<tr class="tot"><td>Old Model Profit</td>${ams.map(mk=>`<td class="r green">${£(Math.round(oldModelRev(mk)||0))}</td>`).join('')}<td class="r green">${£(Math.round(oldYTD))}</td><td class="r green">100.0%</td></tr>`;
+  html += `<tr class="tot"><td>Old Model Profit</td>${ams.map(mk=>`<td class="r green">${gbp(Math.round(oldModelRev(mk)||0))}</td>`).join('')}<td class="r green">${gbp(Math.round(oldYTD))}</td><td class="r green">100.0%</td></tr>`;
 
   // NEW MODEL
   html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">NEW MODEL (PAYE) — Employed Coaches</td></tr>`;
   const newYTD = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
   const costYTD = ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
-  html += `<tr><td>Revenue</td>${ams.map(mk=>`<td class="r blue">${£d(newModelRev(mk))}</td>`).join('')}<td class="r blue">${£(Math.round(newYTD))}</td><td class="r">—</td></tr>`;
+  html += `<tr><td>Revenue</td>${ams.map(mk=>`<td class="r blue">${gbpd(newModelRev(mk))}</td>`).join('')}<td class="r blue">${gbp(Math.round(newYTD))}</td><td class="r">—</td></tr>`;
   const costLines = [
     {key:'head_of_fitness',lbl:'Head of Fitness'},
     {key:'craig_clout',    lbl:'Craig Clout'},
@@ -848,23 +848,23 @@ function renderPnLTable() {
   ];
   for (const cl of costLines) {
     const cYTD = ams.reduce((s,mk)=>s+(DB.costs[mk]?.[cl.key]||0),0);
-    html += `<tr class="sub"><td>${cl.lbl}</td>${ams.map(mk=>{const v=DB.costs[mk]?.[cl.key];return `<td class="r dim">${v?`−${£d(v)}`:'—'}</td>`;}).join('')}<td class="r dim">−${£d(cYTD)}</td><td class="r dim">—</td></tr>`;
+    html += `<tr class="sub"><td>${cl.lbl}</td>${ams.map(mk=>{const v=DB.costs[mk]?.[cl.key];return `<td class="r dim">${v?`−${gbpd(v)}`:'—'}</td>`;}).join('')}<td class="r dim">−${gbpd(cYTD)}</td><td class="r dim">—</td></tr>`;
   }
-  html += `<tr class="sub"><td>Total Cost</td>${ams.map(mk=>`<td class="r red">−${£(Math.round(totalCost(mk)||0))}</td>`).join('')}<td class="r red">−${£(Math.round(costYTD))}</td><td class="r dim">—</td></tr>`;
+  html += `<tr class="sub"><td>Total Cost</td>${ams.map(mk=>`<td class="r red">−${gbp(Math.round(totalCost(mk)||0))}</td>`).join('')}<td class="r red">−${gbp(Math.round(costYTD))}</td><td class="r dim">—</td></tr>`;
   const newProfit = newYTD - costYTD;
   const newMarg   = newProfit / newYTD;
-  html += `<tr class="tot"><td>New Model Profit</td>${ams.map(mk=>{const p=(newModelRev(mk)||0)-(totalCost(mk)||0);return `<td class="r ${p>=0?'green':'red'}">${£(Math.round(p))}</td>`;}).join('')}<td class="r ${newProfit>=0?'green':'red'}">${£(Math.round(newProfit))}</td><td class="r ${newProfit>=0?'green':'red'}">${pct(newMarg)}</td></tr>`;
+  html += `<tr class="tot"><td>New Model Profit</td>${ams.map(mk=>{const p=(newModelRev(mk)||0)-(totalCost(mk)||0);return `<td class="r ${p>=0?'green':'red'}">${gbp(Math.round(p))}</td>`;}).join('')}<td class="r ${newProfit>=0?'green':'red'}">${gbp(Math.round(newProfit))}</td><td class="r ${newProfit>=0?'green':'red'}">${pct(newMarg)}</td></tr>`;
 
   // PT MEMBERSHIP
   const memYTD = ams.reduce((s,mk)=>s+(memRev(mk)||0),0);
   html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">PT MEMBERSHIP — Separate Line</td></tr>`;
-  html += `<tr class="tot"><td>PT Membership</td>${ams.map(mk=>`<td class="r purple">${£(memRev(mk))}</td>`).join('')}<td class="r purple">${£(Math.round(memYTD))}</td><td class="r purple">100.0%</td></tr>`;
+  html += `<tr class="tot"><td>PT Membership</td>${ams.map(mk=>`<td class="r purple">${gbp(memRev(mk))}</td>`).join('')}<td class="r purple">${gbp(Math.round(memYTD))}</td><td class="r purple">100.0%</td></tr>`;
 
   // COMBINED
   const totRev = oldYTD + newYTD + memYTD;
   const totProfit = totRev - costYTD;
   html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">COMBINED TOTAL</td></tr>`;
-  html += `<tr class="tot highlight"><td>Total PT Profit</td>${ams.map(mk=>{const tp=(totalRev(mk)||0)-(totalCost(mk)||0);return `<td class="r">${£(Math.round(tp))}</td>`;}).join('')}<td class="r">${£(Math.round(totProfit))}</td><td class="r">${pct(totProfit/totRev)}</td></tr>`;
+  html += `<tr class="tot highlight"><td>Total PT Profit</td>${ams.map(mk=>{const tp=(totalRev(mk)||0)-(totalCost(mk)||0);return `<td class="r">${gbp(Math.round(tp))}</td>`;}).join('')}<td class="r">${gbp(Math.round(totProfit))}</td><td class="r">${pct(totProfit/totRev)}</td></tr>`;
   html += `</tbody>`;
   document.getElementById('pnlTbl').innerHTML = html;
 }
@@ -886,10 +886,10 @@ function renderCostTable() {
   let html = `<thead><tr><th>Cost Line</th>${mHdrs.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th></tr></thead><tbody>`;
   for (const cl of costLines) {
     const ytd = ams.reduce((s,mk)=>s+(DB.costs[mk]?.[cl.key]||0),0);
-    html += `<tr><td>${cl.lbl}</td>${ams.map(mk=>{const v=DB.costs[mk]?.[cl.key];return `<td class="r">${v?£d(v):'<span class="dim">—</span>'}</td>`;}).join('')}<td class="r white">${£d(ytd)}</td></tr>`;
+    html += `<tr><td>${cl.lbl}</td>${ams.map(mk=>{const v=DB.costs[mk]?.[cl.key];return `<td class="r">${v?gbpd(v):'<span class="dim">—</span>'}</td>`;}).join('')}<td class="r white">${gbpd(ytd)}</td></tr>`;
   }
   const totYTD = ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
-  html += `<tr class="tot"><td>Total Cost</td>${ams.map(mk=>`<td class="r red">${£d(totalCost(mk)||0)}</td>`).join('')}<td class="r red">${£d(totYTD)}</td></tr></tbody>`;
+  html += `<tr class="tot"><td>Total Cost</td>${ams.map(mk=>`<td class="r red">${gbpd(totalCost(mk)||0)}</td>`).join('')}<td class="r red">${gbpd(totYTD)}</td></tr></tbody>`;
   document.getElementById('costTbl').innerHTML = html;
 }
 
@@ -933,9 +933,9 @@ function renderCoaches() {
     const roi = (c.key && DB.costs[latestMk]?.[c.key] > 0) ? (revLatest / DB.costs[latestMk][c.key]) : null;
     return `<div class="coach-card">
       <div class="coach-name">${c.name}</div>
-      <div class="coach-rev">${£d(revLatest)}</div>
+      <div class="coach-rev">${gbpd(revLatest)}</div>
       <div class="coach-cost">${latestLbl} revenue</div>
-      <div class="coach-cost">YTD payroll: ${costYTD>0?£d(costYTD):'—'}</div>
+      <div class="coach-cost">YTD payroll: ${costYTD>0?gbpd(costYTD):'—'}</div>
       <div class="coach-eff ${roi?roi>=1?'green':'red':'amber'}">${roi?roi.toFixed(2)+'x rev/cost':c.key?'See below':'No payroll'}</div>
     </div>`;
   }).join('');
@@ -945,7 +945,7 @@ function renderCoaches() {
     type:'bar',
     data:{ labels:coachNames, datasets:[{ label:'Revenue', data:coachNames.map(n=>coachRevMap[n]), backgroundColor:'#1e3a5f', borderRadius:4 }] },
     options:{ responsive:true, maintainAspectRatio:true, indexAxis:'y',
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${£(c.raw)}`}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${gbp(c.raw)}`}}},
       scales:{x:{...mkY()},y:{grid:GRID,ticks:{...TICK,color:'#888'}}} },
   });
 
@@ -957,7 +957,7 @@ function renderCoaches() {
     type:'bar',
     data:{ labels:payrollNames, datasets:[{ label:'Payroll', data:payrollVals, backgroundColor:'#5f1e1e', borderRadius:4 }] },
     options:{ responsive:true, maintainAspectRatio:true, indexAxis:'y',
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${£(c.raw)}`}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${gbp(c.raw)}`}}},
       scales:{x:{...mkY()},y:{grid:GRID,ticks:{...TICK,color:'#888'}}} },
   });
 
@@ -970,9 +970,9 @@ function renderCoaches() {
     const latestPay = c.key ? (DB.costs[latestMk]?.[c.key] || 0) : 0;
     const roi = latestPay > 0 ? rev/latestPay : null;
     html += `<tr><td>${c.name}</td><td><span class="badge ${c.key?'bb':'bc'}">${c.key?'PAYE':'SE?'}</span></td>
-      ${paysByMonth.map(v=>`<td class="r">${v!=null&&v>0?£d(v):'<span class="dim">—</span>'}</td>`).join('')}
-      <td class="r white">${ytdPay>0?£d(ytdPay):'—'}</td>
-      <td class="r blue">${£d(rev)}</td>
+      ${paysByMonth.map(v=>`<td class="r">${v!=null&&v>0?gbpd(v):'<span class="dim">—</span>'}</td>`).join('')}
+      <td class="r white">${ytdPay>0?gbpd(ytdPay):'—'}</td>
+      <td class="r blue">${gbpd(rev)}</td>
       <td class="r ${roi?roi>=1?'green':'red':'amber'}">${roi?roi.toFixed(2)+'x':'—'}</td></tr>`;
   }
   html += `</tbody>`;
@@ -1002,7 +1002,7 @@ function renderTrends() {
       { label:'New Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?newModelRev(mk):null):FORECAST[mk]?.new_model), borderColor:'#60a5fa55', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
     ]},
     options:{ responsive:true, maintainAspectRatio:true,
-      plugins:{legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${£(c.raw)}`}}},
+      plugins:{legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${gbp(c.raw)}`}}},
       scales:{x:{grid:GRID,ticks:TICK},y:{...mkY()}} },
   });
 
@@ -1016,7 +1016,7 @@ function renderTrends() {
       { label:'Total Cost',        data:costAll, borderColor:'#f87171', backgroundColor:'#f8717111', borderWidth:2.5, pointRadius:4, fill:true, tension:0.3 },
     ]},
     options:{ responsive:true, maintainAspectRatio:true,
-      plugins:{legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${£(c.raw)}`}}},
+      plugins:{legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${gbp(c.raw)}`}}},
       scales:{x:{grid:GRID,ticks:TICK},y:{...mkY()}} },
   });
 
@@ -1054,19 +1054,19 @@ function renderH1Table() {
     const marg = rev > 0 ? prof/rev : null;
     html += `<tr ${isAct?'':'class="fct"'}>
       <td>${MONTHS_LABELS[MONTHS_H1.indexOf(mk)]}</td>
-      <td class="r ${isAct?'':'dim'}">${£(Math.round(old))}</td>
-      <td class="r ${isAct?'blue':'dim'}">${£(Math.round(nw))}</td>
-      <td class="r ${isAct?'':'dim'}">${£(Math.round(mem))}</td>
-      <td class="r ${isAct?'white':'dim'}">${£(Math.round(rev))}</td>
-      <td class="r ${isAct?'red':'dim'}">−${£(Math.round(cost))}</td>
-      <td class="r ${prof>=0?'green':'red'}">${£(Math.round(prof))}</td>
+      <td class="r ${isAct?'':'dim'}">${gbp(Math.round(old))}</td>
+      <td class="r ${isAct?'blue':'dim'}">${gbp(Math.round(nw))}</td>
+      <td class="r ${isAct?'':'dim'}">${gbp(Math.round(mem))}</td>
+      <td class="r ${isAct?'white':'dim'}">${gbp(Math.round(rev))}</td>
+      <td class="r ${isAct?'red':'dim'}">−${gbp(Math.round(cost))}</td>
+      <td class="r ${prof>=0?'green':'red'}">${gbp(Math.round(prof))}</td>
       <td class="r ${marg&&marg>=0.3?'green':marg&&marg>=0.15?'amber':'red'}">${marg?pct(marg):'—'}</td>
       <td><span class="badge ${isAct?'bg':'bc'}">${isAct?'Actual':'Forecast'}</span></td>
     </tr>`;
   }
   const totRev  = MONTHS_H1.reduce((s,mk)=>{const f=FORECAST[mk];return s+(f?f.pt_credits+f.pt_membership+f.pt_rent+f.new_model:0);},0);
   const totCost = MONTHS_H1.reduce((s,mk)=>s+(DB.costs[mk]?.total||COST_FORECAST[mk]||0),0);
-  html += `<tr class="tot"><td>H1 Total</td><td colspan="3"></td><td class="r white">${£(Math.round(totRev))}</td><td class="r red">−${£(Math.round(totCost))}</td><td class="r ${totRev-totCost>=0?'green':'red'}">${£(Math.round(totRev-totCost))}</td><td class="r ${((totRev-totCost)/totRev)>=0.3?'green':'amber'}">${pct((totRev-totCost)/totRev)}</td><td></td></tr>`;
+  html += `<tr class="tot"><td>H1 Total</td><td colspan="3"></td><td class="r white">${gbp(Math.round(totRev))}</td><td class="r red">−${gbp(Math.round(totCost))}</td><td class="r ${totRev-totCost>=0?'green':'red'}">${gbp(Math.round(totRev-totCost))}</td><td class="r ${((totRev-totCost)/totRev)>=0.3?'green':'amber'}">${pct((totRev-totCost)/totRev)}</td><td></td></tr>`;
   html += `</tbody>`;
   document.getElementById('h1ForecastTbl').innerHTML = html;
 }
