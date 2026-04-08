@@ -408,15 +408,17 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 const SUPABASE_URL  = 'https://ljjwssicvvyyueyznmou.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxqandzc2ljdnZ5eXVleXpubW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NTQ4NzgsImV4cCI6MjA5MTIzMDg3OH0.SAlIZNi5Ex4U4kAs7v1-omAjigRFRYSlXBpSdCI0DqM';
 
-// ── Supabase REST helpers (no CDN required — uses native browser fetch) ────
-const SB_HEADERS = {
+// ── Supabase REST helpers (native fetch — no CDN required) ──────
+const SB_AUTH = {
   'apikey': SUPABASE_ANON,
   'Authorization': 'Bearer ' + SUPABASE_ANON,
-  'Content-Type': 'application/json',
 };
 
 async function sbGet(table, params = '') {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, { headers: SB_HEADERS });
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+    method: 'GET',
+    headers: SB_AUTH,          // no Content-Type on GETs — avoids CORS preflight
+  });
   if (!res.ok) throw new Error(`DB read failed (${table}): ${res.status} ${res.statusText}`);
   return res.json();
 }
@@ -425,7 +427,7 @@ async function sbUpsert(table, row, onConflict) {
   const url = `${SUPABASE_URL}/rest/v1/${table}?on_conflict=${encodeURIComponent(onConflict)}`;
   const res = await fetch(url, {
     method: 'POST',
-    headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+    headers: { ...SB_AUTH, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
     body: JSON.stringify(row),
   });
   if (!res.ok) { const t = await res.text(); throw new Error(`DB upsert failed (${table}): ${t}`); }
@@ -434,10 +436,39 @@ async function sbUpsert(table, row, onConflict) {
 async function sbInsert(table, row) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
     method: 'POST',
-    headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
+    headers: { ...SB_AUTH, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
     body: JSON.stringify(row),
   });
   if (!res.ok) { const t = await res.text(); throw new Error(`DB insert failed (${table}): ${t}`); }
+}
+
+// ── Hardcoded fallback data (Jan–Mar 2026 actuals) ───────────────
+// Dashboard renders instantly from this; DB data overlays when available
+function loadFallback() {
+  DB.revenue = {
+    '2026-01': { pt_credits: 3240,    pt_membership: 1500, pt_rent: 1740, new_model: 4429.99 },
+    '2026-02': { pt_credits: 2680,    pt_membership: 1350, pt_rent: 2000, new_model: 7654.86 },
+    '2026-03': { pt_credits: 3100,    pt_membership: 1272, pt_rent: 2000, new_model: 7158.29 },
+  };
+  DB.costs = {
+    '2026-01': { head_of_fitness: 5000, craig_clout: 442.75,  jess_donehue: 0,     harry_sheppard: 0,   tax_ni: 816.41,  total: 6259.16  },
+    '2026-02': { head_of_fitness: 5000, craig_clout: 2096,    jess_donehue: 93.51, harry_sheppard: 162, tax_ni: 1102.73, total: 8454.24  },
+    '2026-03': { head_of_fitness: 5000, craig_clout: 2886.75, jess_donehue: 534.30,harry_sheppard: 561, tax_ni: 1347.31, total: 10329.36 },
+  };
+  DB.coachTxns = {
+    '2026-03': [
+      { coach_name: 'Craig Clout',    product_name: 'Craig Clout - PT 20 pack',             amount: 2300   },
+      { coach_name: 'Craig Clout',    product_name: 'Craig Clout - PT 4 Pack',              amount: 1000   },
+      { coach_name: 'Craig Clout',    product_name: 'Craig Clout - PT 8 Pack',              amount: 960    },
+      { coach_name: 'Harry Sheppard', product_name: 'Harry Sheppard PT - 10 Pack',          amount: 361.29 },
+      { coach_name: 'Harry Sheppard', product_name: 'Harry Shepard PT 5 Pack (Michael)',    amount: 339    },
+      { coach_name: 'Jess Donehue',   product_name: 'Jessica Donehue PT - 8 Pack',          amount: 608    },
+      { coach_name: 'Mara Greenwood', product_name: 'Mara Greenwood PT - 12 Pack (reduced)',amount: 960    },
+      { coach_name: 'Intro / Other',  product_name: 'Joining Fee + Intro PT Session (New)', amount: 330    },
+      { coach_name: 'Intro / Other',  product_name: 'PT Intro Offer - 3 Sessions',          amount: 300    },
+    ],
+  };
+  DB.uploadLog = [];
 }
 
 // ── Forecast targets (static from Revenue Tracker sheet) ────────
@@ -1212,26 +1243,31 @@ function hideLoading() {
 // ═══════════════════════════════════════════════════════════════
 
 window.addEventListener('load', async function init() {
-  try {
-    setLoading('Connecting to database…');
+  // ── Step 1: render instantly from hardcoded fallback ───────────
+  setLoading('Loading dashboard…');
+  loadFallback();
+  renderAll();
+  hideLoading();
 
-    // 12-second timeout — shows a clear message instead of hanging forever
+  // ── Step 2: silently sync from Supabase in background ──────────
+  // Updates the dashboard if DB has newer/additional data.
+  // Any error is shown as a small status note, not a blocker.
+  const statusEl = document.getElementById('uploadStatus');
+  try {
     const timeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Connection timed out. Check your internet connection and refresh.')), 12000)
+      setTimeout(() => reject(new Error('timeout')), 10000)
     );
     await Promise.race([loadData(), timeout]);
-
-    setLoading('Rendering dashboard…');
-    renderAll();
-    hideLoading();
+    renderAll();  // re-render with live DB data
+    statusEl.className = 'upload-status ok';
+    statusEl.textContent = '✓ Live · synced from database';
   } catch (err) {
-    const txt = document.getElementById('loadingText');
-    txt.textContent = '⚠ ' + err.message;
-    txt.style.color = '#f87171';
-    txt.style.maxWidth = '480px';
-    txt.style.textAlign = 'center';
-    document.querySelector('.loader').style.display = 'none';
-    console.error('Dashboard init error:', err);
+    // Non-blocking — dashboard is already showing fallback data
+    statusEl.className = 'upload-status warn';
+    statusEl.textContent = err.message === 'timeout'
+      ? '⚠ Database unreachable — showing cached Jan–Mar data'
+      : '⚠ DB sync failed: ' + err.message;
+    console.warn('DB sync error:', err);
   }
 });
 </script>
