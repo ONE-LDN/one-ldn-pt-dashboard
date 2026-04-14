@@ -225,6 +225,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
     <button class="tab"     onclick="showTab('pnl',this)">Model P&amp;L</button>
     <button class="tab"     onclick="showTab('coaches',this)">Coach Breakdown</button>
     <button class="tab"     onclick="showTab('trends',this)">Trends</button>
+    <button class="tab"     onclick="showTab('pipeline',this)">PT Pipeline</button>
   </div>
 
   <!-- ══════════ TAB 1: OVERVIEW ══════════ -->
@@ -393,6 +394,78 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
     </div>
   </div>
 
+  <!-- ══════════ TAB 5: PT PIPELINE ══════════ -->
+  <div class="panel" id="panel-pipeline">
+
+    <!-- Pipeline KPI strip -->
+    <div class="kpi-strip" style="grid-template-columns:repeat(4,1fr)" id="pipelineKpis"></div>
+
+    <!-- Insight banner -->
+    <div class="insight" id="pipelineInsight"></div>
+
+    <!-- Charts: Funnel + 14D -->
+    <div class="g2">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-ttl">Joining Fee → PT Intro Funnel</div>
+            <div class="card-sub">New joining fees issued vs intro sessions redeemed · by month</div>
+          </div>
+          <span class="badge ba">New Product</span>
+        </div>
+        <div style="position:relative"><canvas id="cJFFunnel" height="220"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-ttl">14 Day Intro Trial — Monthly Volume</div>
+            <div class="card-sub">Trial memberships purchased · £55 each · no PT session included</div>
+          </div>
+          <span class="badge bb">Trial Track</span>
+        </div>
+        <div style="position:relative"><canvas id="c14D" height="220"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Pass status + monthly table -->
+    <div class="g2">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-ttl">Pass Status — All Passes Issued (New Product)</div>
+            <div class="card-sub">Utilisation breakdown · export as at 11 Apr 2026</div>
+          </div>
+        </div>
+        <table id="pipelineStatusTbl"></table>
+        <div class="fn">† Active = booking window still open. Lapsed = settled without booking.</div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-ttl">Monthly Uptake Summary</div>
+            <div class="card-sub">JF issued vs redeemed · uptake rate vs cohort</div>
+          </div>
+        </div>
+        <table id="pipelineTbl"></table>
+        <div class="fn">* Apr 26 still in progress — active passes may yet convert.</div>
+      </div>
+    </div>
+
+    <!-- 14D revenue table -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">14 Day Intro — Monthly Revenue</div>
+          <div class="card-sub">Separate from PT funnel · conversion to club membership tracked in WodBoard</div>
+        </div>
+        <span class="badge bb">Trial Revenue</span>
+      </div>
+      <div style="overflow-x:auto"><table id="pipeline14dTbl"></table></div>
+      <div class="fn">Old product ("Joining Fee + PT Intro", deprecated Jan 2026): 14 passes issued, 0 redeemed — all expired. New product launched 25 Jan 2026.</div>
+    </div>
+
+  </div>
+
 </div><!-- /app -->
 
 <!-- CDN Scripts — Chart.js and PapaParse only; Supabase uses native fetch() -->
@@ -483,6 +556,28 @@ const FORECAST = {
 
 // ── Projected costs Apr–Jun (Head of Fitness £5k + Mar payroll run-rate) ─
 const COST_FORECAST = { '2026-04': 15648, '2026-05': 20812, '2026-06': 25977 };
+
+// ═══════════════════════════════════════════════════════════════
+// PIPELINE DATA — PT Intro Funnel & 14 Day Intro
+// Sources: income_statement_joining_fee + pass_status_report (11 Apr 2026)
+// ═══════════════════════════════════════════════════════════════
+const PIPELINE_MONTHS   = ['Jan 26','Feb 26','Mar 26','Apr 26'];
+// New product "Joining Fee + Intro PT Session (New)" only
+const PIPELINE_JF_NEW   = [5,  16, 14, 12];  // issued per month (income statement)
+const PIPELINE_REDEEMED = [2,   1,  4,  1];  // sessions taken (pass status export)
+const PIPELINE_D14      = [103, 62, 80, 34]; // 14 Day Intro purchases (deduplicated)
+const PIPELINE_STATS = {
+  jf_new_total:    47,   // new product YTD to 14 Apr 2026
+  jf_old_total:    14,   // old product (deprecated Jan 2026, 0 redeemed)
+  passes_exported: 40,   // pass records in export through 11 Apr
+  redeemed:         8,   // sessions actually taken
+  active:          10,   // passes with open booking window (not yet expired)
+  lapsed:          21,   // settled without booking (expired unused)
+  cancelled:        2,   // cancelled + abandoned
+  d14_total:      279,   // 14 Day Intro YTD (deduplicated by customer+date)
+  d14_revenue:  15345,   // at £55 each
+  data_at: '11 Apr 2026',
+};
 
 const MONTHS_H1     = ['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06'];
 const MONTHS_LABELS = ['Jan 26','Feb 26','Mar 26','Apr 26','May 26','Jun 26'];
@@ -1088,6 +1183,119 @@ function renderAll() {
   renderCoaches();
   renderTrends();
   renderH1Table();
+  renderPipeline();
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — PIPELINE TAB
+// ═══════════════════════════════════════════════════════════════
+
+function renderPipeline() {
+  destroyChart('cJFFunnel'); destroyChart('c14D');
+
+  const s = PIPELINE_STATS;
+  const uptake   = s.redeemed / s.jf_new_total;
+  const lapsePct = s.lapsed   / s.passes_exported;
+
+  // ── KPI cards ──
+  document.getElementById('pipelineKpis').innerHTML = [
+    { lbl:'JF Issued (YTD)',     val: s.jf_new_total,                                          sub: 'New product · Jan–Apr 26',                            cls:'white' },
+    { lbl:'PT Intros Redeemed',  val: s.redeemed + ' (' + (uptake*100).toFixed(0) + '%)',      sub: 'Of all new joining fees issued',                      cls:'green' },
+    { lbl:'Lapsed Passes',       val: s.lapsed,                                                sub: (lapsePct*100).toFixed(0)+'% of closed passes expired unused', cls:'red' },
+    { lbl:'14 Day Intros YTD',   val: s.d14_total,                                             sub: '£'+s.d14_revenue.toLocaleString('en-GB')+' revenue · no PT session', cls:'blue' },
+  ].map(k => `<div class="kpi"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val ${k.cls}">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // ── Insight banner ──
+  const rates = PIPELINE_REDEEMED.map((r,i) => PIPELINE_JF_NEW[i] > 0 ? r/PIPELINE_JF_NEW[i] : 1);
+  const worstMonth = PIPELINE_MONTHS[rates.indexOf(Math.min(...rates))];
+  document.getElementById('pipelineInsight').innerHTML =
+    `<strong>${s.lapsed} of ${s.lapsed + s.redeemed} closed passes expired without being redeemed</strong> — a ${(lapsePct*100).toFixed(0)}% lapse rate on a paid benefit. `+
+    `${s.active} members currently hold open passes with their booking window still active. `+
+    `<strong>${worstMonth}</strong> had the lowest uptake. Old product (Jan 2026, deprecated): ${s.jf_old_total} issued, 0 redeemed.`;
+
+  const GRID_N = { color: '#161616', borderColor: '#1e1e1e' };
+  const TICK_N = { color: '#383838', font: { size: 11 } };
+
+  // ── JF Funnel chart ──
+  charts['cJFFunnel'] = new Chart(document.getElementById('cJFFunnel'), {
+    type: 'bar',
+    data: {
+      labels: PIPELINE_MONTHS,
+      datasets: [
+        { label:'JF Issued',     data: PIPELINE_JF_NEW,   backgroundColor:'#e8c54733', borderColor:'#e8c547', borderWidth:1.5, borderRadius:3 },
+        { label:'PT Redeemed ✓', data: PIPELINE_REDEEMED, backgroundColor:'#4ade80aa', borderColor:'#4ade80', borderWidth:1.5, borderRadius:3 },
+      ],
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins: {
+        legend:  { display:true, position:'bottom', labels:{ color:'#555', font:{size:11}, boxWidth:12, padding:12 }},
+        tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.raw}` }},
+      },
+      scales: {
+        x: { grid: GRID_N, ticks: TICK_N },
+        y: { grid: GRID_N, ticks: { ...TICK_N, callback: v => v }, beginAtZero: true },
+      },
+    },
+  });
+
+  // ── 14 Day Intro chart ──
+  charts['c14D'] = new Chart(document.getElementById('c14D'), {
+    type: 'bar',
+    data: {
+      labels: PIPELINE_MONTHS,
+      datasets: [{ label:'14 Day Intros', data: PIPELINE_D14, backgroundColor:'#60a5fa55', borderColor:'#60a5fa', borderWidth:1.5, borderRadius:3 }],
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins: {
+        legend:  { display:false },
+        tooltip: { callbacks: { label: c => ` ${c.raw} trials · £${(c.raw*55).toLocaleString('en-GB')}` }},
+      },
+      scales: {
+        x: { grid: GRID_N, ticks: TICK_N },
+        y: { grid: GRID_N, ticks: { ...TICK_N, callback: v => v }, beginAtZero: true },
+      },
+    },
+  });
+
+  // ── Pass status summary table ──
+  const statuses = [
+    { lbl:'Redeemed ✓',             count: s.redeemed,  cls:'green', note:'Session taken' },
+    { lbl:'Active (open window)',    count: s.active,    cls:'amber', note:'Pass open — still time to book' },
+    { lbl:'Lapsed (expired unused)', count: s.lapsed,    cls:'red',   note:'Settled without booking' },
+    { lbl:'Cancelled / Abandoned',   count: s.cancelled, cls:'muted', note:'Pass void' },
+  ];
+  const totalPasses = s.redeemed + s.active + s.lapsed + s.cancelled;
+  document.getElementById('pipelineStatusTbl').innerHTML =
+    `<thead><tr><th>Status</th><th class="r">Count</th><th class="r">% of Passes</th><th>Note</th></tr></thead><tbody>` +
+    statuses.map(r =>
+      `<tr><td><span class="${r.cls}">${r.lbl}</span></td><td class="r ${r.cls}">${r.count}</td><td class="r">${(r.count/totalPasses*100).toFixed(0)}%</td><td class="lbl">${r.note}</td></tr>`
+    ).join('') +
+    `<tr class="tot"><td>Total Passes Issued</td><td class="r white">${totalPasses}</td><td class="r white">100%</td><td class="lbl">Through ${s.data_at}</td></tr></tbody>`;
+
+  // ── Monthly uptake table ──
+  const totalIssued   = PIPELINE_JF_NEW.reduce((a,b)=>a+b,0);
+  const totalRedeemed = PIPELINE_REDEEMED.reduce((a,b)=>a+b,0);
+  document.getElementById('pipelineTbl').innerHTML =
+    `<thead><tr><th>Month</th><th class="r">JF Issued</th><th class="r">Redeemed</th><th class="r">Uptake %</th></tr></thead><tbody>` +
+    PIPELINE_MONTHS.map((m,i) => {
+      const rate = PIPELINE_JF_NEW[i] > 0 ? PIPELINE_REDEEMED[i]/PIPELINE_JF_NEW[i] : 0;
+      const isCurrent = m === 'Apr 26';
+      const cls = isCurrent ? 'amber' : rate >= 0.25 ? 'green' : 'red';
+      return `<tr><td>${m}</td><td class="r">${PIPELINE_JF_NEW[i]}</td><td class="r green">${PIPELINE_REDEEMED[i]}</td><td class="r ${cls}">${(rate*100).toFixed(0)}%${isCurrent?' *':''}</td></tr>`;
+    }).join('') +
+    `<tr class="tot"><td>Total</td><td class="r">${totalIssued}</td><td class="r green">${totalRedeemed}</td><td class="r ${totalRedeemed/totalIssued>=0.25?'green':'red'}">${(totalRedeemed/totalIssued*100).toFixed(0)}%</td></tr></tbody>`;
+
+  // ── 14 Day Intro revenue table ──
+  const d14Total = PIPELINE_D14.reduce((a,b)=>a+b,0);
+  document.getElementById('pipeline14dTbl').innerHTML =
+    `<thead><tr><th>Month</th><th class="r">Trials</th><th class="r">Revenue</th><th class="r">Rate</th></tr></thead><tbody>` +
+    PIPELINE_MONTHS.map((m,i) =>
+      `<tr><td>${m}</td><td class="r">${PIPELINE_D14[i]}</td><td class="r blue">£${(PIPELINE_D14[i]*55).toLocaleString('en-GB')}</td><td class="r dim">£55</td></tr>`
+    ).join('') +
+    `<tr class="tot"><td>YTD Total</td><td class="r">${d14Total}</td><td class="r blue">£${(d14Total*55).toLocaleString('en-GB')}</td><td class="r dim">—</td></tr></tbody>`;
 }
 
 // ═══════════════════════════════════════════════════════════════
