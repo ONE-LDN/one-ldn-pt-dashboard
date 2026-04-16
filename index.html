@@ -28,9 +28,9 @@ body {
 /* ── KPI STRIP ── */
 .kpi-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 26px; }
 .kpi { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 18px 20px; }
-.kpi-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4a4a4a; margin-bottom: 10px; }
+.kpi-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #7a7a7a; margin-bottom: 10px; }
 .kpi-val { font-size: 22px; font-weight: 700; line-height: 1; }
-.kpi-sub { font-size: 11px; color: #4a4a4a; margin-top: 6px; }
+.kpi-sub { font-size: 11px; color: #7a7a7a; margin-top: 6px; }
 
 /* colour helpers */
 .white  { color: #fff; }
@@ -39,7 +39,7 @@ body {
 .green  { color: #4ade80; }
 .blue   { color: #60a5fa; }
 .purple { color: #a78bfa; }
-.muted  { color: #4a4a4a; }
+.muted  { color: #7a7a7a; }
 
 /* ── LOADING ── */
 #loadingOverlay {
@@ -70,7 +70,7 @@ body {
 }
 .upload-info { flex: 1; min-width: 180px; }
 .upload-info strong { display: block; font-size: 12px; font-weight: 600; color: #c8a830; margin-bottom: 2px; }
-.upload-info span { font-size: 11px; color: #4a4a4a; }
+.upload-info span { font-size: 11px; color: #7a7a7a; }
 .upload-btn {
   background: #e8c547; color: #0a0a0a; border: none; border-radius: 7px;
   padding: 8px 16px; font-size: 12px; font-weight: 700; cursor: pointer;
@@ -78,7 +78,7 @@ body {
 }
 .upload-btn:hover { opacity: 0.82; }
 .upload-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.upload-status { font-size: 11px; color: #4a4a4a; }
+.upload-status { font-size: 11px; color: #7a7a7a; }
 .upload-status.ok  { color: #4ade80; }
 .upload-status.err { color: #f87171; }
 .upload-status.warn { color: #e8c547; }
@@ -90,7 +90,7 @@ body {
   border-radius: 12px; padding: 4px; margin-bottom: 22px;
 }
 .tab {
-  flex: 1; padding: 10px 12px; border: none; background: transparent; color: #4a4a4a;
+  flex: 1; padding: 10px 12px; border: none; background: transparent; color: #7a7a7a;
   font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 9px; transition: all 0.15s;
 }
 .tab.on { background: #1e1e1e; color: #fff; }
@@ -100,7 +100,7 @@ body {
 
 /* ── MONTH FILTER ── */
 .filter-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-.filter-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #4a4a4a; }
+.filter-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #7a7a7a; }
 select.month-pick {
   background: #111; border: 1px solid #222; border-radius: 7px;
   color: #888; font-size: 12px; font-weight: 600; padding: 7px 14px;
@@ -111,7 +111,7 @@ select.month-pick option { background: #111; }
 
 /* ── CARD ── */
 .card { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 22px 24px; margin-bottom: 16px; }
-.card-ttl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #4a4a4a; margin-bottom: 4px; }
+.card-ttl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #7a7a7a; margin-bottom: 4px; }
 .card-sub { font-size: 12px; color: #383838; margin-bottom: 20px; }
 .card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
 
@@ -120,7 +120,7 @@ select.month-pick option { background: #111; }
 
 /* ── MODEL CARDS ── */
 .model-card { background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 12px; padding: 20px 22px; }
-.model-card-ttl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #4a4a4a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.model-card-ttl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #7a7a7a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 .model-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .dot-old { background: #4ade80; }
 .dot-new { background: #60a5fa; }
@@ -133,7 +133,7 @@ select.month-pick option { background: #111; }
 /* ── TABLE ── */
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th {
-  padding: 9px 11px; color: #4a4a4a; font-size: 10px; font-weight: 700;
+  padding: 9px 11px; color: #7a7a7a; font-size: 10px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid #1e1e1e;
   text-align: left; white-space: nowrap;
 }
@@ -142,7 +142,7 @@ td { padding: 10px 11px; border-bottom: 1px solid #151515; color: #b0b0b0; verti
 td.r { text-align: right; }
 td.dim { color: #2e2e2e; }
 td.lbl { color: #555; font-size: 12px; }
-tr.tot td { border-top: 1px solid #4a4a4a; font-weight: 700; color: #fff; border-bottom: none; }
+tr.tot td { border-top: 1px solid #7a7a7a; font-weight: 700; color: #fff; border-bottom: none; }
 tr.sec-hdr td { padding: 14px 11px 4px; color: #383838; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; border-bottom: none; }
 tr:last-child td { border-bottom: none; }
 tr.sub td { color: #555; }
@@ -738,7 +738,7 @@ async function loadData() {
 // CHART DEFAULTS
 // ═══════════════════════════════════════════════════════════════
 
-Chart.defaults.color = '#4a4a4a';
+Chart.defaults.color = '#7a7a7a';
 Chart.defaults.borderColor = '#1a1a1a';
 Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
