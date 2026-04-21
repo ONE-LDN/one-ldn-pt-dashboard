@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PT Profitability Dashboard</title>
+<title>ONE LDN — PT Profitability Dashboard</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -23,14 +23,14 @@ body {
 }
 .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #e8c547; margin-bottom: 5px; }
 .title { font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
-.header-meta { font-size: 11px; color: #444; text-align: right; line-height: 1.8; }
+.header-meta { font-size: 11px; color: #666; text-align: right; line-height: 1.8; }
 
 /* ── KPI STRIP ── */
 .kpi-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 26px; }
 .kpi { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 18px 20px; }
-.kpi-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #7a7a7a; margin-bottom: 10px; }
+.kpi-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #777; margin-bottom: 10px; }
 .kpi-val { font-size: 22px; font-weight: 700; line-height: 1; }
-.kpi-sub { font-size: 11px; color: #7a7a7a; margin-top: 6px; }
+.kpi-sub { font-size: 11px; color: #666; margin-top: 6px; }
 
 /* colour helpers */
 .white  { color: #fff; }
@@ -39,7 +39,7 @@ body {
 .green  { color: #4ade80; }
 .blue   { color: #60a5fa; }
 .purple { color: #a78bfa; }
-.muted  { color: #7a7a7a; }
+.muted  { color: #4a4a4a; }
 
 /* ── LOADING ── */
 #loadingOverlay {
@@ -70,7 +70,7 @@ body {
 }
 .upload-info { flex: 1; min-width: 180px; }
 .upload-info strong { display: block; font-size: 12px; font-weight: 600; color: #c8a830; margin-bottom: 2px; }
-.upload-info span { font-size: 11px; color: #7a7a7a; }
+.upload-info span { font-size: 11px; color: #4a4a4a; }
 .upload-btn {
   background: #e8c547; color: #0a0a0a; border: none; border-radius: 7px;
   padding: 8px 16px; font-size: 12px; font-weight: 700; cursor: pointer;
@@ -78,7 +78,7 @@ body {
 }
 .upload-btn:hover { opacity: 0.82; }
 .upload-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.upload-status { font-size: 11px; color: #7a7a7a; }
+.upload-status { font-size: 11px; color: #4a4a4a; }
 .upload-status.ok  { color: #4ade80; }
 .upload-status.err { color: #f87171; }
 .upload-status.warn { color: #e8c547; }
@@ -90,29 +90,18 @@ body {
   border-radius: 12px; padding: 4px; margin-bottom: 22px;
 }
 .tab {
-  flex: 1; padding: 10px 12px; border: none; background: transparent; color: #7a7a7a;
-  font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 9px; transition: all 0.15s;
+  flex: 1; padding: 10px 16px; border: none; background: transparent; color: #4a4a4a;
+  font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 9px; transition: all 0.15s;
 }
 .tab.on { background: #1e1e1e; color: #fff; }
 .tab:hover:not(.on) { color: #888; }
 .panel { display: none; }
 .panel.on { display: block; }
 
-/* ── MONTH FILTER ── */
-.filter-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-.filter-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #7a7a7a; }
-select.month-pick {
-  background: #111; border: 1px solid #222; border-radius: 7px;
-  color: #888; font-size: 12px; font-weight: 600; padding: 7px 14px;
-  cursor: pointer; transition: border-color 0.15s;
-}
-select.month-pick:focus { outline: none; border-color: #444; color: #fff; }
-select.month-pick option { background: #111; }
-
 /* ── CARD ── */
 .card { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 22px 24px; margin-bottom: 16px; }
-.card-ttl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #7a7a7a; margin-bottom: 4px; }
-.card-sub { font-size: 12px; color: #7a7a7a; margin-bottom: 20px; }
+.card-ttl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #888; margin-bottom: 4px; }
+.card-sub { font-size: 12px; color: #777; margin-bottom: 20px; }
 .card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
 
 .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -120,7 +109,7 @@ select.month-pick option { background: #111; }
 
 /* ── MODEL CARDS ── */
 .model-card { background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 12px; padding: 20px 22px; }
-.model-card-ttl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #7a7a7a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.model-card-ttl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #888; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 .model-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .dot-old { background: #4ade80; }
 .dot-new { background: #60a5fa; }
@@ -133,21 +122,21 @@ select.month-pick option { background: #111; }
 /* ── TABLE ── */
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th {
-  padding: 9px 11px; color: #7a7a7a; font-size: 10px; font-weight: 700;
+  padding: 9px 11px; color: #777; font-size: 10px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid #1e1e1e;
   text-align: left; white-space: nowrap;
 }
 th.r { text-align: right; }
 td { padding: 10px 11px; border-bottom: 1px solid #151515; color: #b0b0b0; vertical-align: middle; }
 td.r { text-align: right; }
-td.dim { color: #7e7e7e; }
+td.dim { color: #2e2e2e; }
 td.lbl { color: #555; font-size: 12px; }
-tr.tot td { border-top: 1px solid #7a7a7a; font-weight: 700; color: #fff; border-bottom: none; }
-tr.sec-hdr td { padding: 14px 11px 4px; color: #7a7a7a; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; border-bottom: none; }
+tr.tot td { border-top: 1px solid #4a4a4a; font-weight: 700; color: #fff; border-bottom: none; }
+tr.sec-hdr td { padding: 14px 11px 4px; color: #666; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; border-bottom: none; }
 tr:last-child td { border-bottom: none; }
 tr.sub td { color: #555; }
 tr.highlight td { color: #e8c547; }
-tr.fct td { color: #7e7e7e; font-style: italic; }
+tr.fct td { color: #2e2e2e; font-style: italic; }
 
 /* ── BADGES ── */
 .badge { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; }
@@ -158,8 +147,16 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
 .bp  { background: #130f1f; color: #a78bfa; }
 .bc  { background: #101010; color: #888; }
 
+/* ── COACH GRID ── */
+.coach-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
+.coach-card { background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 10px; padding: 14px 16px; text-align: center; }
+.coach-name { font-size: 11px; font-weight: 700; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em; }
+.coach-rev { font-size: 19px; font-weight: 700; color: #60a5fa; }
+.coach-cost { font-size: 11px; color: #444; margin-top: 4px; }
+.coach-eff { font-size: 12px; font-weight: 700; margin-top: 6px; }
+
 /* ── FOOTNOTE ── */
-.fn { font-size: 11px; color: #5e5e5e; margin-top: 16px; line-height: 1.7; }
+.fn { font-size: 11px; color: #252525; margin-top: 16px; line-height: 1.7; }
 
 /* ── DB STATUS DOT ── */
 .db-status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #333; }
@@ -171,13 +168,13 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
   .g2 { grid-template-columns: 1fr; }
   .g3 { grid-template-columns: 1fr 1fr; }
   .kpi-strip { grid-template-columns: repeat(3, 1fr); }
+  .coach-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px) {
   .kpi-strip { grid-template-columns: repeat(2, 1fr); }
   .kpi-val { font-size: 18px; }
   .g3 { grid-template-columns: 1fr; }
-  .tabs { flex-wrap: wrap; }
-  .tab { font-size: 11px; padding: 8px 8px; }
+  .coach-grid { grid-template-columns: repeat(2, 1fr); }
 }
 </style>
 </head>
@@ -195,7 +192,7 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
   <div class="header">
     <div>
       <div class="eyebrow">ONE LDN · Personal Training</div>
-      <div class="title">PT Profitability Dashboard — H1 2026</div>
+      <div class="title">PT Profitability Dashboard — 2026</div>
     </div>
     <div class="header-meta" id="hDate"></div>
   </div>
@@ -217,6 +214,21 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
       <strong>Update from WodBoard Export</strong>
       <span>Upload monthly income statement CSV — data syncs to cloud instantly for all users</span>
     </div>
+    <select id="monthPicker" style="background:#0d0d0d;color:#888;border:1px solid #2a2a2a;border-radius:7px;padding:8px 12px;font-size:12px;cursor:pointer;">
+      <option value="">Auto-detect month</option>
+      <option value="2026-01">Jan 2026</option>
+      <option value="2026-02">Feb 2026</option>
+      <option value="2026-03">Mar 2026</option>
+      <option value="2026-04">Apr 2026</option>
+      <option value="2026-05">May 2026</option>
+      <option value="2026-06">Jun 2026</option>
+      <option value="2026-07">Jul 2026</option>
+      <option value="2026-08">Aug 2026</option>
+      <option value="2026-09">Sep 2026</option>
+      <option value="2026-10">Oct 2026</option>
+      <option value="2026-11">Nov 2026</option>
+      <option value="2026-12">Dec 2026</option>
+    </select>
     <input type="file" id="csvFile" accept=".csv">
     <button class="upload-btn" id="uploadBtn" onclick="document.getElementById('csvFile').click()">Upload CSV</button>
     <div class="upload-status" id="uploadStatus">Live · <span id="lastUpload">loading…</span></div>
@@ -227,7 +239,6 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
     <button class="tab on"  onclick="showTab('overview',this)">Overview</button>
     <button class="tab"     onclick="showTab('pnl',this)">Model P&amp;L</button>
     <button class="tab"     onclick="showTab('coaches',this)">Coach Breakdown</button>
-    <button class="tab"     onclick="showTab('costs',this)">Cost Detail</button>
     <button class="tab"     onclick="showTab('trends',this)">Trends</button>
     <button class="tab"     onclick="showTab('pipeline',this)">PT Pipeline</button>
   </div>
@@ -239,15 +250,9 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
       <div class="card-head">
         <div>
           <div class="card-ttl">Revenue by Line — Forecast vs Actuals</div>
-          <div class="card-sub">Monthly PT revenue across all lines · actuals from database · forecast Apr–Jun</div>
+          <div class="card-sub">Monthly PT revenue across all four lines · actuals loaded from database · forecast shown for future months</div>
         </div>
-        <span class="badge ba">H1 2026</span>
-      </div>
-      <div class="filter-row">
-        <span class="filter-lbl">View</span>
-        <select class="month-pick" id="overviewFilter" onchange="applyOverviewFilter()">
-          <option value="">All months (H1)</option>
-        </select>
+        <span class="badge ba">FY 2026</span>
       </div>
       <div style="position:relative"><canvas id="cOverview" height="200"></canvas></div>
     </div>
@@ -255,7 +260,7 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
       <div class="card-head">
         <div>
           <div class="card-ttl">Monthly Revenue Summary</div>
-          <div class="card-sub">All PT revenue lines — actuals vs forecast</div>
+          <div class="card-sub">All four PT revenue lines — actuals vs forecast</div>
         </div>
       </div>
       <div style="overflow-x:auto"><table id="overviewTbl"></table></div>
@@ -269,8 +274,8 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-ttl">Old Model — Monthly Revenue</div>
-            <div class="card-sub">PT Credits + Rent + PT Membership · zero cost · 100% margin</div>
+            <div class="card-ttl">Old Model (PAYG) — Monthly Revenue</div>
+            <div class="card-sub">PT Credits + PT Rent · zero cost · 100% margin</div>
           </div>
           <span class="badge bg">Pure Margin</span>
         </div>
@@ -290,37 +295,43 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
     <div class="card">
       <div class="card-head">
         <div>
-          <div class="card-ttl">Model P&amp;L — Summary</div>
-          <div class="card-sub">Revenue and profit by model · cost detail in Cost Detail tab</div>
+          <div class="card-ttl">Model P&amp;L — Side by Side</div>
+          <div class="card-sub">Revenue, costs and profit margin by model · actuals from database</div>
         </div>
       </div>
       <div style="overflow-x:auto"><table id="pnlTbl"></table></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">New Model Cost Breakdown</div>
+          <div class="card-sub">Head of Fitness (fixed £5k/mo) + PAYE payroll + Employer Tax/NI</div>
+        </div>
+        <span class="badge bb">Actuals</span>
+      </div>
+      <div style="overflow-x:auto"><table id="costTbl"></table></div>
+      <div class="fn">† Head of Fitness allocated entirely to New Model. Old Model (self-managed contractors) bears zero overhead.</div>
     </div>
   </div>
 
   <!-- ══════════ TAB 3: COACH BREAKDOWN ══════════ -->
   <div class="panel" id="panel-coaches">
+    <div class="coach-grid" id="coachCards"></div>
     <div class="g2">
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-ttl">New Model Revenue by Coach</div>
-            <div class="card-sub">PAYE coach revenue from WodBoard data</div>
+            <div class="card-ttl">Most Recent Month — Revenue by Coach</div>
+            <div class="card-sub">New PT Model revenue by coach from latest WodBoard data</div>
           </div>
           <span class="badge bb" id="coachMonthBadge">—</span>
-        </div>
-        <div class="filter-row">
-          <span class="filter-lbl">Month</span>
-          <select class="month-pick" id="coachFilter" onchange="applyCoachFilter()">
-            <option value="">All months (YTD)</option>
-          </select>
         </div>
         <div style="position:relative"><canvas id="cCoachRev" height="220"></canvas></div>
       </div>
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-ttl">Payroll Cost by Coach</div>
+            <div class="card-ttl">Most Recent Month — Payroll Cost</div>
             <div class="card-sub">PAYE payroll only (exc. Head of Fitness + Tax)</div>
           </div>
           <span class="badge br" id="coachCostBadge">—</span>
@@ -331,46 +342,41 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
     <div class="card">
       <div class="card-head">
         <div>
-          <div class="card-ttl">PAYE Coach Detail — YTD</div>
-          <div class="card-sub">Monthly payroll vs YTD revenue generated per coach</div>
+          <div class="card-ttl">PAYE Coach Detail — Actuals to Date</div>
+          <div class="card-sub">Revenue generated vs payroll cost per coach</div>
         </div>
       </div>
       <div style="overflow-x:auto"><table id="coachTbl"></table></div>
       <div class="fn">
         * Revenue attribution uses WodBoard transaction data. Jan/Feb breakdown not available (transaction-level data starts Mar 26).<br>
         † Harry Sheppard transitioned Self-Employed → PAYE February 2026.<br>
-        ‡ Mara Greenwood: confirmed New Model Mar 26. Grace Gordon &amp; Kayla Joll: will appear when first pack sold.
+        ‡ Mara Greenwood: appears in March WodBoard export (£960). Not on payroll — status to confirm.
       </div>
     </div>
     <div class="card">
       <div class="card-head">
         <div>
           <div class="card-ttl">Old Model — Self-Employed PTs</div>
-          <div class="card-sub">PAYG coaches · ONE LDN receives 100% credit pack revenue · bears zero cost</div>
+          <div class="card-sub">PAYG coaches · ONE LDN receives 100% revenue, bears zero cost</div>
         </div>
         <span class="badge bg">Zero Cost</span>
       </div>
       <table id="selfEmpTbl"></table>
-      <div class="fn">* Revenue from PT rental credit packs purchased in actuals period. Zero cost to ONE LDN.</div>
     </div>
-  </div>
-
-  <!-- ══════════ TAB 4: COST DETAIL ══════════ -->
-  <div class="panel" id="panel-costs">
     <div class="card">
       <div class="card-head">
         <div>
-          <div class="card-ttl">New Model — Cost Breakdown</div>
-          <div class="card-sub">Head of Fitness (fixed £5k/mo) + PAYE payroll + Employer Tax/NI · actuals to date</div>
+          <div class="card-ttl">Old Model — Credit Packs Purchased by Coach</div>
+          <div class="card-sub">PT rental hours purchased per PAYG coach · attributed from WodBoard Customer Name · re-upload CSVs to populate</div>
         </div>
-        <span class="badge br">Confidential</span>
+        <span class="badge bg">PAYG Revenue</span>
       </div>
-      <div style="overflow-x:auto"><table id="costTbl"></table></div>
-      <div class="fn">† Head of Fitness allocated entirely to New Model. Old Model (self-managed contractors) bears zero overhead.</div>
+      <div style="overflow-x:auto"><table id="paygCreditTbl"></table></div>
+      <div class="fn">* Data populates from the next CSV upload. Coach attribution uses the Customer Name column from WodBoard income statement exports. Re-upload historical months to backfill.</div>
     </div>
   </div>
 
-  <!-- ══════════ TAB 5: TRENDS ══════════ -->
+  <!-- ══════════ TAB 4: TRENDS ══════════ -->
   <div class="panel" id="panel-trends">
     <div class="g2">
       <div class="card">
@@ -405,27 +411,33 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
     <div class="card">
       <div class="card-head">
         <div>
-          <div class="card-ttl">H1 2026 — Full Period View</div>
-          <div class="card-sub">Actuals replace forecast as each month is uploaded</div>
+          <div class="card-ttl">2026 Full Year View</div>
+          <div class="card-sub">Actuals replace forecast as each month is uploaded · forecast shown for months not yet uploaded</div>
         </div>
       </div>
       <div style="overflow-x:auto"><table id="h1ForecastTbl"></table></div>
-      <div class="fn">* Apr–Jun figures are forecast. Costs Apr–Jun: Head of Fitness £5k/month + projected PAYE at Mar run-rate + employer NI. Break-even on New Model projected Apr–May.</div>
+      <div class="fn">* Future months shown as forecast (italics). Costs: Head of Fitness £5k/month + projected PAYE at last actual run-rate + employer NI. Upload each month's CSV to replace forecast with actuals.</div>
     </div>
   </div>
 
-  <!-- ══════════ TAB 6: PT PIPELINE ══════════ -->
+  <!-- ══════════ TAB 5: PT PIPELINE ══════════ -->
   <div class="panel" id="panel-pipeline">
+
+    <!-- Pipeline KPI strip -->
     <div class="kpi-strip" style="grid-template-columns:repeat(4,1fr)" id="pipelineKpis"></div>
+
+    <!-- Insight banner -->
     <div class="insight" id="pipelineInsight"></div>
+
+    <!-- Charts: Funnel + 14D -->
     <div class="g2">
       <div class="card">
         <div class="card-head">
           <div>
             <div class="card-ttl">Joining Fee → PT Intro Funnel</div>
-            <div class="card-sub">New joining fees issued vs intro sessions redeemed · Jan–Mar 2026</div>
+            <div class="card-sub">New joining fees issued vs intro sessions redeemed · by month</div>
           </div>
-          <span class="badge ba">Jan–Mar (Closed)</span>
+          <span class="badge ba">New Product</span>
         </div>
         <div style="position:relative"><canvas id="cJFFunnel" height="220"></canvas></div>
       </div>
@@ -440,29 +452,32 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
         <div style="position:relative"><canvas id="c14D" height="220"></canvas></div>
       </div>
     </div>
+
+    <!-- Pass status + monthly table -->
     <div class="g2">
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-ttl">Pass Status — Jan–Mar Cohort (New Product)</div>
+            <div class="card-ttl">Pass Status — All Passes Issued (New Product)</div>
             <div class="card-sub">Utilisation breakdown · export as at 11 Apr 2026</div>
           </div>
         </div>
         <table id="pipelineStatusTbl"></table>
-        <div class="fn">† Active = booking window still open. Lapsed = settled without booking.<br>
-        ‡ Data note: pass export (WodBoard pass system, 11 Apr) and KPI count (income statement, 14 Apr) differ slightly in scope — the income statement counts settled payments; the pass system counts records created in WodBoard. April passes are excluded from closed-cohort KPIs as the month is still in progress.</div>
+        <div class="fn">† Active = booking window still open. Lapsed = settled without booking.</div>
       </div>
       <div class="card">
         <div class="card-head">
           <div>
             <div class="card-ttl">Monthly Uptake Summary</div>
-            <div class="card-sub">JF issued vs redeemed · Jan–Mar closed cohort</div>
+            <div class="card-sub">JF issued vs redeemed · uptake rate vs cohort</div>
           </div>
         </div>
         <table id="pipelineTbl"></table>
-        <div class="fn">* Apr 26 shown separately — active passes still converting.</div>
+        <div class="fn">* Apr 26 still in progress — active passes may yet convert.</div>
       </div>
     </div>
+
+    <!-- 14D revenue table -->
     <div class="card">
       <div class="card-head">
         <div>
@@ -474,10 +489,12 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
       <div style="overflow-x:auto"><table id="pipeline14dTbl"></table></div>
       <div class="fn">Old product ("Joining Fee + PT Intro", deprecated Jan 2026): 14 passes issued, 0 redeemed — all expired. New product launched 25 Jan 2026.</div>
     </div>
+
   </div>
 
 </div><!-- /app -->
 
+<!-- CDN Scripts — Chart.js and PapaParse only; Supabase uses native fetch() -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
@@ -490,6 +507,7 @@ tr.fct td { color: #7e7e7e; font-style: italic; }
 const SUPABASE_URL  = 'https://ljjwssicvvyyueyznmou.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxqandzc2ljdnZ5eXVleXpubW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NTQ4NzgsImV4cCI6MjA5MTIzMDg3OH0.SAlIZNi5Ex4U4kAs7v1-omAjigRFRYSlXBpSdCI0DqM';
 
+// ── Supabase REST helpers (native fetch — no CDN required) ──────
 const SB_AUTH = {
   'apikey': SUPABASE_ANON,
   'Authorization': 'Bearer ' + SUPABASE_ANON,
@@ -497,7 +515,8 @@ const SB_AUTH = {
 
 async function sbGet(table, params = '') {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
-    method: 'GET', headers: SB_AUTH,
+    method: 'GET',
+    headers: SB_AUTH,          // no Content-Type on GETs — avoids CORS preflight
   });
   if (!res.ok) throw new Error(`DB read failed (${table}): ${res.status} ${res.statusText}`);
   return res.json();
@@ -522,45 +541,36 @@ async function sbInsert(table, row) {
   if (!res.ok) { const t = await res.text(); throw new Error(`DB insert failed (${table}): ${t}`); }
 }
 
-// ── Hardcoded fallback data (corrected Jan–Mar 2026 actuals) ─────
+// ── Hardcoded fallback data (Jan–Mar 2026 actuals) ───────────────
+// Dashboard renders instantly from this; DB data overlays when available
 function loadFallback() {
   DB.revenue = {
     '2026-01': { pt_credits: 3240,    pt_membership: 1500, pt_rent: 1740, new_model: 4429.99 },
     '2026-02': { pt_credits: 2680,    pt_membership: 1350, pt_rent: 2000, new_model: 7654.86 },
-    '2026-03': { pt_credits: 3360,    pt_membership: 1272, pt_rent: 2000, new_model: 7288.29 },
+    '2026-03': { pt_credits: 3100,    pt_membership: 1272, pt_rent: 2000, new_model: 7158.29 },
   };
   DB.costs = {
-    '2026-01': { head_of_fitness: 5000, craig_clout: 442.75,  jess_donehue: 0,      harry_sheppard: 0,   tax_ni: 816.41,  total: 6259.16  },
-    '2026-02': { head_of_fitness: 5000, craig_clout: 2096,    jess_donehue: 93.51,  harry_sheppard: 162, tax_ni: 1102.73, total: 8454.24  },
-    '2026-03': { head_of_fitness: 5000, craig_clout: 2886.75, jess_donehue: 534.30, harry_sheppard: 561, tax_ni: 1347.31, total: 10329.36 },
+    '2026-01': { head_of_fitness: 5000, craig_clout: 442.75,  jess_donehue: 0,     harry_sheppard: 0,   tax_ni: 816.41,  total: 6259.16  },
+    '2026-02': { head_of_fitness: 5000, craig_clout: 2096,    jess_donehue: 93.51, harry_sheppard: 162, tax_ni: 1102.73, total: 8454.24  },
+    '2026-03': { head_of_fitness: 5000, craig_clout: 2886.75, jess_donehue: 534.30,harry_sheppard: 561, tax_ni: 1347.31, total: 10329.36 },
   };
   DB.coachTxns = {
     '2026-03': [
-      { coach_name: 'Craig Clout',    product_name: 'Craig Clout - PT 4 Pack',                          amount: 1000   },
-      { coach_name: 'Craig Clout',    product_name: 'Craig Clout - PT 8 Pack',                          amount: 960    },
-      { coach_name: 'Craig Clout',    product_name: 'Craig Clout - PT 20 pack',                         amount: 2300   },
-      { coach_name: 'Craig Clout',    product_name: 'Craig Clout (M.Ost) Personal Training booking',    amount: 130    },
-      { coach_name: 'Jess Donehue',   product_name: 'Jessica Donehue PT - 8 Pack',                      amount: 608    },
-      { coach_name: 'Harry Sheppard', product_name: 'Harry Sheppard PT - 10 Pack',                      amount: 361.29 },
-      { coach_name: 'Harry Sheppard', product_name: 'Harry Shepard PT 5 Pack (Michael)',                amount: 339    },
-      { coach_name: 'Mara Greenwood', product_name: 'Mara Greenwood PT - 12 Pack (reduced)',            amount: 960    },
-      { coach_name: 'Intro / Other',  product_name: 'Joining Fee + Intro PT Session (New)',             amount: 330    },
-      { coach_name: 'Intro / Other',  product_name: 'PT Intro Offer - 3 Sessions',                     amount: 300    },
-      { coach_name: 'Alice Farrow',   product_name: 'PT rental - 5 hours',                             amount: 280    },
-      { coach_name: 'Alice Farrow',   product_name: 'PT rental - 10 hours',                            amount: 520    },
-      { coach_name: 'Sam Pepys',      product_name: 'PT rental - 10 hours',                            amount: 520    },
-      { coach_name: 'Aimee Jeffs',    product_name: 'PT rental - 20 hours',                            amount: 960    },
-      { coach_name: 'Adam Siddle',    product_name: 'PT rental - 5 hours',                             amount: 280    },
-      { coach_name: 'Max Wade',       product_name: 'PT rental - 10 hours',                            amount: 260    },
-      { coach_name: 'Max Wade',       product_name: 'PT rental - 5 hours',                             amount: 140    },
-      { coach_name: 'Adrian Canaveral', product_name: 'PT rental - 10 hours',                          amount: 260    },
-      { coach_name: 'Annie Hall',     product_name: 'PT rental - 5 hours',                             amount: 140    },
+      { coach_name: 'Craig Clout',    product_name: 'Craig Clout - PT 20 pack',             amount: 2300   },
+      { coach_name: 'Craig Clout',    product_name: 'Craig Clout - PT 4 Pack',              amount: 1000   },
+      { coach_name: 'Craig Clout',    product_name: 'Craig Clout - PT 8 Pack',              amount: 960    },
+      { coach_name: 'Harry Sheppard', product_name: 'Harry Sheppard PT - 10 Pack',          amount: 361.29 },
+      { coach_name: 'Harry Sheppard', product_name: 'Harry Shepard PT 5 Pack (Michael)',    amount: 339    },
+      { coach_name: 'Jess Donehue',   product_name: 'Jessica Donehue PT - 8 Pack',          amount: 608    },
+      { coach_name: 'Mara Greenwood', product_name: 'Mara Greenwood PT - 12 Pack (reduced)',amount: 960    },
+      { coach_name: 'Intro / Other',  product_name: 'Joining Fee + Intro PT Session (New)', amount: 330    },
+      { coach_name: 'Intro / Other',  product_name: 'PT Intro Offer - 3 Sessions',          amount: 300    },
     ],
   };
   DB.uploadLog = [];
 }
 
-// ── Forecast targets ─────────────────────────────────────────────
+// ── Forecast targets (static from Revenue Tracker sheet) ────────
 const FORECAST = {
   '2026-01': { pt_credits: 7380, pt_membership: 1590, pt_rent: 1740, new_model: 0      },
   '2026-02': { pt_credits: 9040, pt_membership: 1590, pt_rent: 1740, new_model: 4158   },
@@ -568,37 +578,48 @@ const FORECAST = {
   '2026-04': { pt_credits: 8520, pt_membership: 1272, pt_rent: 1740, new_model: 19127  },
   '2026-05': { pt_credits: 6200, pt_membership:  954, pt_rent: 1740, new_model: 29106  },
   '2026-06': { pt_credits: 4500, pt_membership:  636, pt_rent: 1740, new_model: 39085  },
+  // H2 targets TBD — update once post-June forecasts are set
+  '2026-07': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
+  '2026-08': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
+  '2026-09': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
+  '2026-10': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
+  '2026-11': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
+  '2026-12': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
 };
 
-const COST_FORECAST = { '2026-04': 15648, '2026-05': 20812, '2026-06': 25977 };
+// ── Projected costs (Head of Fitness £5k + PAYE at last actual run-rate) ─
+const COST_FORECAST = {
+  '2026-04': 15648, '2026-05': 20812, '2026-06': 25977,
+  // H2 costs TBD
+  '2026-07': 0, '2026-08': 0, '2026-09': 0,
+  '2026-10': 0, '2026-11': 0, '2026-12': 0,
+};
 
-// ── Pipeline data — Jan–Mar 2026 closed cohort ───────────────────
-const PIPELINE_MONTHS   = ['Jan 26','Feb 26','Mar 26'];
-const PIPELINE_JF_NEW   = [5, 16, 14];
-const PIPELINE_REDEEMED = [2,  1,  4];
-const PIPELINE_D14      = [103, 62, 80];
-
-// Apr in-progress (shown separately in monthly table)
-const PIPELINE_APR_JF   = 12;
-const PIPELINE_APR_RED  = 1;
-const PIPELINE_APR_D14  = 34;
-
+// ═══════════════════════════════════════════════════════════════
+// PIPELINE DATA — PT Intro Funnel & 14 Day Intro
+// Sources: income_statement_joining_fee + pass_status_report (11 Apr 2026)
+// ═══════════════════════════════════════════════════════════════
+const PIPELINE_MONTHS   = ['Jan 26','Feb 26','Mar 26','Apr 26'];
+// New product "Joining Fee + Intro PT Session (New)" only
+const PIPELINE_JF_NEW   = [5,  16, 14, 12];  // issued per month (income statement)
+const PIPELINE_REDEEMED = [2,   1,  4,  1];  // sessions taken (pass status export)
+const PIPELINE_D14      = [103, 62, 80, 34]; // 14 Day Intro purchases (deduplicated)
 const PIPELINE_STATS = {
-  jf_new_total:    35,   // Jan–Mar closed cohort
+  jf_new_total:    47,   // new product YTD to 14 Apr 2026
   jf_old_total:    14,   // old product (deprecated Jan 2026, 0 redeemed)
-  passes_exported: 40,   // full pass export snapshot (includes partial Apr)
-  redeemed:         7,   // Jan–Mar cohort redeemed (2+1+4)
-  active:          10,   // passes with open booking window
-  lapsed:          21,   // expired unused (full export snapshot)
-  cancelled:        2,
-  d14_total:      245,   // 14 Day Intro Jan–Mar
-  d14_revenue:  13475,   // 245 × £55
+  passes_exported: 40,   // pass records in export through 11 Apr
+  redeemed:         8,   // sessions actually taken
+  active:          10,   // passes with open booking window (not yet expired)
+  lapsed:          21,   // settled without booking (expired unused)
+  cancelled:        2,   // cancelled + abandoned
+  d14_total:      279,   // 14 Day Intro YTD (deduplicated by customer+date)
+  d14_revenue:  15345,   // at £55 each
   data_at: '11 Apr 2026',
 };
 
-const MONTHS_H1     = ['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06'];
-const MONTHS_LABELS = ['Jan 26','Feb 26','Mar 26','Apr 26','May 26','Jun 26'];
-const MONTHS_SHORT  = ['Jan','Feb','Mar','Apr','May','Jun'];
+const MONTHS_H1     = ['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06','2026-07','2026-08','2026-09','2026-10','2026-11','2026-12'];
+const MONTHS_LABELS = ['Jan 26','Feb 26','Mar 26','Apr 26','May 26','Jun 26','Jul 26','Aug 26','Sep 26','Oct 26','Nov 26','Dec 26'];
+const MONTHS_SHORT  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 const SELF_EMP = [
   'Alice Farrow','Adrian Canaveral','Rich Harris','Lucas Cloves',
@@ -606,54 +627,75 @@ const SELF_EMP = [
   'Max Wade (→ New Model Apr 26)',
 ];
 
-// ── CSV upload item mapping ───────────────────────────────────────
-// PT rental items: coach name is taken from the customer "Name" column at upload time
+// ── PAYG PT membership — customer ID → coach name ──────────────────────────
+// "Personal Trainer Membership" product — monthly fee paid by PAYG PTs to ONE LDN.
+// WodBoard Customer IDs confirmed by Saffron 2026-04-21.
+// Note: Harry Sheppard (192919) transitioned SE → PAYE Feb 2026; membership may have lapsed.
+// Note: Rich Harris is not on the membership (PAYG rental only).
+const PAYG_PT_MEMBER_IDS = {
+  '256755': 'Aimee Jeffs',
+  '16280':  'Sam Pepys',
+  '114125': 'Lucas Cloves',
+  '64599':  'Max Wade',
+  '64591':  'Alice Farrow',
+  '64590':  'Adrian Canaveral',
+  '192919': 'Harry Sheppard',
+  '64589':  'Adam Siddle',
+  '98486':  'Luke Mehson',
+  '28121':  'Annie Hall',
+};
+
+// ── PAYG PT name lookup — used to attribute "PT rental" transactions by coach ──
+// Keys are lowercased for case-insensitive matching against WodBoard Name column
+const PAYG_PT_MAP = {
+  'alice farrow':     'Alice Farrow',
+  'adrian canaveral': 'Adrian Canaveral',
+  'rich harris':      'Rich Harris',
+  'lucas cloves':     'Lucas Cloves',
+  'aimee jeffs':      'Aimee Jeffs',
+  'luke mehson':      'Luke Mehson',
+  'sam pepys':        'Sam Pepys',
+  'annie hall':       'Annie Hall',
+  'adam siddle':      'Adam Siddle',
+  'max wade':         'Max Wade',
+};
+
+// ── CSV upload item mapping ──────────────────────────────────────
 const ITEM_MAP = [
-  { re: /pt rental/i,                                       line: 'pt_credits',    coach: null,              seRental: true  },
-  { re: /personal trainer memb/i,                           line: 'pt_membership', coach: null                               },
-  { re: /craig/i,                                           line: 'new_model',     coach: 'Craig Clout'                      },
-  { re: /jessica?(\s+donehue)?|jess\s*donehue|^jess\b/i,   line: 'new_model',     coach: 'Jess Donehue'                     },
-  { re: /harry\s*sh?ep/i,                                   line: 'new_model',     coach: 'Harry Sheppard'                   },
-  { re: /mara\s*(greenwood)?/i,                             line: 'new_model',     coach: 'Mara Greenwood'                   },
-  { re: /grace\s*(gordon)?/i,                               line: 'new_model',     coach: 'Grace Gordon'                     },
-  { re: /kayla\s*(joll)?/i,                                 line: 'new_model',     coach: 'Kayla Joll'                       },
-  { re: /joining fee|pt intro offer|intro pt session/i,     line: 'new_model',     coach: 'Intro / Other'                    },
+  { re: /pt rental/i,                                       line: 'pt_credits',    coach: null              },
+  { re: /personal trainer memb/i,                           line: 'pt_membership', coach: null              },
+  { re: /craig/i,                                           line: 'new_model',     coach: 'Craig Clout'     },
+  { re: /jessica?(\s+donehue)?|jess\s*donehue|^jess\b/i,   line: 'new_model',     coach: 'Jess Donehue'    },
+  { re: /harry\s*sh?ep/i,                                   line: 'new_model',     coach: 'Harry Sheppard'  },
+  { re: /mara\s*(greenwood)?/i,                             line: 'new_model',     coach: 'Mara Greenwood'  },
+  { re: /joining fee|pt intro offer|intro pt session/i,     line: 'new_model',     coach: 'Intro / Other'   },
 ];
 
 // ═══════════════════════════════════════════════════════════════
-// DATA STORE
+// DATA STORE (populated from Supabase on load)
 // ═══════════════════════════════════════════════════════════════
 
 let DB = {
-  revenue:   {},
-  costs:     {},
-  coachTxns: {},
-  uploadLog: [],
+  revenue:      {},  // { 'YYYY-MM': { pt_credits, pt_membership, pt_rent, new_model } }
+  costs:        {},  // { 'YYYY-MM': { head_of_fitness, craig_clout, jess_donehue, harry_sheppard, tax_ni, total } }
+  coachTxns:    {},  // { 'YYYY-MM': [ { coach_name, product_name, amount } ] }
+  uploadLog:    [],  // [ { filename, month_covered, uploaded_at, rows_inserted } ]
 };
-
-// Filter state
-let overviewFilterMk = '';  // '' = all months
-let coachFilterMk    = '';  // '' = all months (YTD)
 
 // ═══════════════════════════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════════════════════════
 
-const gbp  = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0}) + (v < 0 ? ')' : '');
+const gbp = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0}) + (v < 0 ? ')' : '');
 const gbpd = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + (v < 0 ? ')' : '');
-const pct  = v => v == null ? '—' : (v * 100).toFixed(1) + '%';
-const monthKey = d => d.toISOString().slice(0, 7);
-const isoMonth = k => k + '-01';
+const pct = v => v == null ? '—' : (v * 100).toFixed(1) + '%';
+const monthKey = d => d.toISOString().slice(0, 7);     // Date → 'YYYY-MM'
+const isoMonth = k => k + '-01';                        // 'YYYY-MM' → 'YYYY-MM-01'
 
 function oldModelRev(mk) {
   const r = DB.revenue[mk];
   if (!r) return null;
   return (r.pt_credits || 0) + (r.pt_rent || 0);
-}
-function oldModelRevWithMem(mk) {
-  const r = DB.revenue[mk];
-  if (!r) return null;
-  return (r.pt_credits || 0) + (r.pt_rent || 0) + (r.pt_membership || 0);
 }
 function newModelRev(mk) { return DB.revenue[mk]?.new_model ?? null; }
 function memRev(mk)      { return DB.revenue[mk]?.pt_membership ?? null; }
@@ -664,37 +706,8 @@ function totalRev(mk) {
   return (r.pt_credits||0) + (r.pt_membership||0) + (r.pt_rent||0) + (r.new_model||0);
 }
 
+// Actual months = those with revenue data
 const actMonths = () => MONTHS_H1.filter(mk => DB.revenue[mk]);
-
-// ── SE PT revenue from coach_transactions ─────────────────────────
-function seRevByPT(filterMk) {
-  const map = {}; // { ptName: total }
-  const months = filterMk ? [filterMk] : actMonths();
-  for (const mk of months) {
-    if (!DB.coachTxns[mk]) continue;
-    for (const t of DB.coachTxns[mk]) {
-      if (/pt rental/i.test(t.product_name)) {
-        map[t.coach_name] = (map[t.coach_name] || 0) + parseFloat(t.amount);
-      }
-    }
-  }
-  return map;
-}
-
-// ── New Model revenue from coach_transactions ─────────────────────
-function newModelRevByCoach(filterMk) {
-  const map = {}; // { coachName: total }
-  const months = filterMk ? [filterMk] : actMonths();
-  for (const mk of months) {
-    if (!DB.coachTxns[mk]) continue;
-    for (const t of DB.coachTxns[mk]) {
-      if (!/pt rental/i.test(t.product_name)) {
-        map[t.coach_name] = (map[t.coach_name] || 0) + parseFloat(t.amount);
-      }
-    }
-  }
-  return map;
-}
 
 // ═══════════════════════════════════════════════════════════════
 // LOAD DATA FROM SUPABASE
@@ -702,6 +715,7 @@ function newModelRevByCoach(filterMk) {
 
 async function loadData() {
   setLoading('Fetching revenue data…');
+
   const [revenue, costs, coachTxns, uploadLog] = await Promise.all([
     sbGet('pt_revenue',            'order=month'),
     sbGet('pt_costs',              'order=month'),
@@ -709,6 +723,7 @@ async function loadData() {
     sbGet('pt_upload_log',         'order=uploaded_at.desc&limit=20'),
   ]);
 
+  // ── Revenue ─────────────────────────────────────────────────
   DB.revenue = {};
   for (const row of revenue) {
     const mk = row.month.slice(0, 7);
@@ -716,6 +731,7 @@ async function loadData() {
     DB.revenue[mk][row.line] = parseFloat(row.amount);
   }
 
+  // ── Costs ───────────────────────────────────────────────────
   DB.costs = {};
   for (const row of costs) {
     const mk = row.month.slice(0, 7);
@@ -724,6 +740,7 @@ async function loadData() {
     DB.costs[mk].total = (DB.costs[mk].total || 0) + parseFloat(row.amount);
   }
 
+  // ── Coach transactions ───────────────────────────────────────
   DB.coachTxns = {};
   for (const row of coachTxns) {
     const mk = row.month.slice(0, 7);
@@ -731,6 +748,7 @@ async function loadData() {
     DB.coachTxns[mk].push(row);
   }
 
+  // ── Upload log ───────────────────────────────────────────────
   DB.uploadLog = uploadLog;
 }
 
@@ -738,12 +756,12 @@ async function loadData() {
 // CHART DEFAULTS
 // ═══════════════════════════════════════════════════════════════
 
-Chart.defaults.color = '#7a7a7a';
+Chart.defaults.color = '#4a4a4a';
 Chart.defaults.borderColor = '#1a1a1a';
 Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
 const GRID = { color: '#161616', borderColor: '#1e1e1e' };
-const TICK = { color: '#7a7a7a', font: { size: 11 } };
+const TICK = { color: '#383838', font: { size: 11 } };
 function mkY() { return { ticks: { callback: v => gbp(v), ...TICK }, grid: GRID, beginAtZero: true }; }
 
 let charts = {};
@@ -759,6 +777,7 @@ function renderHeader() {
     `<span class="db-status"><span class="db-dot"></span> Live database</span><br>` +
     `Last upload: ${lastUp ? new Date(lastUp.uploaded_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}<br>` +
     `Actuals: ${actMonths().map(mk=>MONTHS_LABELS[MONTHS_H1.indexOf(mk)]).join(', ') || 'none'}`;
+
   const lastUpEl = document.getElementById('lastUpload');
   if (lastUpEl) lastUpEl.textContent = lastUp ? `Last upload: ${lastUp.filename}` : 'No uploads yet';
 }
@@ -769,10 +788,11 @@ function renderHeader() {
 
 function renderKPIs() {
   const ams = actMonths();
-  const oldYTD  = ams.reduce((s,mk) => s + (oldModelRevWithMem(mk) || 0), 0);
+  const oldYTD  = ams.reduce((s,mk) => s + (oldModelRev(mk) || 0), 0);
   const newYTD  = ams.reduce((s,mk) => s + (newModelRev(mk) || 0), 0);
+  const memYTD  = ams.reduce((s,mk) => s + (memRev(mk) || 0), 0);
   const costYTD = ams.reduce((s,mk) => s + (totalCost(mk) || 0), 0);
-  const revYTD  = oldYTD + newYTD;
+  const revYTD  = oldYTD + newYTD + memYTD;
   const profYTD = revYTD - costYTD;
   const margin  = profYTD / revYTD;
 
@@ -783,11 +803,11 @@ function renderKPIs() {
   const ach = fctYTD > 0 ? revYTD / fctYTD : null;
 
   const kpis = [
-    { lbl: 'Old Model Rev YTD', val: gbp(Math.round(oldYTD)),  sub: 'Credits + Rent + Membership · 100% margin', cls: 'green'  },
-    { lbl: 'New Model Rev YTD', val: gbp(Math.round(newYTD)),  sub: 'PAYE named packages',                        cls: 'blue'   },
-    { lbl: 'Total PT Costs YTD',val: gbp(Math.round(costYTD)), sub: 'Payroll + tax + HoF',                        cls: 'red'    },
-    { lbl: 'Blended Margin %',  val: pct(margin),               sub: `Profit: ${gbp(Math.round(profYTD))}`,        cls: margin>=0.3?'green':margin>=0.15?'amber':'red' },
-    { lbl: 'Rev vs Forecast',   val: ach ? pct(ach) : '—',     sub: `${ams.length}/${MONTHS_H1.length} months reported`, cls: ach&&ach>=1?'green':ach&&ach>=0.85?'amber':'red' },
+    { lbl: 'Old Model Rev YTD', val: gbp(Math.round(oldYTD)), sub: 'PT Credits + Rent · 100% margin', cls: 'green'  },
+    { lbl: 'New Model Rev YTD', val: gbp(Math.round(newYTD)), sub: 'PAYE named packages',              cls: 'blue'   },
+    { lbl: 'Total PT Costs YTD',val: gbp(Math.round(costYTD)),sub: 'Payroll + tax + HoF',              cls: 'red'    },
+    { lbl: 'Blended Margin %',  val: pct(margin),            sub: `Profit: ${gbp(Math.round(profYTD))}`,cls: margin>=0.3?'green':margin>=0.15?'amber':'red' },
+    { lbl: 'Rev vs Forecast',   val: ach ? pct(ach) : '—',  sub: `${ams.length}/${MONTHS_H1.length} months reported`, cls: ach&&ach>=1?'green':ach&&ach>=0.85?'amber':'red' },
   ];
 
   document.getElementById('kpiStrip').innerHTML = kpis.map(k =>
@@ -801,37 +821,37 @@ function renderKPIs() {
 
 function renderInsight() {
   const ams = actMonths();
-  const oldYTD  = ams.reduce((s,mk)=>s+(oldModelRevWithMem(mk)||0),0);
-  const newYTD  = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
-  const costYTD = ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
+  const oldYTD = ams.reduce((s,mk)=>s+(oldModelRev(mk)||0),0);
+  const newYTD = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
+  const costYTD= ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
   const newMargin = (newYTD - costYTD) / newYTD;
   const newProfit = newYTD - costYTD;
   document.getElementById('insightBanner').innerHTML =
-    `<strong>Key insight:</strong> Old Model (PAYG + membership) generates <strong>${gbp(Math.round(oldYTD))} at 100% margin</strong> — effectively subsidising the New Model's investment phase. ` +
+    `<strong>Key insight:</strong> Old Model (PAYG) generates <strong>${gbp(Math.round(oldYTD))} at 100% margin</strong> — effectively subsidising the New Model's investment phase. ` +
     `New Model currently runs at <strong>${pct(newMargin)} margin (${gbp(Math.round(newProfit))} YTD)</strong> as payroll and Head of Fitness front-load the build. ` +
     `Break-even projected <strong>Apr–May 2026</strong> as named packages scale.`;
 }
 
 // ═══════════════════════════════════════════════════════════════
-// RENDER — MODEL CARDS (Overview)
+// RENDER — MODEL CARDS
 // ═══════════════════════════════════════════════════════════════
 
 function renderModelCards() {
   const ams = actMonths();
-  const oldRev  = ams.reduce((s,mk)=>s+(oldModelRev(mk)||0),0);
-  const memRevT = ams.reduce((s,mk)=>s+(memRev(mk)||0),0);
-  const newRev  = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
+  const oldRev = ams.reduce((s,mk)=>s+(oldModelRev(mk)||0),0);
+  const newRev = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
+  const memRevTotal = ams.reduce((s,mk)=>s+(memRev(mk)||0),0);
   const costTotal = ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
   const newProfit = newRev - costTotal;
-  const newMarg   = newProfit / newRev;
+  const newMarg = newProfit / newRev;
 
   document.getElementById('modelCards').innerHTML = `
     <div class="model-card">
       <div class="model-card-ttl"><span class="model-dot dot-old"></span>Old Model (PAYG)</div>
-      <div class="model-rev green">${gbp(Math.round(oldRev + memRevT))}</div>
-      <div class="model-cost">Credits + Rent + Membership · ${ams.length} months</div>
+      <div class="model-rev green">${gbp(Math.round(oldRev))}</div>
+      <div class="model-cost">Revenue · ${ams.length} months actuals</div>
       <div class="model-cost">Cost: £0 · independent contractors</div>
-      <div class="model-profit green">Profit: ${gbp(Math.round(oldRev + memRevT))}</div>
+      <div class="model-profit green">Profit: ${gbp(Math.round(oldRev))}</div>
       <div class="model-margin green">100% margin</div>
     </div>
     <div class="model-card">
@@ -843,55 +863,31 @@ function renderModelCards() {
       <div class="model-margin ${newProfit>=0?'green':'red'}">${pct(newMarg)} margin · investment phase</div>
     </div>
     <div class="model-card">
-      <div class="model-card-ttl"><span class="model-dot" style="background:#e8c547"></span>Total PT</div>
-      <div class="model-rev amber">${gbp(Math.round(oldRev + memRevT + newRev))}</div>
-      <div class="model-cost">All revenue streams · ${ams.length} months</div>
-      <div class="model-cost">Net costs: ${gbp(Math.round(costTotal))}</div>
-      <div class="model-profit amber">Profit: ${gbp(Math.round(oldRev + memRevT + newRev - costTotal))}</div>
-      <div class="model-margin amber">${pct((oldRev+memRevT+newRev-costTotal)/(oldRev+memRevT+newRev))} blended margin</div>
+      <div class="model-card-ttl"><span class="model-dot dot-mem"></span>PT Membership</div>
+      <div class="model-rev purple">${gbp(Math.round(memRevTotal))}</div>
+      <div class="model-cost">Revenue · ${ams.length} months actuals</div>
+      <div class="model-cost">Cost: £0 · separate from delivery models</div>
+      <div class="model-profit purple">Profit: ${gbp(Math.round(memRevTotal))}</div>
+      <div class="model-margin purple">100% margin</div>
     </div>`;
 }
 
 // ═══════════════════════════════════════════════════════════════
-// RENDER — OVERVIEW CHART (with month filter)
+// RENDER — OVERVIEW CHART
 // ═══════════════════════════════════════════════════════════════
-
-function populateOverviewDropdown() {
-  const sel = document.getElementById('overviewFilter');
-  // Remove old month options (keep first "All months")
-  while (sel.options.length > 1) sel.remove(1);
-  for (const mk of actMonths()) {
-    const opt = document.createElement('option');
-    opt.value = mk;
-    opt.textContent = MONTHS_LABELS[MONTHS_H1.indexOf(mk)];
-    sel.appendChild(opt);
-  }
-  sel.value = overviewFilterMk;
-}
-
-function applyOverviewFilter() {
-  overviewFilterMk = document.getElementById('overviewFilter').value;
-  renderOverviewChart();
-  renderOverviewTable();
-}
 
 function renderOverviewChart() {
   destroyChart('cOverview');
-
-  const filterMks = overviewFilterMk
-    ? [overviewFilterMk]
-    : MONTHS_H1;
-  const labels = filterMks.map(mk => MONTHS_SHORT[MONTHS_H1.indexOf(mk)]);
-
+  const labels = MONTHS_SHORT;
   const makeDataset = (key, colorAct, colorFct, label) => ([
     {
       label: `${label} (act)`,
-      data: filterMks.map(mk => DB.revenue[mk]?.[key] ?? null),
+      data: MONTHS_H1.map(mk => DB.revenue[mk]?.[key] ?? null),
       backgroundColor: colorAct, stack: 'act',
     },
     {
       label: `${label} (fct)`,
-      data: filterMks.map(mk => DB.revenue[mk] ? null : (FORECAST[mk]?.[key] ?? null)),
+      data: MONTHS_H1.map(mk => DB.revenue[mk] ? null : (FORECAST[mk]?.[key] ?? null)),
       backgroundColor: colorFct, stack: 'fct',
     }
   ]);
@@ -901,7 +897,6 @@ function renderOverviewChart() {
     data: { labels, datasets: [
       ...makeDataset('pt_credits',    '#14532d','#14532d55','PT Credits'),
       ...makeDataset('pt_membership', '#2d1b69','#2d1b6955','PT Membership'),
-      ...makeDataset('pt_rent',       '#1c3b28','#1c3b2855','PT Rent'),
       ...makeDataset('new_model',     '#1e3a5f','#1e3a5f55','New Model'),
     ]},
     options: {
@@ -913,44 +908,37 @@ function renderOverviewChart() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// RENDER — OVERVIEW TABLE (with month filter)
+// RENDER — OVERVIEW TABLE
 // ═══════════════════════════════════════════════════════════════
 
 function renderOverviewTable() {
-  const filterMks = overviewFilterMk ? [overviewFilterMk] : MONTHS_H1;
-  const filterLabels = filterMks.map(mk => MONTHS_SHORT[MONTHS_H1.indexOf(mk)]);
   const lines = ['pt_credits','pt_membership','pt_rent','new_model'];
   const lbls  = { pt_credits:'PT Credits', pt_membership:'PT Membership', pt_rent:'PT Rent', new_model:'New PT Model' };
-  const showYTD = !overviewFilterMk;
-
-  let html = `<thead><tr><th>Line</th>${filterLabels.map(m=>`<th class="r">${m}</th>`).join('')}${showYTD?'<th class="r">YTD</th><th class="r">H1 Fct</th><th class="r">Ach%</th>':''}</tr></thead><tbody>`;
+  let html = `<thead><tr><th>Line</th>${MONTHS_SHORT.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th><th class="r">H1 Fct</th><th class="r">Ach%</th></tr></thead><tbody>`;
 
   for (const line of lines) {
-    const vals = filterMks.map(mk => DB.revenue[mk]?.[line] ?? null);
-    const fcts = filterMks.map(mk => FORECAST[mk]?.[line] ?? 0);
+    const vals = MONTHS_H1.map(mk => DB.revenue[mk]?.[line] ?? null);
+    const fcts = MONTHS_H1.map(mk => FORECAST[mk]?.[line] ?? 0);
     const ytd  = vals.reduce((s,v) => s+(v||0), 0);
-    const h1   = MONTHS_H1.reduce((s,mk) => s+(FORECAST[mk]?.[line]||0), 0);
+    const h1   = fcts.reduce((s,v) => s+v, 0);
     const ytdF = actMonths().reduce((s,mk) => s+(FORECAST[mk]?.[line]||0), 0);
     const ach  = ytdF > 0 ? ytd/ytdF : null;
-    html += `<tr><td>${lbls[line]}</td>${filterMks.map((mk,i)=>{
+    html += `<tr><td>${lbls[line]}</td>${MONTHS_H1.map((mk,i)=>{
       const v = vals[i];
       return v!=null ? `<td class="r">${gbp(v)}</td>` : `<td class="r dim">${gbp(fcts[i])}</td>`;
-    }).join('')}${showYTD?`<td class="r white">${gbp(Math.round(ytd))}</td><td class="r">${gbp(Math.round(h1))}</td><td class="r ${ach&&ach>=1?'green':ach&&ach>=0.85?'amber':'red'}">${ach?pct(ach):'—'}</td>`:''}</tr>`;
+    }).join('')}<td class="r white">${gbp(Math.round(ytd))}</td><td class="r">${gbp(Math.round(h1))}</td><td class="r ${ach&&ach>=1?'green':ach&&ach>=0.85?'amber':'red'}">${ach?pct(ach):'—'}</td></tr>`;
   }
 
   // Total row
-  const totAct = filterMks.map(mk => {
-    const r = DB.revenue[mk];
-    return r ? (r.pt_credits||0)+(r.pt_membership||0)+(r.pt_rent||0)+(r.new_model||0) : null;
-  });
-  const totFct = filterMks.map(mk => { const f=FORECAST[mk]; return f?f.pt_credits+f.pt_membership+f.pt_rent+f.new_model:0; });
+  const totAct = MONTHS_H1.map(mk => totalRev(mk));
+  const totFct = MONTHS_H1.map(mk => { const f=FORECAST[mk]; return f?f.pt_credits+f.pt_membership+f.pt_rent+f.new_model:0; });
   const totYTD = totAct.reduce((s,v)=>s+(v||0),0);
-  const totH1  = MONTHS_H1.reduce((s,mk)=>{const f=FORECAST[mk];return s+(f?f.pt_credits+f.pt_membership+f.pt_rent+f.new_model:0);},0);
-  const totFctYTD = actMonths().reduce((s,mk)=>{const f=FORECAST[mk];return s+(f?f.pt_credits+f.pt_membership+f.pt_rent+f.new_model:0);},0);
-  html += `<tr class="tot"><td>Total</td>${filterMks.map((mk,i)=>{
+  const totH1  = totFct.reduce((s,v)=>s+v,0);
+  const totAch = actMonths().reduce((s,mk)=>s+(FORECAST[mk]?Object.values(FORECAST[mk]).reduce((a,b)=>a+b,0):0),0);
+  html += `<tr class="tot"><td>Total</td>${MONTHS_H1.map((mk,i)=>{
     const v=totAct[i];
     return v!=null?`<td class="r">${gbp(Math.round(v))}</td>`:`<td class="r dim">${gbp(Math.round(totFct[i]))}</td>`;
-  }).join('')}${showYTD?`<td class="r">${gbp(Math.round(totYTD))}</td><td class="r">${gbp(Math.round(totH1))}</td><td class="r ${totFctYTD>0&&totYTD/totFctYTD>=1?'green':totFctYTD>0&&totYTD/totFctYTD>=0.85?'amber':'red'}">${totFctYTD>0?pct(totYTD/totFctYTD):'—'}</td>`:''}</tr>`;
+  }).join('')}<td class="r">${gbp(Math.round(totYTD))}</td><td class="r">${gbp(Math.round(totH1))}</td><td class="r ${totAch>0&&totYTD/totAch>=1?'green':totAch>0&&totYTD/totAch>=0.85?'amber':'red'}">${totAch>0?pct(totYTD/totAch):'—'}</td></tr>`;
   html += `</tbody>`;
   document.getElementById('overviewTbl').innerHTML = html;
 }
@@ -962,16 +950,14 @@ function renderOverviewTable() {
 function renderModelCharts() {
   destroyChart('cOldModel'); destroyChart('cNewModel');
 
-  // Old Model — includes PT Credits, PT Rent, PT Membership
+  // Old Model
   charts['cOldModel'] = new Chart(document.getElementById('cOldModel'), {
     type: 'bar',
     data: { labels: MONTHS_SHORT, datasets: [
-      { label:'PT Credits (act)',    data: MONTHS_H1.map(mk=>DB.revenue[mk]?.pt_credits??null),    backgroundColor:'#166534', stack:'act' },
-      { label:'PT Rent (act)',       data: MONTHS_H1.map(mk=>DB.revenue[mk]?.pt_rent??null),       backgroundColor:'#1a7a45', stack:'act' },
-      { label:'PT Membership (act)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?.pt_membership??null), backgroundColor:'#2d1b69', stack:'act' },
-      { label:'PT Credits (fct)',    data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.pt_credits??null),    backgroundColor:'#16653488', stack:'fct' },
-      { label:'PT Rent (fct)',       data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.pt_rent??null),       backgroundColor:'#1a7a4588', stack:'fct' },
-      { label:'PT Membership (fct)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.pt_membership??null), backgroundColor:'#2d1b6988', stack:'fct' },
+      { label:'PT Credits (act)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?.pt_credits??null), backgroundColor:'#166534', stack:'act' },
+      { label:'PT Rent (act)',    data: MONTHS_H1.map(mk=>DB.revenue[mk]?.pt_rent??null),    backgroundColor:'#1a7a45', stack:'act' },
+      { label:'PT Credits (fct)',data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.pt_credits??null), backgroundColor:'#16653488', stack:'fct' },
+      { label:'PT Rent (fct)',   data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.pt_rent??null),    backgroundColor:'#1a7a4588', stack:'fct' },
     ]},
     options: { responsive:true, maintainAspectRatio:true,
       plugins:{ legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${gbp(c.raw)}`}} },
@@ -987,9 +973,9 @@ function renderModelCharts() {
   charts['cNewModel'] = new Chart(document.getElementById('cNewModel'), {
     type: 'bar',
     data: { labels: MONTHS_SHORT, datasets: [
-      { label:'Revenue (act)',  data: MONTHS_H1.map(mk=>DB.revenue[mk]?.new_model??null),    backgroundColor:'#1e3a5f' },
-      { label:'Total Cost',     data: costData,                                               backgroundColor: MONTHS_H1.map(mk=>DB.costs[mk]?'#5f1e1e':'#5f1e1e88') },
-      { label:'Revenue (fct)',  data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.new_model??null), backgroundColor:'#1e3a5f66' },
+      { label:'Revenue (act)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?.new_model??null),    backgroundColor:'#1e3a5f' },
+      { label:'Total Cost',    data: costData,                                               backgroundColor: MONTHS_H1.map(mk=>DB.costs[mk]?'#5f1e1e':'#5f1e1e88') },
+      { label:'Revenue (fct)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.new_model??null), backgroundColor:'#1e3a5f66' },
     ]},
     options: { responsive:true, maintainAspectRatio:true,
       plugins:{ legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${gbp(c.raw)}`}} },
@@ -998,7 +984,7 @@ function renderModelCharts() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// RENDER — P&L TABLE (simplified)
+// RENDER — P&L TABLE
 // ═══════════════════════════════════════════════════════════════
 
 function renderPnLTable() {
@@ -1006,42 +992,54 @@ function renderPnLTable() {
   const mHdrs = ams.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
   let html = `<thead><tr><th>Line</th>${mHdrs.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th><th class="r">Margin</th></tr></thead><tbody>`;
 
-  // ── OLD MODEL ──
-  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">OLD MODEL (PAYG) — Self-Employed PTs + Membership</td></tr>`;
+  // OLD MODEL
+  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">OLD MODEL (PAYG) — Self-Employed PTs</td></tr>`;
   html += `<tr><td>PT Credits</td>${ams.map(mk=>`<td class="r">${gbp(DB.revenue[mk]?.pt_credits??null)}</td>`).join('')}<td class="r white">${gbp(Math.round(ams.reduce((s,mk)=>s+(DB.revenue[mk]?.pt_credits||0),0)))}</td><td class="r">—</td></tr>`;
   html += `<tr><td>PT Rent</td>${ams.map(mk=>`<td class="r">${gbp(DB.revenue[mk]?.pt_rent??null)}</td>`).join('')}<td class="r white">${gbp(Math.round(ams.reduce((s,mk)=>s+(DB.revenue[mk]?.pt_rent||0),0)))}</td><td class="r">—</td></tr>`;
-  html += `<tr><td>PT Membership</td>${ams.map(mk=>`<td class="r purple">${gbp(memRev(mk))}</td>`).join('')}<td class="r purple">${gbp(Math.round(ams.reduce((s,mk)=>s+(memRev(mk)||0),0)))}</td><td class="r">—</td></tr>`;
-  const oldYTD = ams.reduce((s,mk)=>s+(oldModelRevWithMem(mk)||0),0);
+  const oldYTD = ams.reduce((s,mk)=>s+(oldModelRev(mk)||0),0);
   html += `<tr class="sub"><td>Cost</td>${ams.map(()=>`<td class="r dim">—</td>`).join('')}<td class="r dim">£0</td><td class="r">—</td></tr>`;
-  html += `<tr class="tot"><td>Old Model Profit</td>${ams.map(mk=>`<td class="r green">${gbp(Math.round(oldModelRevWithMem(mk)||0))}</td>`).join('')}<td class="r green">${gbp(Math.round(oldYTD))}</td><td class="r green">100.0%</td></tr>`;
+  html += `<tr class="tot"><td>Old Model Profit</td>${ams.map(mk=>`<td class="r green">${gbp(Math.round(oldModelRev(mk)||0))}</td>`).join('')}<td class="r green">${gbp(Math.round(oldYTD))}</td><td class="r green">100.0%</td></tr>`;
 
-  // ── NEW MODEL (simplified) ──
+  // NEW MODEL
   html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">NEW MODEL (PAYE) — Employed Coaches</td></tr>`;
-  const newYTD  = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
+  const newYTD = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
   const costYTD = ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
   html += `<tr><td>Revenue</td>${ams.map(mk=>`<td class="r blue">${gbpd(newModelRev(mk))}</td>`).join('')}<td class="r blue">${gbp(Math.round(newYTD))}</td><td class="r">—</td></tr>`;
-  html += `<tr class="sub"><td>Cost</td>${ams.map(mk=>`<td class="r red">−${gbp(Math.round(totalCost(mk)||0))}</td>`).join('')}<td class="r red">−${gbp(Math.round(costYTD))}</td><td class="r dim">—</td></tr>`;
+  const costLines = [
+    {key:'head_of_fitness',lbl:'Head of Fitness'},
+    {key:'craig_clout',    lbl:'Craig Clout'},
+    {key:'jess_donehue',   lbl:'Jess Donehue'},
+    {key:'harry_sheppard', lbl:'Harry Sheppard'},
+    {key:'tax_ni',         lbl:'Employer Tax/NI'},
+  ];
+  for (const cl of costLines) {
+    const cYTD = ams.reduce((s,mk)=>s+(DB.costs[mk]?.[cl.key]||0),0);
+    html += `<tr class="sub"><td>${cl.lbl}</td>${ams.map(mk=>{const v=DB.costs[mk]?.[cl.key];return `<td class="r dim">${v?`−${gbpd(v)}`:'—'}</td>`;}).join('')}<td class="r dim">−${gbpd(cYTD)}</td><td class="r dim">—</td></tr>`;
+  }
+  html += `<tr class="sub"><td>Total Cost</td>${ams.map(mk=>`<td class="r red">−${gbp(Math.round(totalCost(mk)||0))}</td>`).join('')}<td class="r red">−${gbp(Math.round(costYTD))}</td><td class="r dim">—</td></tr>`;
   const newProfit = newYTD - costYTD;
   const newMarg   = newProfit / newYTD;
   html += `<tr class="tot"><td>New Model Profit</td>${ams.map(mk=>{const p=(newModelRev(mk)||0)-(totalCost(mk)||0);return `<td class="r ${p>=0?'green':'red'}">${gbp(Math.round(p))}</td>`;}).join('')}<td class="r ${newProfit>=0?'green':'red'}">${gbp(Math.round(newProfit))}</td><td class="r ${newProfit>=0?'green':'red'}">${pct(newMarg)}</td></tr>`;
 
-  // ── COMBINED BOTTOM LINE ──
-  const totRev    = oldYTD + newYTD;
-  const totProfit = totRev - costYTD;
-  const totMarg   = totProfit / totRev;
-  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}"></td></tr>`;
-  html += `<tr class="tot highlight"><td>Total PT Profit</td>${ams.map(mk=>{const tp=(totalRev(mk)||0)-(totalCost(mk)||0);return `<td class="r">${gbp(Math.round(tp))}</td>`;}).join('')}<td class="r">${gbp(Math.round(totProfit))}</td><td class="r">—</td></tr>`;
-  html += `<tr class="tot highlight"><td>Total Profit %</td>${ams.map(mk=>{const r=totalRev(mk),c=totalCost(mk)||0;return r?`<td class="r">${pct((r-c)/r)}</td>`:`<td class="r dim">—</td>`;}).join('')}<td class="r">${pct(totMarg)}</td><td class="r">—</td></tr>`;
+  // PT MEMBERSHIP
+  const memYTD = ams.reduce((s,mk)=>s+(memRev(mk)||0),0);
+  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">PT MEMBERSHIP — Separate Line</td></tr>`;
+  html += `<tr class="tot"><td>PT Membership</td>${ams.map(mk=>`<td class="r purple">${gbp(memRev(mk))}</td>`).join('')}<td class="r purple">${gbp(Math.round(memYTD))}</td><td class="r purple">100.0%</td></tr>`;
 
+  // COMBINED
+  const totRev = oldYTD + newYTD + memYTD;
+  const totProfit = totRev - costYTD;
+  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">COMBINED TOTAL</td></tr>`;
+  html += `<tr class="tot highlight"><td>Total PT Profit</td>${ams.map(mk=>{const tp=(totalRev(mk)||0)-(totalCost(mk)||0);return `<td class="r">${gbp(Math.round(tp))}</td>`;}).join('')}<td class="r">${gbp(Math.round(totProfit))}</td><td class="r">${pct(totProfit/totRev)}</td></tr>`;
   html += `</tbody>`;
   document.getElementById('pnlTbl').innerHTML = html;
 }
 
 // ═══════════════════════════════════════════════════════════════
-// RENDER — COST TABLE (Cost Detail tab)
+// RENDER — COST TABLE
 // ═══════════════════════════════════════════════════════════════
 
-function renderCostDetail() {
+function renderCostTable() {
   const ams = actMonths();
   const mHdrs = ams.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
   const costLines = [
@@ -1065,68 +1063,62 @@ function renderCostDetail() {
 // RENDER — COACH TAB
 // ═══════════════════════════════════════════════════════════════
 
-const PAYE_COACHES = [
-  { name:'Craig Clout',    key:'craig_clout'    },
-  { name:'Jess Donehue',   key:'jess_donehue'   },
-  { name:'Harry Sheppard', key:'harry_sheppard'  },
-  { name:'Mara Greenwood', key:null              },
-  { name:'Grace Gordon',   key:null              },
-  { name:'Kayla Joll',     key:null              },
-];
-
-function populateCoachDropdown() {
-  const sel = document.getElementById('coachFilter');
-  while (sel.options.length > 1) sel.remove(1);
-  for (const mk of actMonths()) {
-    const opt = document.createElement('option');
-    opt.value = mk;
-    opt.textContent = MONTHS_LABELS[MONTHS_H1.indexOf(mk)];
-    sel.appendChild(opt);
-  }
-  sel.value = coachFilterMk;
-}
-
-function applyCoachFilter() {
-  coachFilterMk = document.getElementById('coachFilter').value;
-  renderCoaches();
-}
-
 function renderCoaches() {
   destroyChart('cCoachRev'); destroyChart('cCoachCost');
 
+  // Find most recent month with coach transaction data
+  const txnMonths = MONTHS_H1.filter(mk => DB.coachTxns[mk]?.length > 0);
+  const latestMk  = txnMonths[txnMonths.length - 1] || null;
+  const latestLbl = latestMk ? MONTHS_LABELS[MONTHS_H1.indexOf(latestMk)] : '—';
+
+  document.getElementById('coachMonthBadge').textContent = latestLbl;
+  document.getElementById('coachCostBadge').textContent  = latestLbl;
+
+  // Aggregate coach revenue by name for latest month
+  const coachRevMap = {};
+  if (latestMk && DB.coachTxns[latestMk]) {
+    for (const t of DB.coachTxns[latestMk]) {
+      coachRevMap[t.coach_name] = (coachRevMap[t.coach_name] || 0) + parseFloat(t.amount);
+    }
+  }
+
+  const coachNames = Object.keys(coachRevMap).sort((a,b) => coachRevMap[b]-coachRevMap[a]);
+
+  // Coach cards (fixed PAYE coaches)
+  const payeCoaches = [
+    { name:'Craig Clout',    key:'craig_clout'    },
+    { name:'Jess Donehue',   key:'jess_donehue'   },
+    { name:'Harry Sheppard', key:'harry_sheppard'  },
+    { name:'Mara Greenwood', key:null              },
+  ];
   const ams = actMonths();
 
-  // New Model revenue by coach (filtered or YTD)
-  const coachRevMap = newModelRevByCoach(coachFilterMk);
+  document.getElementById('coachCards').innerHTML = payeCoaches.map(c => {
+    const costYTD = c.key ? ams.reduce((s,mk)=>s+(DB.costs[mk]?.[c.key]||0),0) : 0;
+    const revLatest = coachRevMap[c.name] || 0;
+    const roi = (c.key && DB.costs[latestMk]?.[c.key] > 0) ? (revLatest / DB.costs[latestMk][c.key]) : null;
+    return `<div class="coach-card">
+      <div class="coach-name">${c.name}</div>
+      <div class="coach-rev">${gbpd(revLatest)}</div>
+      <div class="coach-cost">${latestLbl} revenue</div>
+      <div class="coach-cost">YTD payroll: ${costYTD>0?gbpd(costYTD):'—'}</div>
+      <div class="coach-eff ${roi?roi>=1?'green':'red':'amber'}">${roi?roi.toFixed(2)+'x rev/cost':c.key?'See below':'No payroll'}</div>
+    </div>`;
+  }).join('');
 
-  const filterLabel = coachFilterMk
-    ? MONTHS_LABELS[MONTHS_H1.indexOf(coachFilterMk)]
-    : 'YTD';
-
-  document.getElementById('coachMonthBadge').textContent = filterLabel;
-  document.getElementById('coachCostBadge').textContent  = filterLabel;
-
-  // ── Chart: New Model coach revenue ──
-  const coachNames = PAYE_COACHES
-    .filter(c => (coachRevMap[c.name] || 0) > 0)
-    .sort((a,b) => (coachRevMap[b.name]||0) - (coachRevMap[a.name]||0))
-    .map(c => c.name);
-
+  // Coach revenue bar chart
   charts['cCoachRev'] = new Chart(document.getElementById('cCoachRev'), {
     type:'bar',
-    data:{ labels:coachNames, datasets:[{ label:'Revenue', data:coachNames.map(n=>coachRevMap[n]||0), backgroundColor:'#1e3a5f', borderRadius:4 }] },
+    data:{ labels:coachNames, datasets:[{ label:'Revenue', data:coachNames.map(n=>coachRevMap[n]), backgroundColor:'#1e3a5f', borderRadius:4 }] },
     options:{ responsive:true, maintainAspectRatio:true, indexAxis:'y',
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${gbp(c.raw)}`}}},
       scales:{x:{...mkY()},y:{grid:GRID,ticks:{...TICK,color:'#888'}}} },
   });
 
-  // ── Chart: Payroll cost (filtered or YTD) ──
+  // Coach payroll bar (latest month PAYE only)
   const payrollNames = ['Craig Clout','Jess Donehue','Harry Sheppard'];
   const payrollKeys  = ['craig_clout','jess_donehue','harry_sheppard'];
-  const payrollVals  = payrollKeys.map(k => {
-    if (coachFilterMk) return DB.costs[coachFilterMk]?.[k] ?? 0;
-    return ams.reduce((s,mk)=>s+(DB.costs[mk]?.[k]||0),0);
-  });
+  const payrollVals  = payrollKeys.map(k => DB.costs[latestMk]?.[k] ?? 0);
   charts['cCoachCost'] = new Chart(document.getElementById('cCoachCost'), {
     type:'bar',
     data:{ labels:payrollNames, datasets:[{ label:'Payroll', data:payrollVals, backgroundColor:'#5f1e1e', borderRadius:4 }] },
@@ -1135,38 +1127,75 @@ function renderCoaches() {
       scales:{x:{...mkY()},y:{grid:GRID,ticks:{...TICK,color:'#888'}}} },
   });
 
-  // ── PAYE Coach Detail — YTD revenue ──
-  let html = `<thead><tr><th>Coach</th><th>Type</th>${MONTHS_SHORT.map(m=>`<th class="r">${m} Pay</th>`).join('')}<th class="r">YTD Pay</th><th class="r">YTD Rev</th><th class="r">ROI</th></tr></thead><tbody>`;
-  for (const c of PAYE_COACHES) {
+  // Coach detail table
+  let html = `<thead><tr><th>Coach</th><th>Type</th>${MONTHS_SHORT.map(m=>`<th class="r">${m} Pay</th>`).join('')}<th class="r">YTD Pay</th><th class="r">${latestLbl} Rev</th><th class="r">ROI</th></tr></thead><tbody>`;
+  for (const c of payeCoaches) {
     const paysByMonth = MONTHS_H1.map(mk => c.key ? (DB.costs[mk]?.[c.key] ?? null) : null);
     const ytdPay = c.key ? ams.reduce((s,mk)=>s+(DB.costs[mk]?.[c.key]||0),0) : 0;
-    const ytdRev = newModelRevByCoach('')[c.name] || 0;
-    const roi = ytdPay > 0 ? ytdRev/ytdPay : null;
-    html += `<tr><td>${c.name}</td><td><span class="badge ${c.key?'bb':'bc'}">${c.key?'PAYE':'—'}</span></td>
+    const rev = coachRevMap[c.name] || 0;
+    const latestPay = c.key ? (DB.costs[latestMk]?.[c.key] || 0) : 0;
+    const roi = latestPay > 0 ? rev/latestPay : null;
+    html += `<tr><td>${c.name}</td><td><span class="badge ${c.key?'bb':'bc'}">${c.key?'PAYE':'SE?'}</span></td>
       ${paysByMonth.map(v=>`<td class="r">${v!=null&&v>0?gbpd(v):'<span class="dim">—</span>'}</td>`).join('')}
       <td class="r white">${ytdPay>0?gbpd(ytdPay):'—'}</td>
-      <td class="r blue">${ytdRev>0?gbpd(ytdRev):'—'}</td>
+      <td class="r blue">${gbpd(rev)}</td>
       <td class="r ${roi?roi>=1?'green':'red':'amber'}">${roi?roi.toFixed(2)+'x':'—'}</td></tr>`;
   }
   html += `</tbody>`;
   document.getElementById('coachTbl').innerHTML = html;
 
-  // ── Self-Employed PTs — credit pack revenue ──
-  const seRev = seRevByPT('');  // always YTD for the table
-  const sePTs = [
-    'Alice Farrow','Adrian Canaveral','Rich Harris','Lucas Cloves',
-    'Aimee Jeffs','Luke Mehson','Sam Pepys','Annie Hall','Adam Siddle','Max Wade',
-  ];
-  const seTotal = sePTs.reduce((s,n)=>s+(seRev[n]||0),0);
+  // Self-employed table
   document.getElementById('selfEmpTbl').innerHTML =
-    `<thead><tr><th>#</th><th>PT Name</th><th>Type</th><th class="r">YTD Credit Pack Revenue</th></tr></thead><tbody>` +
-    sePTs.map((n,i)=>{
-      const rev = seRev[n] || 0;
-      const isMoved = n === 'Max Wade';
-      return `<tr><td class="lbl">${i+1}</td><td>${n}${isMoved?' <span class="badge bc" style="font-size:10px">→ New Model Apr 26</span>':''}</td><td><span class="badge bg">PAYG</span></td><td class="r ${rev>0?'green':'dim'}">${rev>0?gbp(rev):'—'}</td></tr>`;
-    }).join('') +
-    `<tr class="tot"><td colspan="3">Total SE PT Credit Pack Revenue</td><td class="r green">${gbp(seTotal)}</td></tr>` +
+    `<thead><tr><th>#</th><th>PT Name</th><th>Type</th><th>Cost to ONE LDN</th></tr></thead><tbody>` +
+    SELF_EMP.map((n,i)=>`<tr><td class="lbl">${i+1}</td><td>${n}</td><td><span class="badge bg">PAYG</span></td><td class="r green">£0</td></tr>`).join('') +
     `</tbody>`;
+
+  // ── PAYG credit pack table ─────────────────────────────────────────────
+  // Aggregate all coach transactions for PAYG PTs across all months
+  const paygNames = Object.values(PAYG_PT_MAP);
+  const paygMonths = MONTHS_H1.filter(mk => DB.coachTxns[mk]?.some(t => paygNames.includes(t.coach_name)));
+
+  if (paygMonths.length === 0) {
+    document.getElementById('paygCreditTbl').innerHTML =
+      `<thead><tr><th>Coach</th><th class="r">Revenue</th></tr></thead>` +
+      `<tbody><tr><td colspan="2" style="color:#444;font-style:italic;padding:18px 11px;">No data yet — re-upload monthly CSVs to populate. Coach attribution now active for future uploads.</td></tr></tbody>`;
+  } else {
+    // Build: { coachName: { monthKey: { packs: [{product, amount}], total } } }
+    const paygData = {};
+    for (const mk of paygMonths) {
+      for (const t of DB.coachTxns[mk]) {
+        if (!paygNames.includes(t.coach_name)) continue;
+        if (!paygData[t.coach_name]) paygData[t.coach_name] = {};
+        if (!paygData[t.coach_name][mk]) paygData[t.coach_name][mk] = { packs: [], total: 0 };
+        paygData[t.coach_name][mk].packs.push({ product: t.product_name, amount: t.amount });
+        paygData[t.coach_name][mk].total += parseFloat(t.amount);
+      }
+    }
+    const mHdrs = paygMonths.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
+    let ph = `<thead><tr><th>Coach</th>${mHdrs.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th></tr></thead><tbody>`;
+    for (const coach of Object.keys(paygData).sort()) {
+      const ytd = paygMonths.reduce((s,mk) => s + (paygData[coach][mk]?.total || 0), 0);
+      ph += `<tr><td>${coach}</td>`;
+      for (const mk of paygMonths) {
+        const d = paygData[coach][mk];
+        if (d) {
+          const tip = d.packs.map(p => `${p.product}: ${gbp(p.amount)}`).join(' · ');
+          ph += `<td class="r green" title="${tip}">${gbp(Math.round(d.total))}</td>`;
+        } else {
+          ph += `<td class="r dim">—</td>`;
+        }
+      }
+      ph += `<td class="r white">${gbp(Math.round(ytd))}</td></tr>`;
+    }
+    // Totals row
+    const totByMonth = paygMonths.map(mk =>
+      Object.values(paygData).reduce((s, cd) => s + (cd[mk]?.total || 0), 0)
+    );
+    const grandTotal = totByMonth.reduce((a,b) => a+b, 0);
+    ph += `<tr class="tot"><td>Total Old Model (PAYG)</td>${totByMonth.map(v=>`<td class="r green">${gbp(Math.round(v))}</td>`).join('')}<td class="r green">${gbp(Math.round(grandTotal))}</td></tr>`;
+    ph += `</tbody>`;
+    document.getElementById('paygCreditTbl').innerHTML = ph;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1176,11 +1205,12 @@ function renderCoaches() {
 function renderTrends() {
   destroyChart('cModelTrend'); destroyChart('cBreakeven'); destroyChart('cMarginTrend');
 
+  // Model trend
   charts['cModelTrend'] = new Chart(document.getElementById('cModelTrend'), {
     type:'line',
     data:{ labels:MONTHS_SHORT, datasets:[
-      { label:'Old Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?oldModelRevWithMem(mk):null), borderColor:'#4ade80', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
-      { label:'Old Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?oldModelRevWithMem(mk):null):(FORECAST[mk]?.pt_credits||0)+(FORECAST[mk]?.pt_rent||0)+(FORECAST[mk]?.pt_membership||0)), borderColor:'#4ade8055', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
+      { label:'Old Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?oldModelRev(mk):null), borderColor:'#4ade80', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
+      { label:'Old Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?oldModelRev(mk):null):(FORECAST[mk]?.pt_credits||0)+(FORECAST[mk]?.pt_rent||0)), borderColor:'#4ade8055', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
       { label:'New Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?newModelRev(mk):null), borderColor:'#60a5fa', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
       { label:'New Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?newModelRev(mk):null):FORECAST[mk]?.new_model), borderColor:'#60a5fa55', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
     ]},
@@ -1189,6 +1219,7 @@ function renderTrends() {
       scales:{x:{grid:GRID,ticks:TICK},y:{...mkY()}} },
   });
 
+  // Break-even
   const costAll = MONTHS_H1.map(mk => DB.costs[mk]?.total ?? COST_FORECAST[mk] ?? null);
   const revAll  = MONTHS_H1.map(mk => DB.revenue[mk]?.new_model ?? FORECAST[mk]?.new_model ?? null);
   charts['cBreakeven'] = new Chart(document.getElementById('cBreakeven'), {
@@ -1202,6 +1233,7 @@ function renderTrends() {
       scales:{x:{grid:GRID,ticks:TICK},y:{...mkY()}} },
   });
 
+  // Margin trend (actuals only)
   const ams = actMonths();
   const margins = ams.map(mk => {
     const r = totalRev(mk), c = totalCost(mk)||0;
@@ -1223,12 +1255,13 @@ function renderTrends() {
 // ═══════════════════════════════════════════════════════════════
 
 function renderH1Table() {
-  let html = `<thead><tr><th>Month</th><th class="r">Old Model</th><th class="r">New Model</th><th class="r">Total Rev</th><th class="r">Total Cost</th><th class="r">Profit</th><th class="r">Margin</th><th>Status</th></tr></thead><tbody>`;
+  let html = `<thead><tr><th>Month</th><th class="r">Old Model</th><th class="r">New Model</th><th class="r">PT Membership</th><th class="r">Total Rev</th><th class="r">Total Cost</th><th class="r">Profit</th><th class="r">Margin</th><th>Status</th></tr></thead><tbody>`;
   for (const mk of MONTHS_H1) {
     const isAct = !!DB.revenue[mk];
-    const old  = isAct ? oldModelRevWithMem(mk) : (FORECAST[mk]?.pt_credits||0)+(FORECAST[mk]?.pt_rent||0)+(FORECAST[mk]?.pt_membership||0);
+    const old  = isAct ? oldModelRev(mk) : (FORECAST[mk]?.pt_credits||0)+(FORECAST[mk]?.pt_rent||0);
     const nw   = isAct ? newModelRev(mk) : (FORECAST[mk]?.new_model||0);
-    const rev  = (old||0)+(nw||0);
+    const mem  = isAct ? memRev(mk)      : (FORECAST[mk]?.pt_membership||0);
+    const rev  = (old||0)+(nw||0)+(mem||0);
     const cost = isAct ? (totalCost(mk)||0) : (COST_FORECAST[mk]||0);
     const prof = rev - cost;
     const marg = rev > 0 ? prof/rev : null;
@@ -1236,6 +1269,7 @@ function renderH1Table() {
       <td>${MONTHS_LABELS[MONTHS_H1.indexOf(mk)]}</td>
       <td class="r ${isAct?'':'dim'}">${gbp(Math.round(old))}</td>
       <td class="r ${isAct?'blue':'dim'}">${gbp(Math.round(nw))}</td>
+      <td class="r ${isAct?'':'dim'}">${gbp(Math.round(mem))}</td>
       <td class="r ${isAct?'white':'dim'}">${gbp(Math.round(rev))}</td>
       <td class="r ${isAct?'red':'dim'}">−${gbp(Math.round(cost))}</td>
       <td class="r ${prof>=0?'green':'red'}">${gbp(Math.round(prof))}</td>
@@ -1243,12 +1277,36 @@ function renderH1Table() {
       <td><span class="badge ${isAct?'bg':'bc'}">${isAct?'Actual':'Forecast'}</span></td>
     </tr>`;
   }
+  const totRev  = MONTHS_H1.reduce((s,mk)=>{const f=FORECAST[mk];return s+(f?f.pt_credits+f.pt_membership+f.pt_rent+f.new_model:0);},0);
+  const totCost = MONTHS_H1.reduce((s,mk)=>s+(DB.costs[mk]?.total||COST_FORECAST[mk]||0),0);
+  html += `<tr class="tot"><td>H1 Total</td><td colspan="3"></td><td class="r white">${gbp(Math.round(totRev))}</td><td class="r red">−${gbp(Math.round(totCost))}</td><td class="r ${totRev-totCost>=0?'green':'red'}">${gbp(Math.round(totRev-totCost))}</td><td class="r ${((totRev-totCost)/totRev)>=0.3?'green':'amber'}">${pct((totRev-totCost)/totRev)}</td><td></td></tr>`;
   html += `</tbody>`;
   document.getElementById('h1ForecastTbl').innerHTML = html;
 }
 
 // ═══════════════════════════════════════════════════════════════
-// RENDER — PIPELINE TAB (Jan–Mar closed cohort)
+// RENDER ALL
+// ═══════════════════════════════════════════════════════════════
+
+function renderAll() {
+  renderHeader();
+  renderKPIs();
+  renderInsight();
+  renderModelCards();
+  renderOverviewChart();
+  renderOverviewTable();
+  renderModelCharts();
+  renderPnLTable();
+  renderCostTable();
+  renderCoaches();
+  renderTrends();
+  renderH1Table();
+  renderPipeline();
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — PIPELINE TAB
 // ═══════════════════════════════════════════════════════════════
 
 function renderPipeline() {
@@ -1256,29 +1314,28 @@ function renderPipeline() {
 
   const s = PIPELINE_STATS;
   const uptake   = s.redeemed / s.jf_new_total;
-  const lapsePct = s.lapsed   / (s.redeemed + s.lapsed + s.cancelled); // closed passes only
+  const lapsePct = s.lapsed   / s.passes_exported;
 
   // ── KPI cards ──
   document.getElementById('pipelineKpis').innerHTML = [
-    { lbl:'JF Issued (Jan–Mar)',   val: s.jf_new_total,                                         sub: 'New product · closed cohort',                         cls:'white' },
-    { lbl:'PT Intros Redeemed',    val: s.redeemed + ' (' + (uptake*100).toFixed(0) + '%)',     sub: 'Of all new joining fees issued Jan–Mar',               cls:'green' },
-    { lbl:'Lapsed (closed passes)',val: s.lapsed,                                               sub: (lapsePct*100).toFixed(0)+'% of closed passes expired', cls:'red'   },
-    { lbl:'14 Day Intros Jan–Mar', val: s.d14_total,                                            sub: '£'+s.d14_revenue.toLocaleString('en-GB')+' revenue · no PT session', cls:'blue' },
+    { lbl:'JF Issued (YTD)',     val: s.jf_new_total,                                          sub: 'New product · Jan–Apr 26',                            cls:'white' },
+    { lbl:'PT Intros Redeemed',  val: s.redeemed + ' (' + (uptake*100).toFixed(0) + '%)',      sub: 'Of all new joining fees issued',                      cls:'green' },
+    { lbl:'Lapsed Passes',       val: s.lapsed,                                                sub: (lapsePct*100).toFixed(0)+'% of closed passes expired unused', cls:'red' },
+    { lbl:'14 Day Intros YTD',   val: s.d14_total,                                             sub: '£'+s.d14_revenue.toLocaleString('en-GB')+' revenue · no PT session', cls:'blue' },
   ].map(k => `<div class="kpi"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val ${k.cls}">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
 
-  // ── Insight ──
-  const rates = PIPELINE_REDEEMED.map((r,i) => PIPELINE_JF_NEW[i] > 0 ? r/PIPELINE_JF_NEW[i] : 0);
+  // ── Insight banner ──
+  const rates = PIPELINE_REDEEMED.map((r,i) => PIPELINE_JF_NEW[i] > 0 ? r/PIPELINE_JF_NEW[i] : 1);
   const worstMonth = PIPELINE_MONTHS[rates.indexOf(Math.min(...rates))];
   document.getElementById('pipelineInsight').innerHTML =
-    `<strong>Jan–Mar closed cohort:</strong> ${s.lapsed} of ${s.lapsed + s.redeemed} closed passes expired without redemption — a ${(lapsePct*100).toFixed(0)}% lapse rate on a paid benefit. ` +
-    `${s.active} passes currently have an open booking window. ` +
-    `<strong>${worstMonth}</strong> had the lowest uptake of the closed period. ` +
-    `April (${PIPELINE_APR_JF} issued, ${PIPELINE_APR_RED} redeemed so far) is excluded as the month is still in progress.`;
+    `<strong>${s.lapsed} of ${s.lapsed + s.redeemed} closed passes expired without being redeemed</strong> — a ${(lapsePct*100).toFixed(0)}% lapse rate on a paid benefit. `+
+    `${s.active} members currently hold open passes with their booking window still active. `+
+    `<strong>${worstMonth}</strong> had the lowest uptake. Old product (Jan 2026, deprecated): ${s.jf_old_total} issued, 0 redeemed.`;
 
   const GRID_N = { color: '#161616', borderColor: '#1e1e1e' };
-  const TICK_N = { color: '#7a7a7a', font: { size: 11 } };
+  const TICK_N = { color: '#383838', font: { size: 11 } };
 
-  // ── JF Funnel chart (Jan–Mar) ──
+  // ── JF Funnel chart ──
   charts['cJFFunnel'] = new Chart(document.getElementById('cJFFunnel'), {
     type: 'bar',
     data: {
@@ -1301,7 +1358,7 @@ function renderPipeline() {
     },
   });
 
-  // ── 14 Day Intro chart (Jan–Mar) ──
+  // ── 14 Day Intro chart ──
   charts['c14D'] = new Chart(document.getElementById('c14D'), {
     type: 'bar',
     data: {
@@ -1321,7 +1378,7 @@ function renderPipeline() {
     },
   });
 
-  // ── Pass status table ──
+  // ── Pass status summary table ──
   const statuses = [
     { lbl:'Redeemed ✓',             count: s.redeemed,  cls:'green', note:'Session taken' },
     { lbl:'Active (open window)',    count: s.active,    cls:'amber', note:'Pass open — still time to book' },
@@ -1330,57 +1387,33 @@ function renderPipeline() {
   ];
   const totalPasses = s.redeemed + s.active + s.lapsed + s.cancelled;
   document.getElementById('pipelineStatusTbl').innerHTML =
-    `<thead><tr><th>Status</th><th class="r">Count</th><th class="r">% of Export</th><th>Note</th></tr></thead><tbody>` +
+    `<thead><tr><th>Status</th><th class="r">Count</th><th class="r">% of Passes</th><th>Note</th></tr></thead><tbody>` +
     statuses.map(r =>
       `<tr><td><span class="${r.cls}">${r.lbl}</span></td><td class="r ${r.cls}">${r.count}</td><td class="r">${(r.count/totalPasses*100).toFixed(0)}%</td><td class="lbl">${r.note}</td></tr>`
     ).join('') +
-    `<tr class="tot"><td>Total in Export</td><td class="r white">${totalPasses}</td><td class="r white">100%</td><td class="lbl">Snapshot: ${s.data_at}</td></tr></tbody>`;
+    `<tr class="tot"><td>Total Passes Issued</td><td class="r white">${totalPasses}</td><td class="r white">100%</td><td class="lbl">Through ${s.data_at}</td></tr></tbody>`;
 
-  // ── Monthly uptake table (Jan–Mar + Apr in-progress) ──
-  const aprRate = PIPELINE_APR_JF > 0 ? PIPELINE_APR_RED / PIPELINE_APR_JF : 0;
-  let uptakeTbl = `<thead><tr><th>Month</th><th class="r">JF Issued</th><th class="r">Redeemed</th><th class="r">Uptake %</th></tr></thead><tbody>`;
-  PIPELINE_MONTHS.forEach((m,i) => {
-    const rate = PIPELINE_JF_NEW[i] > 0 ? PIPELINE_REDEEMED[i]/PIPELINE_JF_NEW[i] : 0;
-    uptakeTbl += `<tr><td>${m}</td><td class="r">${PIPELINE_JF_NEW[i]}</td><td class="r green">${PIPELINE_REDEEMED[i]}</td><td class="r ${rate>=0.25?'green':'red'}">${(rate*100).toFixed(0)}%</td></tr>`;
-  });
-  const totIssued   = PIPELINE_JF_NEW.reduce((a,b)=>a+b,0);
-  const totRedeemed = PIPELINE_REDEEMED.reduce((a,b)=>a+b,0);
-  uptakeTbl += `<tr class="tot"><td>Jan–Mar Total</td><td class="r">${totIssued}</td><td class="r green">${totRedeemed}</td><td class="r ${totRedeemed/totIssued>=0.2?'green':'red'}">${(totRedeemed/totIssued*100).toFixed(0)}%</td></tr>`;
-  uptakeTbl += `<tr class="fct"><td>Apr 26 *</td><td class="r">${PIPELINE_APR_JF}</td><td class="r">${PIPELINE_APR_RED}</td><td class="r amber">${(aprRate*100).toFixed(0)}% (in progress)</td></tr>`;
-  uptakeTbl += `</tbody>`;
-  document.getElementById('pipelineTbl').innerHTML = uptakeTbl;
+  // ── Monthly uptake table ──
+  const totalIssued   = PIPELINE_JF_NEW.reduce((a,b)=>a+b,0);
+  const totalRedeemed = PIPELINE_REDEEMED.reduce((a,b)=>a+b,0);
+  document.getElementById('pipelineTbl').innerHTML =
+    `<thead><tr><th>Month</th><th class="r">JF Issued</th><th class="r">Redeemed</th><th class="r">Uptake %</th></tr></thead><tbody>` +
+    PIPELINE_MONTHS.map((m,i) => {
+      const rate = PIPELINE_JF_NEW[i] > 0 ? PIPELINE_REDEEMED[i]/PIPELINE_JF_NEW[i] : 0;
+      const isCurrent = m === 'Apr 26';
+      const cls = isCurrent ? 'amber' : rate >= 0.25 ? 'green' : 'red';
+      return `<tr><td>${m}</td><td class="r">${PIPELINE_JF_NEW[i]}</td><td class="r green">${PIPELINE_REDEEMED[i]}</td><td class="r ${cls}">${(rate*100).toFixed(0)}%${isCurrent?' *':''}</td></tr>`;
+    }).join('') +
+    `<tr class="tot"><td>Total</td><td class="r">${totalIssued}</td><td class="r green">${totalRedeemed}</td><td class="r ${totalRedeemed/totalIssued>=0.25?'green':'red'}">${(totalRedeemed/totalIssued*100).toFixed(0)}%</td></tr></tbody>`;
 
   // ── 14 Day Intro revenue table ──
-  const d14Total  = PIPELINE_D14.reduce((a,b)=>a+b,0);
+  const d14Total = PIPELINE_D14.reduce((a,b)=>a+b,0);
   document.getElementById('pipeline14dTbl').innerHTML =
     `<thead><tr><th>Month</th><th class="r">Trials</th><th class="r">Revenue</th><th class="r">Rate</th></tr></thead><tbody>` +
     PIPELINE_MONTHS.map((m,i) =>
       `<tr><td>${m}</td><td class="r">${PIPELINE_D14[i]}</td><td class="r blue">£${(PIPELINE_D14[i]*55).toLocaleString('en-GB')}</td><td class="r dim">£55</td></tr>`
     ).join('') +
-    `<tr class="fct"><td>Apr 26 *</td><td class="r">${PIPELINE_APR_D14}</td><td class="r">£${(PIPELINE_APR_D14*55).toLocaleString('en-GB')}</td><td class="r dim">£55</td></tr>` +
-    `<tr class="tot"><td>Jan–Mar Total</td><td class="r">${d14Total}</td><td class="r blue">£${(d14Total*55).toLocaleString('en-GB')}</td><td class="r dim">—</td></tr></tbody>`;
-}
-
-// ═══════════════════════════════════════════════════════════════
-// RENDER ALL
-// ═══════════════════════════════════════════════════════════════
-
-function renderAll() {
-  renderHeader();
-  renderKPIs();
-  renderInsight();
-  renderModelCards();
-  populateOverviewDropdown();
-  renderOverviewChart();
-  renderOverviewTable();
-  renderModelCharts();
-  renderPnLTable();
-  renderCostDetail();
-  populateCoachDropdown();
-  renderCoaches();
-  renderTrends();
-  renderH1Table();
-  renderPipeline();
+    `<tr class="tot"><td>YTD Total</td><td class="r">${d14Total}</td><td class="r blue">£${(d14Total*55).toLocaleString('en-GB')}</td><td class="r dim">—</td></tr></tbody>`;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1390,65 +1423,130 @@ function renderAll() {
 document.getElementById('csvFile').addEventListener('change', async function(e) {
   const file = e.target.files[0];
   if (!file) return;
+
   const btn = document.getElementById('uploadBtn');
   const statusEl = document.getElementById('uploadStatus');
   btn.disabled = true;
   statusEl.className = 'upload-status';
   statusEl.textContent = 'Parsing CSV…';
+
   Papa.parse(file, {
     header: true, skipEmptyLines: true,
     complete: async results => {
-      try { await processUpload(file.name, results.data); }
-      catch(err) { statusEl.className = 'upload-status err'; statusEl.textContent = 'Upload failed: ' + err.message; }
-      finally { btn.disabled = false; e.target.value = ''; }
+      try {
+        await processUpload(file.name, results.data);
+      } catch(err) {
+        statusEl.className = 'upload-status err';
+        statusEl.textContent = 'Upload failed: ' + err.message;
+      } finally {
+        btn.disabled = false;
+        e.target.value = '';
+      }
     },
-    error: err => { statusEl.className = 'upload-status err'; statusEl.textContent = 'CSV parse error: ' + err.message; btn.disabled = false; e.target.value = ''; }
+    error: err => {
+      statusEl.className = 'upload-status err';
+      statusEl.textContent = 'CSV parse error: ' + err.message;
+      btn.disabled = false;
+      e.target.value = '';
+    }
   });
 });
 
 async function processUpload(filename, rows) {
   const statusEl = document.getElementById('uploadStatus');
 
-  const dateStr = rows.find(r => r.Date)?.Date;
-  if (!dateStr) throw new Error('No date column found in CSV');
-  const parts = dateStr.split('/');
-  if (parts.length !== 3) throw new Error('Unexpected date format: ' + dateStr);
-  const monthDate = new Date(parseInt(parts[2]), parseInt(parts[1])-1, 1);
-  const mk = monthKey(monthDate);
-  const isoDate = isoMonth(mk);
-  const monthLabel = monthDate.toLocaleDateString('en-GB', {month:'short', year:'2-digit'});
+  // ── Detect month ──────────────────────────────────────────────────
+  // Priority: (1) manual month picker, (2) last date in CSV (most reliable
+  // for period-end exports that may span month boundaries)
+  let mk, isoDate, monthLabel;
+
+  const manualPick = document.getElementById('monthPicker')?.value;
+  if (manualPick) {
+    // User explicitly selected a month — trust it
+    mk = manualPick;
+    const d = new Date(mk + '-01');
+    isoDate   = mk + '-01';
+    monthLabel = d.toLocaleDateString('en-GB', { month: 'short', year: '2-digit' });
+    statusEl.textContent = `Using selected month: ${monthLabel}…`;
+  } else {
+    // Auto-detect from LAST dated row (safer than first for cross-month exports)
+    const datedRows = rows.filter(r => r.Date);
+    if (!datedRows.length) throw new Error('No date column found in CSV');
+    const lastDateStr = datedRows[datedRows.length - 1].Date;
+    const parts = lastDateStr.split('/');
+    if (parts.length !== 3) throw new Error('Unexpected date format: ' + lastDateStr);
+    const monthDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, 1);
+    mk        = monthKey(monthDate);
+    isoDate   = isoMonth(mk);
+    monthLabel = monthDate.toLocaleDateString('en-GB', { month: 'short', year: '2-digit' });
+    // Warn if CSV spans multiple months
+    const firstDateStr = datedRows[0].Date;
+    const firstParts   = firstDateStr.split('/');
+    const firstMonth   = firstParts[1] + '/' + firstParts[2];
+    const lastMonth    = parts[1] + '/' + parts[2];
+    if (firstMonth !== lastMonth) {
+      statusEl.className = 'upload-status warn';
+      statusEl.textContent = `⚠ CSV spans multiple months (${firstDateStr} – ${lastDateStr}). Using last date → ${monthLabel}. Use the month picker to override.`;
+      await new Promise(r => setTimeout(r, 2000)); // brief pause so warning is readable
+    }
+  }
 
   statusEl.textContent = `Detected month: ${monthLabel} — uploading…`;
 
+  // ── Check if already uploaded ──
   const existing = await sbGet('pt_upload_log',
     `filename=eq.${encodeURIComponent(filename)}&select=id,uploaded_at&limit=1`);
+
   if (existing && existing.length > 0) {
     statusEl.className = 'upload-status warn';
-    statusEl.textContent = `Already uploaded: ${filename} (${new Date(existing[0].uploaded_at).toLocaleDateString('en-GB')}). Re-uploading safely.`;
+    statusEl.textContent = `Already uploaded: ${filename} (${new Date(existing[0].uploaded_at).toLocaleDateString('en-GB')}). Re-uploading — data for ${monthLabel} will be overwritten.`;
   }
 
-  const revenueAccum = {};
-  const coachTxns    = [];
+  // ── Helper: parse a row's date to 'YYYY-MM' ──────────────────────
+  function rowMonth(row) {
+    const d = (row.Date || '').trim();
+    if (!d) return null;
+    const p = d.split('/');
+    if (p.length !== 3) return null;
+    return p[2] + '-' + p[1].padStart(2, '0');  // DD/MM/YYYY → YYYY-MM
+  }
 
-  for (const row of rows) {
-    const item      = (row.Item || row.item || '').trim();
-    const gross     = parseFloat((row['Gross Amount'] || row['Amount'] || '0').replace(/[£,]/g,''));
-    const custName  = (row.Name || row.name || '').trim();
-    const state     = (row.State || row.state || '').trim().toLowerCase();
+  // ── Filter to target month only — safe against overlapping date ranges ──
+  const targetRows = rows.filter(r => rowMonth(r) === mk);
+  const skippedRows = rows.length - targetRows.length;
+  if (skippedRows > 0) {
+    statusEl.textContent = `Processing ${targetRows.length} rows for ${monthLabel} (${skippedRows} rows from other months ignored)…`;
+    await new Promise(r => setTimeout(r, 1200));
+  }
 
+  // ── Extract PT revenue from target-month rows only ──
+  const revenueAccum = {};  // { line: total }
+  const coachTxns    = [];  // [{ coach, product, amount }]
+
+  for (const row of targetRows) {
+    const item   = (row.Item || row.item || '').trim();
+    const gross  = parseFloat((row['Gross Amount'] || row['Amount'] || '0').replace(/[£,]/g,''));
     if (!item || isNaN(gross) || gross <= 0) continue;
-    // Skip non-settled items (e.g. Scheduled, Written Off)
-    if (state && !['settled',''].includes(state)) continue;
 
     for (const rule of ITEM_MAP) {
       if (rule.re.test(item)) {
         revenueAccum[rule.line] = (revenueAccum[rule.line] || 0) + gross;
         if (rule.coach) {
-          // Named PAYE coach
+          // PAYE coach — attributed by product name
           coachTxns.push({ coach: rule.coach, product: item, amount: gross });
-        } else if (rule.seRental && custName && custName !== '-') {
-          // SE PT rental — capture customer name as the PT
-          coachTxns.push({ coach: custName, product: item, amount: gross });
+        } else if (rule.line === 'pt_credits') {
+          // Old Model (PAYG) — attribute by Customer Name if they're a known PAYG PT
+          const custName = (row.Name || row.name || '').trim().toLowerCase();
+          const paygCoach = PAYG_PT_MAP[custName];
+          if (paygCoach) {
+            coachTxns.push({ coach: paygCoach, product: item, amount: gross });
+          }
+        } else if (rule.line === 'pt_membership') {
+          // PAYG PT membership fee — attribute by customer ID if in known PT list
+          const custId = (row['Customer ID'] || row['customer_id'] || '').toString().trim();
+          if (custId && PAYG_PT_MEMBER_IDS[custId]) {
+            coachTxns.push({ coach: PAYG_PT_MEMBER_IDS[custId], product: item, amount: gross });
+          }
         }
         break;
       }
@@ -1461,6 +1559,7 @@ async function processUpload(filename, rows) {
     return;
   }
 
+  // ── Upsert revenue ──
   let inserted = 0;
   for (const [line, amount] of Object.entries(revenueAccum)) {
     await sbUpsert('pt_revenue',
@@ -1469,10 +1568,12 @@ async function processUpload(filename, rows) {
     inserted++;
   }
 
+  // ── Upsert coach transactions ──
+  // Aggregate by coach+product first (sum quantities)
   const coachAgg = {};
   for (const t of coachTxns) {
     const k = `${t.coach}|${t.product}`;
-    if (!coachAgg[k]) coachAgg[k] = { ...t, quantity: 0, amount: 0 };
+    coachAgg[k] = (coachAgg[k] || { ...t, quantity: 0, amount: 0 });
     coachAgg[k].amount   += t.amount;
     coachAgg[k].quantity += 1;
   }
@@ -1482,9 +1583,11 @@ async function processUpload(filename, rows) {
       'month,product_name,coach_name');
   }
 
+  // ── Log upload ──
   await sbInsert('pt_upload_log',
     { filename, month_covered: isoDate, rows_inserted: inserted, rows_skipped: 0, uploaded_by: 'web-upload' });
 
+  // ── Reload data and re-render ──
   statusEl.textContent = 'Refreshing dashboard…';
   await loadData();
   renderAll();
@@ -1508,7 +1611,9 @@ function showTab(id, btn) {
 // LOADING HELPERS
 // ═══════════════════════════════════════════════════════════════
 
-function setLoading(msg) { document.getElementById('loadingText').textContent = msg; }
+function setLoading(msg) {
+  document.getElementById('loadingText').textContent = msg;
+}
 function hideLoading() {
   document.getElementById('loadingOverlay').style.display = 'none';
   document.getElementById('appRoot').style.display = 'block';
@@ -1519,19 +1624,26 @@ function hideLoading() {
 // ═══════════════════════════════════════════════════════════════
 
 window.addEventListener('load', async function init() {
+  // ── Step 1: render instantly from hardcoded fallback ───────────
   setLoading('Loading dashboard…');
   loadFallback();
   renderAll();
   hideLoading();
 
+  // ── Step 2: silently sync from Supabase in background ──────────
+  // Updates the dashboard if DB has newer/additional data.
+  // Any error is shown as a small status note, not a blocker.
   const statusEl = document.getElementById('uploadStatus');
   try {
-    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000));
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('timeout')), 10000)
+    );
     await Promise.race([loadData(), timeout]);
-    renderAll();
+    renderAll();  // re-render with live DB data
     statusEl.className = 'upload-status ok';
     statusEl.textContent = '✓ Live · synced from database';
   } catch (err) {
+    // Non-blocking — dashboard is already showing fallback data
     statusEl.className = 'upload-status warn';
     statusEl.textContent = err.message === 'timeout'
       ? '⚠ Database unreachable — showing cached Jan–Mar data'
