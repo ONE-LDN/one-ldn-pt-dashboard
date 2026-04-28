@@ -1423,7 +1423,6 @@ function renderCoaches() {
   const latestLbl = latestMk ? MONTHS_LABELS[MONTHS_H1.indexOf(latestMk)] : '—';
 
   document.getElementById('coachMonthBadge').textContent = latestLbl;
-  document.getElementById('coachCostBadge').textContent  = latestLbl;
 
   // Aggregate coach revenue by name for latest month
   const coachRevMap = {};
