@@ -163,18 +163,113 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 .db-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
 .db-dot.err { background: #f87171; }
 
+/* ── DECISION HEADER ── */
+.decision-header {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px;
+  background: #1e1e1e; border: 1px solid #1e1e1e; border-radius: 12px;
+  overflow: hidden; margin-bottom: 10px;
+}
+.decision-header.rag-green { border-color: #14532d; }
+.decision-header.rag-amber { border-color: #451a03; }
+.decision-header.rag-red   { border-color: #450a0a; }
+.dh-col {
+  padding: 20px 22px;
+  background: #0d0d0d;
+}
+.dh-col-main  { background: #0a0d08; }
+.dh-col-main.rag-green { background: #0a140a; }
+.dh-col-main.rag-amber { background: #140e04; }
+.dh-col-main.rag-red   { background: #140404; }
+.dh-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #555; margin-bottom: 8px; }
+.dh-amount { font-size: 36px; font-weight: 700; line-height: 1; letter-spacing: -1px; color: #fff; margin-bottom: 10px; }
+.dh-progress-track { height: 6px; background: #1e1e1e; border-radius: 3px; margin-bottom: 10px; }
+.dh-progress-fill  { height: 6px; border-radius: 3px; transition: width 0.5s ease; }
+.fill-green { background: #4ade80; }
+.fill-amber { background: #e8c547; }
+.fill-red   { background: #f87171; }
+.dh-rag-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.rag-badge  { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.rag-green  { background: #052e16; color: #4ade80; }
+.rag-amber  { background: #1c1500; color: #e8c547; }
+.rag-red    { background: #1c0404; color: #f87171; }
+.rag-grey   { background: #111; color: #555; }
+.dh-target-row { font-size: 11px; color: #444; display: flex; align-items: center; gap: 6px; }
+.dh-edit-btn { background: none; border: none; cursor: pointer; color: #444; font-size: 12px; padding: 0 3px; line-height: 1; transition: color 0.15s; }
+.dh-edit-btn:hover { color: #e8c547; }
+.dh-target-input { background: #0d0d0d; border: 1px solid #e8c547; border-radius: 5px; color: #fff; padding: 3px 7px; font-size: 12px; width: 90px; }
+.dh-sub { font-size: 11px; color: #444; margin-top: 4px; }
+.custom-badge { display: inline-block; font-size: 9px; padding: 1px 5px; background: #1a1400; color: #e8c547; border-radius: 3px; margin-left: 6px; }
+.dh-delta { font-size: 24px; font-weight: 700; margin: 6px 0 4px; line-height: 1; }
+.dh-days  { font-size: 40px; font-weight: 700; line-height: 1; margin: 4px 0 4px; }
+.dh-days.urgency-amber { color: #e8c547; }
+.dh-days.urgency-red   { color: #f87171; }
+
+/* ── REVENUE BREAKDOWN STRIP ── */
+.breakdown-strip { margin-bottom: 8px; }
+.bs-row {
+  display: grid; grid-template-columns: 120px 90px 90px 1fr 70px;
+  align-items: center; gap: 12px;
+  padding: 8px 16px; border-radius: 8px; margin-bottom: 4px;
+  background: #0d0d0d; border: 1px solid #141414;
+}
+.bs-line   { font-size: 12px; font-weight: 600; color: #888; }
+.bs-actual { font-size: 13px; font-weight: 700; color: #fff; text-align: right; }
+.bs-target { font-size: 11px; color: #3a3a3a; text-align: right; }
+.bs-bar-track { height: 4px; background: #1e1e1e; border-radius: 2px; }
+.bs-bar-fill  { height: 4px; border-radius: 2px; }
+.bs-pct    { font-size: 11px; font-weight: 700; text-align: right; }
+.bs-action { font-size: 10px; color: #2e2e2e; grid-column: 1 / -1; padding-left: 2px; display: none; }
+.bs-row:hover .bs-action { display: block; }
+
+/* ── ANALYSIS DIVIDER ── */
+.analysis-divider {
+  text-align: center; font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #252525; margin: 18px 0 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.analysis-divider::before, .analysis-divider::after {
+  content: ''; flex: 1; height: 1px; background: #181818;
+}
+
+/* ── COST ENTRY FORM ── */
+.cost-form { display: grid; grid-template-columns: 1fr 80px 130px; gap: 0; }
+.cost-form-hdr { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #444; padding: 6px 10px; border-bottom: 1px solid #1e1e1e; }
+.cost-form-row { display: contents; }
+.cost-form-row > * { padding: 7px 10px; border-bottom: 1px solid #111; display: flex; align-items: center; }
+.cost-form-lbl { font-size: 13px; color: #888; }
+.cost-form-input {
+  background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 5px;
+  color: #fff; padding: 5px 8px; font-size: 12px; width: 70px; text-align: right;
+}
+.cost-form-input:focus { outline: none; border-color: #e8c547; }
+.cost-form-input.wide { width: 110px; }
+.cost-total-row > * { padding: 10px 10px; border-top: 1px solid #333; font-weight: 700; }
+.cost-save-row { display: flex; gap: 10px; margin-top: 12px; align-items: center; }
+.cost-save-btn { background: #e8c547; color: #0a0a0a; border: none; border-radius: 7px; padding: 9px 18px; font-size: 12px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; }
+.cost-save-btn:hover { opacity: 0.82; }
+.cost-save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.cost-clear-btn { background: none; border: 1px solid #2a2a2a; color: #555; border-radius: 7px; padding: 9px 14px; font-size: 12px; cursor: pointer; }
+.cost-status { font-size: 11px; color: #4a4a4a; }
+.cost-status.ok  { color: #4ade80; }
+.cost-status.err { color: #f87171; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 960px) {
+  .decision-header { grid-template-columns: 1fr 1fr; }
+  .dh-col:last-child { grid-column: 1 / -1; }
   .g2 { grid-template-columns: 1fr; }
   .g3 { grid-template-columns: 1fr 1fr; }
   .kpi-strip { grid-template-columns: repeat(3, 1fr); }
   .coach-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px) {
+  .decision-header { grid-template-columns: 1fr; }
   .kpi-strip { grid-template-columns: repeat(2, 1fr); }
   .kpi-val { font-size: 18px; }
   .g3 { grid-template-columns: 1fr; }
   .coach-grid { grid-template-columns: repeat(2, 1fr); }
+  .bs-row { grid-template-columns: 1fr 70px 70px; }
+  .bs-bar-track, .bs-pct { display: none; }
 }
 </style>
 </head>
@@ -197,8 +292,11 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
     <div class="header-meta" id="hDate"></div>
   </div>
 
-  <!-- KPI STRIP -->
-  <div class="kpi-strip" id="kpiStrip"></div>
+  <!-- DECISION HEADER -->
+  <div id="decisionHeader"></div>
+
+  <!-- REVENUE BREAKDOWN STRIP -->
+  <div class="breakdown-strip" id="revBreakdownStrip"></div>
 
   <!-- INSIGHT BANNER -->
   <div class="insight" id="insightBanner"></div>
@@ -234,6 +332,9 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
     <div class="upload-status" id="uploadStatus">Live · <span id="lastUpload">loading…</span></div>
   </div>
 
+  <!-- ANALYSIS DIVIDER -->
+  <div class="analysis-divider">Detailed Analysis</div>
+
   <!-- TABS -->
   <div class="tabs">
     <button class="tab on"  onclick="showTab('overview',this)">Overview</button>
@@ -241,6 +342,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
     <button class="tab"     onclick="showTab('coaches',this)">Coach Breakdown</button>
     <button class="tab"     onclick="showTab('trends',this)">Trends</button>
     <button class="tab"     onclick="showTab('pipeline',this)">PT Pipeline</button>
+    <button class="tab"     onclick="showTab('costs',this)" style="color:#f87171">Costs</button>
   </div>
 
   <!-- ══════════ TAB 1: OVERVIEW ══════════ -->
@@ -301,49 +403,26 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
       </div>
       <div style="overflow-x:auto"><table id="pnlTbl"></table></div>
     </div>
-    <div class="card">
-      <div class="card-head">
-        <div>
-          <div class="card-ttl">New Model Cost Breakdown</div>
-          <div class="card-sub">Head of Fitness (fixed £5k/mo) + PAYE payroll + Employer Tax/NI</div>
-        </div>
-        <span class="badge bb">Actuals</span>
-      </div>
-      <div style="overflow-x:auto"><table id="costTbl"></table></div>
-      <div class="fn">† Head of Fitness allocated entirely to New Model. Old Model (self-managed contractors) bears zero overhead.</div>
-    </div>
   </div>
 
   <!-- ══════════ TAB 3: COACH BREAKDOWN ══════════ -->
   <div class="panel" id="panel-coaches">
     <div class="coach-grid" id="coachCards"></div>
-    <div class="g2">
-      <div class="card">
-        <div class="card-head">
-          <div>
-            <div class="card-ttl">Most Recent Month — Revenue by Coach</div>
-            <div class="card-sub">New PT Model revenue by coach from latest WodBoard data</div>
-          </div>
-          <span class="badge bb" id="coachMonthBadge">—</span>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">Most Recent Month — Revenue by Coach</div>
+          <div class="card-sub">New PT Model revenue by coach from latest WodBoard data</div>
         </div>
-        <div style="position:relative"><canvas id="cCoachRev" height="220"></canvas></div>
+        <span class="badge bb" id="coachMonthBadge">—</span>
       </div>
-      <div class="card">
-        <div class="card-head">
-          <div>
-            <div class="card-ttl">Most Recent Month — Payroll Cost</div>
-            <div class="card-sub">PAYE payroll only (exc. Head of Fitness + Tax)</div>
-          </div>
-          <span class="badge br" id="coachCostBadge">—</span>
-        </div>
-        <div style="position:relative"><canvas id="cCoachCost" height="220"></canvas></div>
-      </div>
+      <div style="position:relative"><canvas id="cCoachRev" height="220"></canvas></div>
     </div>
     <div class="card">
       <div class="card-head">
         <div>
-          <div class="card-ttl">PAYE Coach Detail — Actuals to Date</div>
-          <div class="card-sub">Revenue generated vs payroll cost per coach</div>
+          <div class="card-ttl">PAYE Coach Revenue — Actuals to Date</div>
+          <div class="card-sub">Revenue generated per coach · transaction data from WodBoard</div>
         </div>
       </div>
       <div style="overflow-x:auto"><table id="coachTbl"></table></div>
@@ -492,6 +571,82 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 
   </div>
 
+  <!-- ══════════ TAB 6: COSTS (INTERNAL) ══════════ -->
+  <div class="panel" id="panel-costs">
+    <div class="insight" style="background:#1a0000;border:1px solid #3d0000;color:#f87171">
+      <strong style="color:#fca5a5">Internal use only.</strong> Individual coach payroll and full cost breakdown — not for sharing with coaches or staff.
+    </div>
+    <div class="g2">
+      <!-- Cost Entry Form -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-ttl">Add Monthly Costs</div>
+            <div class="card-sub">Enter from Ashleigh's payroll breakdown · saves to cloud</div>
+          </div>
+          <select id="costMonthPicker" style="background:#0d0d0d;color:#888;border:1px solid #2a2a2a;border-radius:7px;padding:6px 10px;font-size:12px;cursor:pointer;" onchange="prefillCostForm()">
+            <option value="2026-01">Jan 2026</option>
+            <option value="2026-02">Feb 2026</option>
+            <option value="2026-03">Mar 2026</option>
+            <option value="2026-04" selected>Apr 2026</option>
+            <option value="2026-05">May 2026</option>
+            <option value="2026-06">Jun 2026</option>
+            <option value="2026-07">Jul 2026</option>
+            <option value="2026-08">Aug 2026</option>
+            <option value="2026-09">Sep 2026</option>
+            <option value="2026-10">Oct 2026</option>
+            <option value="2026-11">Nov 2026</option>
+            <option value="2026-12">Dec 2026</option>
+          </select>
+        </div>
+        <div class="cost-form" id="costEntryForm">
+          <div class="cost-form-hdr">Coach</div>
+          <div class="cost-form-hdr" style="text-align:right">Sessions</div>
+          <div class="cost-form-hdr" style="text-align:right">Total Payout</div>
+          <!-- Rows injected by prefillCostForm() -->
+        </div>
+        <div class="cost-save-row">
+          <button class="cost-save-btn" id="costSaveBtn" onclick="saveCosts()">Save Costs</button>
+          <button class="cost-clear-btn" onclick="clearCostForm()">Clear</button>
+          <span class="cost-status" id="costStatus"></span>
+        </div>
+      </div>
+      <!-- Cost Breakdown Display -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-ttl">Cost Breakdown</div>
+            <div class="card-sub">Sessions · payouts · hourly rate · <span id="costDisplayBadgeMk">most recent month</span></div>
+          </div>
+          <span class="badge br" id="costsDisplayBadge">—</span>
+        </div>
+        <div style="overflow-x:auto"><table id="costsBreakdownTbl"></table></div>
+      </div>
+    </div>
+    <!-- Full cost table across months -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">New Model Cost Breakdown — All Months</div>
+          <div class="card-sub">Head of Fitness + PAYE payroll + Employer Tax/NI</div>
+        </div>
+        <span class="badge bb">Actuals</span>
+      </div>
+      <div style="overflow-x:auto"><table id="costTbl"></table></div>
+      <div class="fn">† Head of Fitness: £5,000/month Jan–Apr 2026, £0 from May 2026.</div>
+    </div>
+    <!-- Coach payroll vs revenue -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">PAYE Coach — Payroll vs Revenue</div>
+          <div class="card-sub">Monthly payroll cost vs revenue generated per coach · ROI indicator</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto"><table id="coachPayTbl"></table></div>
+    </div>
+  </div>
+
 </div><!-- /app -->
 
 <!-- CDN Scripts — Chart.js and PapaParse only; Supabase uses native fetch() -->
@@ -572,12 +727,12 @@ function loadFallback() {
 
 // ── Forecast targets (static from Revenue Tracker sheet) ────────
 const FORECAST = {
-  '2026-01': { pt_credits: 7380, pt_membership: 1590, pt_rent: 1740, new_model: 0      },
-  '2026-02': { pt_credits: 9040, pt_membership: 1590, pt_rent: 1740, new_model: 4158   },
-  '2026-03': { pt_credits: 9180, pt_membership: 1590, pt_rent: 1740, new_model: 10395  },
-  '2026-04': { pt_credits: 8520, pt_membership: 1272, pt_rent: 1740, new_model: 19127  },
-  '2026-05': { pt_credits: 6200, pt_membership:  954, pt_rent: 1740, new_model: 29106  },
-  '2026-06': { pt_credits: 4500, pt_membership:  636, pt_rent: 1740, new_model: 39085  },
+  '2026-01': { pt_credits: 7380, pt_membership: 1590, pt_rent: 2000, new_model: 0      },
+  '2026-02': { pt_credits: 9040, pt_membership: 1590, pt_rent: 2000, new_model: 4158   },
+  '2026-03': { pt_credits: 9180, pt_membership: 1590, pt_rent: 2000, new_model: 10395  },
+  '2026-04': { pt_credits: 8520, pt_membership: 1272, pt_rent: 2000, new_model: 19127  },
+  '2026-05': { pt_credits: 6200, pt_membership:  954, pt_rent: 2000, new_model: 29106  },
+  '2026-06': { pt_credits: 4500, pt_membership:  636, pt_rent: 1000, new_model: 39085  },
   // H2 targets TBD — update once post-June forecasts are set
   '2026-07': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
   '2026-08': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
@@ -587,12 +742,21 @@ const FORECAST = {
   '2026-12': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
 };
 
-// ── Projected costs (Head of Fitness £5k + PAYE at last actual run-rate) ─
+// ── Projected costs (PAYE at last actual run-rate; HoF £0 from May) ─
 const COST_FORECAST = {
-  '2026-04': 15648, '2026-05': 20812, '2026-06': 25977,
+  '2026-04': 15648, '2026-05': 10812, '2026-06': 15977,
   // H2 costs TBD
   '2026-07': 0, '2026-08': 0, '2026-09': 0,
   '2026-10': 0, '2026-11': 0, '2026-12': 0,
+};
+
+// ── PT Rent — flat facility fee, not in WodBoard CSV (no upload rule) ─
+// One flat-rent PT leaving after May 2026: £2,000 → £1,000 from June.
+const FIXED_PT_RENT = {
+  '2026-01': 1740, '2026-02': 2000, '2026-03': 2000,
+  '2026-04': 2000, '2026-05': 2000, '2026-06': 1000,
+  '2026-07': 1000, '2026-08': 1000, '2026-09': 1000,
+  '2026-10': 1000, '2026-11': 1000, '2026-12': 1000,
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -624,7 +788,6 @@ const MONTHS_SHORT  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oc
 const SELF_EMP = [
   'Alice Farrow','Adrian Canaveral','Rich Harris','Lucas Cloves',
   'Aimee Jeffs','Luke Mehson','Sam Pepys','Annie Hall','Adam Siddle',
-  'Max Wade (→ New Model Apr 26)',
 ];
 
 // ── PAYG PT membership — customer ID → coach name ──────────────────────────
@@ -636,13 +799,13 @@ const PAYG_PT_MEMBER_IDS = {
   '256755': 'Aimee Jeffs',
   '16280':  'Sam Pepys',
   '114125': 'Lucas Cloves',
-  '64599':  'Max Wade',
   '64591':  'Alice Farrow',
   '64590':  'Adrian Canaveral',
-  '192919': 'Harry Sheppard',
   '64589':  'Adam Siddle',
   '98486':  'Luke Mehson',
   '28121':  'Annie Hall',
+  // Max Wade (64599) removed Apr 2026 — transitioned to PAYE New Model
+  // Harry Sheppard (192919) removed — transitioned PAYE Feb 2026
 };
 
 // ── PAYG PT name lookup — used to attribute "PT rental" transactions by coach ──
@@ -668,6 +831,9 @@ const ITEM_MAP = [
   { re: /jessica?(\s+donehue)?|jess\s*donehue|^jess\b/i,   line: 'new_model',     coach: 'Jess Donehue'    },
   { re: /harry\s*sh?ep/i,                                   line: 'new_model',     coach: 'Harry Sheppard'  },
   { re: /mara\s*(greenwood)?/i,                             line: 'new_model',     coach: 'Mara Greenwood'  },
+  { re: /max\s*wade/i,                                      line: 'new_model',     coach: 'Max Wade'        },
+  { re: /kayla\s*joll/i,                                    line: 'new_model',     coach: 'Kayla Joll'      },
+  { re: /grace\s*g\b/i,                                     line: 'new_model',     coach: 'Grace G'         },
   { re: /joining fee|pt intro offer|intro pt session/i,     line: 'new_model',     coach: 'Intro / Other'   },
 ];
 
@@ -692,10 +858,14 @@ const pct = v => v == null ? '—' : (v * 100).toFixed(1) + '%';
 const monthKey = d => d.toISOString().slice(0, 7);     // Date → 'YYYY-MM'
 const isoMonth = k => k + '-01';                        // 'YYYY-MM' → 'YYYY-MM-01'
 
+function ptRent(mk) {
+  // pt_rent never comes from CSV uploads — use fixed hardcoded value
+  return FIXED_PT_RENT[mk] ?? 0;
+}
 function oldModelRev(mk) {
   const r = DB.revenue[mk];
   if (!r) return null;
-  return (r.pt_credits || 0) + (r.pt_rent || 0);
+  return (r.pt_credits || 0) + ptRent(mk);
 }
 function newModelRev(mk) { return DB.revenue[mk]?.new_model ?? null; }
 function memRev(mk)      { return DB.revenue[mk]?.pt_membership ?? null; }
@@ -703,7 +873,18 @@ function totalCost(mk)   { return DB.costs[mk]?.total ?? null; }
 function totalRev(mk) {
   const r = DB.revenue[mk];
   if (!r) return null;
-  return (r.pt_credits||0) + (r.pt_membership||0) + (r.pt_rent||0) + (r.new_model||0);
+  return (r.pt_credits||0) + (r.pt_membership||0) + ptRent(mk) + (r.new_model||0);
+}
+
+// Target for a month: localStorage override → FORECAST total
+function getTarget(mk) {
+  const override = localStorage.getItem('pt_target_override_' + mk);
+  if (override !== null) return parseFloat(override);
+  const f = FORECAST[mk];
+  return f ? f.pt_credits + f.pt_membership + f.pt_rent + f.new_model : 0;
+}
+function getTargetLine(mk, line) {
+  return FORECAST[mk]?.[line] ?? 0;
 }
 
 // Actual months = those with revenue data
@@ -783,36 +964,153 @@ function renderHeader() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// RENDER — KPI STRIP
+// RENDER — DECISION HEADER
 // ═══════════════════════════════════════════════════════════════
 
-function renderKPIs() {
-  const ams = actMonths();
-  const oldYTD  = ams.reduce((s,mk) => s + (oldModelRev(mk) || 0), 0);
-  const newYTD  = ams.reduce((s,mk) => s + (newModelRev(mk) || 0), 0);
-  const memYTD  = ams.reduce((s,mk) => s + (memRev(mk) || 0), 0);
-  const costYTD = ams.reduce((s,mk) => s + (totalCost(mk) || 0), 0);
-  const revYTD  = oldYTD + newYTD + memYTD;
-  const profYTD = revYTD - costYTD;
-  const margin  = profYTD / revYTD;
+function workingDaysLeft(today) {
+  const end = new Date(today.getFullYear(), today.getMonth()+1, 0); // last day of month
+  let count = 0;
+  const d = new Date(today); d.setDate(d.getDate()+1);
+  while (d <= end) { if (d.getDay() !== 0) count++; d.setDate(d.getDate()+1); }
+  return count;
+}
 
-  const fctYTD = ams.reduce((s,mk) => {
-    const f = FORECAST[mk];
-    return s + (f ? f.pt_credits + f.pt_membership + f.pt_rent + f.new_model : 0);
-  }, 0);
-  const ach = fctYTD > 0 ? revYTD / fctYTD : null;
+function renderDecisionHeader() {
+  const today      = new Date();
+  const currentMk  = monthKey(today);
+  const daysInMo   = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
+  const daysEl     = today.getDate();
+  const daysLeft   = daysInMo - daysEl;
+  const workLeft   = workingDaysLeft(today);
+  const monthLbl   = today.toLocaleDateString('en-GB',{month:'short',year:'2-digit'});
 
-  const kpis = [
-    { lbl: 'Old Model Rev YTD', val: gbp(Math.round(oldYTD)), sub: 'PT Credits + Rent · 100% margin', cls: 'green'  },
-    { lbl: 'New Model Rev YTD', val: gbp(Math.round(newYTD)), sub: 'PAYE named packages',              cls: 'blue'   },
-    { lbl: 'Total PT Costs YTD',val: gbp(Math.round(costYTD)),sub: 'Payroll + tax + HoF',              cls: 'red'    },
-    { lbl: 'Blended Margin %',  val: pct(margin),            sub: `Profit: ${gbp(Math.round(profYTD))}`,cls: margin>=0.3?'green':margin>=0.15?'amber':'red' },
-    { lbl: 'Rev vs Forecast',   val: ach ? pct(ach) : '—',  sub: `${ams.length}/${MONTHS_H1.length} months reported`, cls: ach&&ach>=1?'green':ach&&ach>=0.85?'amber':'red' },
+  // Revenue data for current & previous month
+  const currentRev = totalRev(currentMk);
+  const prevMk     = MONTHS_H1[MONTHS_H1.indexOf(currentMk) - 1] ?? null;
+  const prevRev    = prevMk ? (totalRev(prevMk) || 0) : null;
+
+  // Target & pace
+  const monthTgt   = getTarget(currentMk);
+  const pacedTgt   = monthTgt > 0 ? (monthTgt / daysInMo) * daysEl : 0;
+  const rev        = currentRev ?? 0;
+  const paceRatio  = pacedTgt > 0 ? rev / pacedTgt : null;
+  const tgtRatio   = monthTgt > 0 ? rev / monthTgt : null;
+
+  // RAG
+  const rag = paceRatio === null ? 'grey'
+    : paceRatio >= 0.9 ? 'green'
+    : paceRatio >= 0.7 ? 'amber'
+    : 'red';
+  const ragLabel = { green:'On Track', amber:'Behind Pace', red:'At Risk', grey:'No Data' }[rag];
+  const fillPct  = Math.min(100, tgtRatio ? Math.round(tgtRatio*100) : 0);
+
+  // Has override?
+  const hasOverride = localStorage.getItem('pt_target_override_' + currentMk) !== null;
+
+  // vs last month delta
+  const delta    = prevRev !== null ? rev - prevRev : null;
+  const deltaFmt = delta !== null
+    ? `<span class="${delta>=0?'green':'red'}">${delta>=0?'▲':'▼'} ${gbp(Math.abs(Math.round(delta)))}</span>`
+    : '<span class="muted">—</span>';
+  const prevLbl = prevMk ? MONTHS_LABELS[MONTHS_H1.indexOf(prevMk)] : '—';
+
+  // Days urgency
+  const daysCls = daysLeft <= 5 ? 'urgency-red' : daysLeft <= 10 ? 'urgency-amber' : '';
+
+  // Data label
+  const dataLbl = currentRev !== null ? `${monthLbl} · uploaded` : `${monthLbl} · no data yet`;
+
+  document.getElementById('decisionHeader').innerHTML = `
+    <div class="decision-header rag-${rag}">
+      <div class="dh-col dh-col-main rag-${rag}">
+        <div class="dh-label">Revenue — ${dataLbl}</div>
+        <div class="dh-amount">${gbp(Math.round(rev))}</div>
+        <div class="dh-progress-track"><div class="dh-progress-fill fill-${rag}" style="width:${fillPct}%"></div></div>
+        <div class="dh-rag-row">
+          <span class="rag-badge rag-${rag}">${ragLabel}</span>
+          <span class="dh-target-row">vs <span id="dhTargetAmt">${gbp(Math.round(monthTgt))}</span> target
+            ${hasOverride?'<span class="custom-badge">custom</span>':''}
+            <button class="dh-edit-btn" onclick="startEditTarget('${currentMk}')" title="Edit target">✏</button>
+          </span>
+        </div>
+        <div class="dh-sub">
+          ${tgtRatio!==null?Math.round(tgtRatio*100):'—'}% of monthly target
+          ${paceRatio!==null?' · '+Math.round(paceRatio*100)+'% of paced target':''}
+        </div>
+      </div>
+      <div class="dh-col">
+        <div class="dh-label">vs Last Month</div>
+        <div class="dh-delta">${deltaFmt}</div>
+        <div class="dh-sub">vs ${gbp(Math.round(prevRev??0))} ${prevLbl}</div>
+      </div>
+      <div class="dh-col">
+        <div class="dh-label">Days Remaining in ${monthLbl}</div>
+        <div class="dh-days ${daysCls}">${daysLeft}</div>
+        <div class="dh-sub">${workLeft} working days (Mon–Sat)</div>
+      </div>
+    </div>`;
+}
+
+function startEditTarget(mk) {
+  const current = getTarget(mk);
+  const el = document.getElementById('dhTargetAmt');
+  if (!el) return;
+  el.innerHTML = `<input id="dhTargetInput" class="dh-target-input" type="number" value="${current}" onblur="commitTarget('${mk}')" onkeydown="if(event.key==='Enter')commitTarget('${mk}');if(event.key==='Escape')renderDecisionHeader();">`;
+  document.getElementById('dhTargetInput')?.focus();
+}
+function commitTarget(mk) {
+  const val = parseFloat(document.getElementById('dhTargetInput')?.value);
+  if (!isNaN(val) && val > 0) {
+    localStorage.setItem('pt_target_override_' + mk, val);
+  }
+  renderDecisionHeader();
+  renderRevBreakdown();
+  renderInsight();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — REVENUE BREAKDOWN STRIP
+// ═══════════════════════════════════════════════════════════════
+
+function renderRevBreakdown() {
+  const today     = new Date();
+  const currentMk = monthKey(today);
+  const daysInMo  = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
+  const daysEl    = today.getDate();
+  const r         = DB.revenue[currentMk];
+
+  const lines = [
+    { key:'new_model',    lbl:'New Model',        actual: r?.new_model ?? null,        action:'Book intro sessions / follow up with matched leads' },
+    { key:'pt_credits',   lbl:'PT Credits (PAYG)',actual: r?.pt_credits ?? null,        action:'Chase PAYG coaches re pack renewals' },
+    { key:'pt_rent',      lbl:'PT Rent',          actual: ptRent(currentMk),            action:'Check facility booking utilisation', fixed:true },
+    { key:'pt_membership',lbl:'PT Membership',    actual: r?.pt_membership ?? null,    action:'Review which PAYG PTs haven\'t renewed' },
   ];
 
-  document.getElementById('kpiStrip').innerHTML = kpis.map(k =>
-    `<div class="kpi"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val ${k.cls}">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`
-  ).join('');
+  const html = lines.map(line => {
+    const tgt     = getTargetLine(currentMk, line.key);
+    const paced   = tgt > 0 ? (tgt / daysInMo) * daysEl : 0;
+    const act     = line.actual ?? 0;
+    const ratio   = paced > 0 ? act / paced : null;
+    const fillPct = Math.min(100, tgt > 0 ? Math.round(act/tgt*100) : 0);
+    const rag     = line.fixed ? 'grey'
+      : ratio === null ? 'grey'
+      : ratio >= 0.9 ? 'green'
+      : ratio >= 0.7 ? 'amber'
+      : 'red';
+    const pctTxt  = tgt > 0 ? Math.round(act/tgt*100)+'%' : '—';
+    return `<div class="bs-row">
+      <div class="bs-line">${line.lbl}</div>
+      <div class="bs-actual ${rag==='grey'?'muted':rag}">${gbp(Math.round(act))}</div>
+      <div class="bs-target">of ${gbp(Math.round(tgt))}</div>
+      <div class="bs-bar-track"><div class="bs-bar-fill fill-${rag}" style="width:${fillPct}%"></div></div>
+      <div class="bs-pct ${rag==='grey'?'muted':rag}">
+        ${line.fixed?'<span class="rag-badge rag-grey">Fixed</span>':`<span class="rag-badge rag-${rag}">${pctTxt}</span>`}
+      </div>
+      <div class="bs-action">${line.action}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('revBreakdownStrip').innerHTML = html;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -820,16 +1118,71 @@ function renderKPIs() {
 // ═══════════════════════════════════════════════════════════════
 
 function renderInsight() {
-  const ams = actMonths();
-  const oldYTD = ams.reduce((s,mk)=>s+(oldModelRev(mk)||0),0);
-  const newYTD = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
-  const costYTD= ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
-  const newMargin = (newYTD - costYTD) / newYTD;
-  const newProfit = newYTD - costYTD;
-  document.getElementById('insightBanner').innerHTML =
-    `<strong>Key insight:</strong> Old Model (PAYG) generates <strong>${gbp(Math.round(oldYTD))} at 100% margin</strong> — effectively subsidising the New Model's investment phase. ` +
-    `New Model currently runs at <strong>${pct(newMargin)} margin (${gbp(Math.round(newProfit))} YTD)</strong> as payroll and Head of Fitness front-load the build. ` +
-    `Break-even projected <strong>Apr–May 2026</strong> as named packages scale.`;
+  const today     = new Date();
+  const currentMk = monthKey(today);
+  const daysInMo  = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
+  const daysEl    = today.getDate();
+  const daysLeft  = daysInMo - daysEl;
+
+  const rev       = totalRev(currentMk) ?? 0;
+  const tgt       = getTarget(currentMk);
+  const pacedTgt  = tgt > 0 ? (tgt / daysInMo) * daysEl : 0;
+  const paceRatio = pacedTgt > 0 ? rev / pacedTgt : null;
+  const projEnd   = daysEl > 0 ? (rev / daysEl) * daysInMo : 0;
+  const gap       = tgt - rev;
+  const dailyNeeded = daysLeft > 0 ? gap / daysLeft : null;
+
+  let msg = '';
+
+  if (paceRatio === null || totalRev(currentMk) === null) {
+    // No current month data — fall back to YTD summary
+    const ams = actMonths();
+    const oldYTD = ams.reduce((s,mk)=>s+(oldModelRev(mk)||0),0);
+    const newYTD = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
+    const costYTD= ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
+    const newProfit = newYTD - costYTD;
+    const newMargin = newYTD > 0 ? newProfit / newYTD : 0;
+    msg = `<strong>No data uploaded for this month yet.</strong> YTD: Old Model generating <strong>${gbp(Math.round(oldYTD))} at 100% margin</strong>. `
+        + `New Model at <strong>${pct(newMargin)} margin (${gbp(Math.round(newProfit))} YTD)</strong>. `
+        + `Upload this month's WodBoard CSV to see live pace tracking.`;
+  } else {
+    // Build gap attribution — find underperforming line
+    const r        = DB.revenue[currentMk] || {};
+    const newAct   = r.new_model || 0;
+    const newTgt   = getTargetLine(currentMk, 'new_model');
+    const newPaced = newTgt > 0 ? (newTgt / daysInMo) * daysEl : 0;
+    const newGap   = newPaced - newAct;
+
+    // Coach-level gap (from coach transactions)
+    let coachGapStr = '';
+    if (newGap > 200 && DB.coachTxns[currentMk]?.length > 0) {
+      const coachRevMap = {};
+      for (const t of DB.coachTxns[currentMk]) {
+        if (['Craig Clout','Jess Donehue','Harry Sheppard','Mara Greenwood','Max Wade','Kayla Joll','Grace G'].includes(t.coach_name)) {
+          coachRevMap[t.coach_name] = (coachRevMap[t.coach_name]||0) + parseFloat(t.amount);
+        }
+      }
+      const lowest = Object.entries(coachRevMap).sort((a,b)=>a[1]-b[1]).slice(0,2);
+      if (lowest.length > 0) {
+        coachGapStr = ` New Model gap led by: ${lowest.map(([n,v])=>`<strong>${n} (${gbp(Math.round(v))})</strong>`).join(' and ')}.`;
+      }
+    }
+
+    if (paceRatio < 0.7) {
+      msg = `<strong style="color:#f87171">At risk:</strong> You need <strong>${gbp(Math.round(gap))}</strong> in the next ${daysLeft} days to hit target`
+          + (dailyNeeded ? ` — that's <strong>${gbp(Math.round(dailyNeeded))}/day</strong>.` : '.')
+          + coachGapStr;
+    } else if (paceRatio < 0.9) {
+      msg = `<strong style="color:#e8c547">Behind pace:</strong> On current trend, you'll finish the month at <strong>${gbp(Math.round(projEnd))}</strong>`
+          + (gap > 0 ? ` — <strong>${gbp(Math.round(gap))} short</strong> of target.` : '.')
+          + coachGapStr;
+    } else {
+      msg = `<strong style="color:#4ade80">On track:</strong> Projecting <strong>${gbp(Math.round(projEnd))}</strong> for the month`
+          + (projEnd >= tgt ? ` — <strong>${gbp(Math.round(projEnd-tgt))} above target</strong> at this pace.` : '.');
+    }
+  }
+
+  document.getElementById('insightBanner').innerHTML = msg;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1006,11 +1359,9 @@ function renderPnLTable() {
   const costYTD = ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
   html += `<tr><td>Revenue</td>${ams.map(mk=>`<td class="r blue">${gbpd(newModelRev(mk))}</td>`).join('')}<td class="r blue">${gbp(Math.round(newYTD))}</td><td class="r">—</td></tr>`;
   const costLines = [
-    {key:'head_of_fitness',lbl:'Head of Fitness'},
-    {key:'craig_clout',    lbl:'Craig Clout'},
-    {key:'jess_donehue',   lbl:'Jess Donehue'},
-    {key:'harry_sheppard', lbl:'Harry Sheppard'},
-    {key:'tax_ni',         lbl:'Employer Tax/NI'},
+    {key:'head_of_fitness', lbl:'Head of Fitness'},
+    ...PAYE_COACHES.map(c=>({key:c.key,lbl:c.name})),
+    {key:'tax_ni',          lbl:'Employer Tax/NI'},
   ];
   for (const cl of costLines) {
     const cYTD = ams.reduce((s,mk)=>s+(DB.costs[mk]?.[cl.key]||0),0);
@@ -1044,14 +1395,14 @@ function renderCostTable() {
   const mHdrs = ams.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
   const costLines = [
     {key:'head_of_fitness', lbl:'Head of Fitness †'},
-    {key:'craig_clout',     lbl:'Craig Clout'},
-    {key:'jess_donehue',    lbl:'Jess Donehue'},
-    {key:'harry_sheppard',  lbl:'Harry Sheppard ‡'},
+    ...PAYE_COACHES.map(c => ({key:c.key, lbl:c.name})),
     {key:'tax_ni',          lbl:'Employer Tax / NI'},
   ];
   let html = `<thead><tr><th>Cost Line</th>${mHdrs.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th></tr></thead><tbody>`;
   for (const cl of costLines) {
     const ytd = ams.reduce((s,mk)=>s+(DB.costs[mk]?.[cl.key]||0),0);
+    const hasAny = ams.some(mk => DB.costs[mk]?.[cl.key] > 0);
+    if (!hasAny) continue; // hide coaches with no data yet
     html += `<tr><td>${cl.lbl}</td>${ams.map(mk=>{const v=DB.costs[mk]?.[cl.key];return `<td class="r">${v?gbpd(v):'<span class="dim">—</span>'}</td>`;}).join('')}<td class="r white">${gbpd(ytd)}</td></tr>`;
   }
   const totYTD = ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
@@ -1064,7 +1415,7 @@ function renderCostTable() {
 // ═══════════════════════════════════════════════════════════════
 
 function renderCoaches() {
-  destroyChart('cCoachRev'); destroyChart('cCoachCost');
+  destroyChart('cCoachRev');
 
   // Find most recent month with coach transaction data
   const txnMonths = MONTHS_H1.filter(mk => DB.coachTxns[mk]?.length > 0);
@@ -1084,25 +1435,25 @@ function renderCoaches() {
 
   const coachNames = Object.keys(coachRevMap).sort((a,b) => coachRevMap[b]-coachRevMap[a]);
 
-  // Coach cards (fixed PAYE coaches)
+  // Coach cards (PAYE coaches)
   const payeCoaches = [
     { name:'Craig Clout',    key:'craig_clout'    },
     { name:'Jess Donehue',   key:'jess_donehue'   },
     { name:'Harry Sheppard', key:'harry_sheppard'  },
-    { name:'Mara Greenwood', key:null              },
+    { name:'Mara Greenwood', key:'mara_greenwood'  },
+    { name:'Max Wade',       key:'max_wade'        },
+    { name:'Kayla Joll',     key:'kayla_joll'      },
+    { name:'Grace G',        key:'grace_g'         },
   ];
   const ams = actMonths();
 
   document.getElementById('coachCards').innerHTML = payeCoaches.map(c => {
-    const costYTD = c.key ? ams.reduce((s,mk)=>s+(DB.costs[mk]?.[c.key]||0),0) : 0;
     const revLatest = coachRevMap[c.name] || 0;
-    const roi = (c.key && DB.costs[latestMk]?.[c.key] > 0) ? (revLatest / DB.costs[latestMk][c.key]) : null;
     return `<div class="coach-card">
       <div class="coach-name">${c.name}</div>
       <div class="coach-rev">${gbpd(revLatest)}</div>
       <div class="coach-cost">${latestLbl} revenue</div>
-      <div class="coach-cost">YTD payroll: ${costYTD>0?gbpd(costYTD):'—'}</div>
-      <div class="coach-eff ${roi?roi>=1?'green':'red':'amber'}">${roi?roi.toFixed(2)+'x rev/cost':c.key?'See below':'No payroll'}</div>
+      <div class="coach-cost">PAYE</div>
     </div>`;
   }).join('');
 
@@ -1115,31 +1466,22 @@ function renderCoaches() {
       scales:{x:{...mkY()},y:{grid:GRID,ticks:{...TICK,color:'#888'}}} },
   });
 
-  // Coach payroll bar (latest month PAYE only)
-  const payrollNames = ['Craig Clout','Jess Donehue','Harry Sheppard'];
-  const payrollKeys  = ['craig_clout','jess_donehue','harry_sheppard'];
-  const payrollVals  = payrollKeys.map(k => DB.costs[latestMk]?.[k] ?? 0);
-  charts['cCoachCost'] = new Chart(document.getElementById('cCoachCost'), {
-    type:'bar',
-    data:{ labels:payrollNames, datasets:[{ label:'Payroll', data:payrollVals, backgroundColor:'#5f1e1e', borderRadius:4 }] },
-    options:{ responsive:true, maintainAspectRatio:true, indexAxis:'y',
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${gbp(c.raw)}`}}},
-      scales:{x:{...mkY()},y:{grid:GRID,ticks:{...TICK,color:'#888'}}} },
-  });
+  // (payroll detail is in the Costs tab — see renderCosts)
 
-  // Coach detail table
-  let html = `<thead><tr><th>Coach</th><th>Type</th>${MONTHS_SHORT.map(m=>`<th class="r">${m} Pay</th>`).join('')}<th class="r">YTD Pay</th><th class="r">${latestLbl} Rev</th><th class="r">ROI</th></tr></thead><tbody>`;
+  // Coach revenue table — revenue only, no payroll figures
+  const actMks = actMonths().filter(mk => MONTHS_H1.includes(mk));
+  const actLbls = actMks.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
+  let html = `<thead><tr><th>Coach</th><th>Type</th>${actLbls.map(m=>`<th class="r">${m} Rev</th>`).join('')}<th class="r">YTD Rev</th></tr></thead><tbody>`;
   for (const c of payeCoaches) {
-    const paysByMonth = MONTHS_H1.map(mk => c.key ? (DB.costs[mk]?.[c.key] ?? null) : null);
-    const ytdPay = c.key ? ams.reduce((s,mk)=>s+(DB.costs[mk]?.[c.key]||0),0) : 0;
-    const rev = coachRevMap[c.name] || 0;
-    const latestPay = c.key ? (DB.costs[latestMk]?.[c.key] || 0) : 0;
-    const roi = latestPay > 0 ? rev/latestPay : null;
-    html += `<tr><td>${c.name}</td><td><span class="badge ${c.key?'bb':'bc'}">${c.key?'PAYE':'SE?'}</span></td>
-      ${paysByMonth.map(v=>`<td class="r">${v!=null&&v>0?gbpd(v):'<span class="dim">—</span>'}</td>`).join('')}
-      <td class="r white">${ytdPay>0?gbpd(ytdPay):'—'}</td>
-      <td class="r blue">${gbpd(rev)}</td>
-      <td class="r ${roi?roi>=1?'green':'red':'amber'}">${roi?roi.toFixed(2)+'x':'—'}</td></tr>`;
+    const revByMonth = actMks.map(mk => {
+      const txns = DB.coachTxns[mk];
+      if (!txns) return null;
+      return txns.filter(t => t.coach_name === c.name).reduce((s,t) => s + parseFloat(t.amount), 0) || null;
+    });
+    const ytdRev = revByMonth.reduce((s,v) => s+(v||0), 0);
+    html += `<tr><td>${c.name}</td><td><span class="badge bb">PAYE</span></td>
+      ${revByMonth.map(v=>`<td class="r blue">${v!=null&&v>0?gbpd(v):'<span class="dim">—</span>'}</td>`).join('')}
+      <td class="r white">${ytdRev>0?gbpd(ytdRev):'—'}</td></tr>`;
   }
   html += `</tbody>`;
   document.getElementById('coachTbl').innerHTML = html;
@@ -1288,20 +1630,196 @@ function renderH1Table() {
 // RENDER ALL
 // ═══════════════════════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════════════════════
+// RENDER — FINANCE TAB (internal — payroll + cost breakdown)
+// ═══════════════════════════════════════════════════════════════
+
+// PAYE coach list used across cost functions
+const PAYE_COACHES = [
+  { name:'Craig Clout',    key:'craig_clout'    },
+  { name:'Jess Donehue',   key:'jess_donehue'   },
+  { name:'Harry Sheppard', key:'harry_sheppard'  },
+  { name:'Mara G',         key:'mara_greenwood'  },
+  { name:'Max Wade',       key:'max_wade'        },
+  { name:'Kayla Joll',     key:'kayla_joll'      },
+  { name:'Grace G',        key:'grace_g'         },
+];
+
+function hofDefault(mk) {
+  // Head of Fitness: £5,000 Jan–Apr 2026, £0 from May
+  const [y,m] = mk.split('-').map(Number);
+  return (y === 2026 && m <= 4) ? 5000 : 0;
+}
+
+function prefillCostForm() {
+  const mk = document.getElementById('costMonthPicker').value;
+  const existing = DB.costs[mk] || {};
+  const form = document.getElementById('costEntryForm');
+  let rows = '';
+  for (const c of PAYE_COACHES) {
+    const sess = existing[c.key+'_sessions'] ?? '';
+    const pay  = existing[c.key] ?? '';
+    rows += `<div class="cost-form-lbl">${c.name}</div>
+      <div><input class="cost-form-input" type="number" id="cf_sess_${c.key}" value="${sess}" placeholder="—" min="0"></div>
+      <div><input class="cost-form-input wide" type="number" id="cf_pay_${c.key}" value="${pay||''}" placeholder="0.00" step="0.01" min="0"></div>`;
+  }
+  // Employer NI / Tax
+  const taxNi = existing['tax_ni'] ?? '';
+  rows += `<div class="cost-form-lbl" style="color:#555">Employer Tax / NI</div>
+    <div></div>
+    <div><input class="cost-form-input wide" type="number" id="cf_tax_ni" value="${taxNi||''}" placeholder="0.00" step="0.01" min="0"></div>`;
+  // Head of Fitness
+  const hofVal = existing['head_of_fitness'] ?? hofDefault(mk);
+  rows += `<div class="cost-form-lbl" style="color:#555">Head of Fitness</div>
+    <div></div>
+    <div><input class="cost-form-input wide" type="number" id="cf_hof" value="${hofVal}" placeholder="0.00" step="0.01" min="0"></div>`;
+  // Total row (static display, updated on input)
+  rows += `<div class="cost-form-lbl" style="color:#fff;font-weight:700;border-top:1px solid #333;padding-top:10px">Total</div>
+    <div style="border-top:1px solid #333;padding-top:10px"></div>
+    <div style="border-top:1px solid #333;padding-top:10px;font-weight:700;color:#fff" id="cf_total">—</div>`;
+
+  form.innerHTML =
+    `<div class="cost-form-hdr">Coach</div><div class="cost-form-hdr" style="text-align:right">Sessions</div><div class="cost-form-hdr" style="text-align:right">Total Payout</div>`
+    + rows;
+
+  // Live total on any input change
+  form.addEventListener('input', updateCostTotal);
+  updateCostTotal();
+
+  const mk_lbl = new Date(mk+'-01').toLocaleDateString('en-GB',{month:'short',year:'2-digit'});
+  document.getElementById('costSaveBtn').textContent = `Save Costs for ${mk_lbl}`;
+  document.getElementById('costStatus').textContent = '';
+  document.getElementById('costStatus').className = 'cost-status';
+}
+
+function updateCostTotal() {
+  let total = 0;
+  for (const c of PAYE_COACHES) {
+    total += parseFloat(document.getElementById('cf_pay_'+c.key)?.value || 0);
+  }
+  total += parseFloat(document.getElementById('cf_tax_ni')?.value || 0);
+  total += parseFloat(document.getElementById('cf_hof')?.value || 0);
+  const el = document.getElementById('cf_total');
+  if (el) el.textContent = gbp(Math.round(total*100)/100);
+}
+
+function clearCostForm() {
+  document.querySelectorAll('#costEntryForm input').forEach(i => i.value = '');
+  updateCostTotal();
+}
+
+async function saveCosts() {
+  const mk  = document.getElementById('costMonthPicker').value;
+  const iso = mk + '-01';
+  const btn = document.getElementById('costSaveBtn');
+  const st  = document.getElementById('costStatus');
+  btn.disabled = true;
+  st.className = 'cost-status';
+  st.textContent = 'Saving…';
+
+  try {
+    const rows = [];
+    for (const c of PAYE_COACHES) {
+      const pay  = parseFloat(document.getElementById('cf_pay_'+c.key)?.value);
+      const sess = parseFloat(document.getElementById('cf_sess_'+c.key)?.value);
+      if (!isNaN(pay) && pay > 0) rows.push({ month: iso, cost_line: c.key, amount: pay });
+      if (!isNaN(sess) && sess > 0) rows.push({ month: iso, cost_line: c.key+'_sessions', amount: sess });
+    }
+    const taxNi = parseFloat(document.getElementById('cf_tax_ni')?.value);
+    if (!isNaN(taxNi) && taxNi > 0) rows.push({ month: iso, cost_line: 'tax_ni', amount: taxNi });
+    const hof = parseFloat(document.getElementById('cf_hof')?.value);
+    if (!isNaN(hof)) rows.push({ month: iso, cost_line: 'head_of_fitness', amount: hof });
+
+    if (rows.length === 0) { st.className='cost-status err'; st.textContent='No values entered.'; btn.disabled=false; return; }
+
+    for (const r of rows) await sbUpsert('pt_costs', r, 'month,cost_line');
+
+    await loadData();
+    renderAll();
+    st.className = 'cost-status ok';
+    const mk_lbl = new Date(iso).toLocaleDateString('en-GB',{month:'short',year:'2-digit'});
+    st.textContent = `✓ ${mk_lbl} costs saved — ${rows.length} lines updated`;
+  } catch(e) {
+    st.className = 'cost-status err';
+    st.textContent = 'Error: ' + e.message;
+  }
+  btn.disabled = false;
+}
+
+function renderCosts() {
+  renderCostTable();
+
+  // ── Cost breakdown display table (per-coach sessions + payout + avg rate) ──
+  const costMks  = MONTHS_H1.filter(mk => DB.costs[mk]);
+  const latestMk = costMks[costMks.length-1] || null;
+  const latestLbl = latestMk ? MONTHS_LABELS[MONTHS_H1.indexOf(latestMk)] : '—';
+
+  document.getElementById('costsDisplayBadge').textContent = latestLbl;
+  document.getElementById('costDisplayBadgeMk').textContent = latestMk ? latestLbl : 'no data';
+
+  let total_sess = 0, total_pay = 0;
+  let bh = `<thead><tr><th>PT Name</th><th class="r">Sessions</th><th class="r">Total Payout</th><th class="r">Avg Hourly Rate</th></tr></thead><tbody>`;
+  for (const c of PAYE_COACHES) {
+    const pay  = latestMk ? (DB.costs[latestMk]?.[c.key] || 0) : 0;
+    const sess = latestMk ? (DB.costs[latestMk]?.[c.key+'_sessions'] || 0) : 0;
+    const avg  = sess > 0 ? pay / sess : null;
+    if (pay > 0 || sess > 0) {
+      total_sess += sess; total_pay += pay;
+      bh += `<tr><td>${c.name}</td><td class="r">${sess||'—'}</td><td class="r">${gbpd(pay)}</td><td class="r">${avg?avg.toFixed(2):'—'}</td></tr>`;
+    }
+  }
+  // Overhead rows (no sessions)
+  const hof   = latestMk ? (DB.costs[latestMk]?.head_of_fitness || 0) : 0;
+  const taxni = latestMk ? (DB.costs[latestMk]?.tax_ni || 0) : 0;
+  if (hof > 0)   { total_pay += hof;   bh += `<tr class="sub"><td>Head of Fitness</td><td class="r">—</td><td class="r">${gbpd(hof)}</td><td class="r">—</td></tr>`; }
+  if (taxni > 0) { total_pay += taxni; bh += `<tr class="sub"><td>Employer Tax / NI</td><td class="r">—</td><td class="r">${gbpd(taxni)}</td><td class="r">—</td></tr>`; }
+  bh += `<tr class="tot"><td>Total</td><td class="r">${total_sess||'—'}</td><td class="r">${gbpd(total_pay)}</td><td class="r">—</td></tr>`;
+  bh += `</tbody>`;
+  document.getElementById('costsBreakdownTbl').innerHTML = bh;
+
+  // ── Coach payroll vs revenue table ──
+  const ams = actMonths();
+  const coachRevMap = {};
+  if (latestMk && DB.coachTxns[latestMk]) {
+    for (const t of DB.coachTxns[latestMk]) {
+      coachRevMap[t.coach_name] = (coachRevMap[t.coach_name] || 0) + parseFloat(t.amount);
+    }
+  }
+  let ph = `<thead><tr><th>Coach</th>${MONTHS_SHORT.map(m=>`<th class="r">${m} Pay</th>`).join('')}<th class="r">YTD Pay</th><th class="r">${latestLbl} Rev</th><th class="r">ROI</th></tr></thead><tbody>`;
+  for (const c of PAYE_COACHES) {
+    const paysByMonth = MONTHS_H1.map(mk => DB.costs[mk]?.[c.key] ?? null);
+    const ytdPay = ams.reduce((s,mk)=>s+(DB.costs[mk]?.[c.key]||0),0);
+    const rev    = coachRevMap[c.name] || 0;
+    const latPay = DB.costs[latestMk]?.[c.key] || 0;
+    const roi    = latPay > 0 ? rev/latPay : null;
+    ph += `<tr><td>${c.name}</td>
+      ${paysByMonth.map(v=>`<td class="r">${v!=null&&v>0?gbpd(v):'<span class="dim">—</span>'}</td>`).join('')}
+      <td class="r white">${ytdPay>0?gbpd(ytdPay):'—'}</td>
+      <td class="r blue">${gbpd(rev)}</td>
+      <td class="r ${roi?roi>=1?'green':'red':'muted'}">${roi?roi.toFixed(2)+'x':'—'}</td></tr>`;
+  }
+  ph += `</tbody>`;
+  document.getElementById('coachPayTbl').innerHTML = ph;
+
+  // Prefill cost form for current month on first load
+  prefillCostForm();
+}
+
 function renderAll() {
   renderHeader();
-  renderKPIs();
+  renderDecisionHeader();
+  renderRevBreakdown();
   renderInsight();
   renderModelCards();
   renderOverviewChart();
   renderOverviewTable();
   renderModelCharts();
   renderPnLTable();
-  renderCostTable();
   renderCoaches();
   renderTrends();
   renderH1Table();
   renderPipeline();
+  renderCosts();
 }
 
 
