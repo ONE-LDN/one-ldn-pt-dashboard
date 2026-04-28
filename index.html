@@ -435,16 +435,6 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
     <div class="card">
       <div class="card-head">
         <div>
-          <div class="card-ttl">Old Model — Self-Employed PTs</div>
-          <div class="card-sub">PAYG coaches · ONE LDN receives 100% revenue, bears zero cost</div>
-        </div>
-        <span class="badge bg">Zero Cost</span>
-      </div>
-      <table id="selfEmpTbl"></table>
-    </div>
-    <div class="card">
-      <div class="card-head">
-        <div>
           <div class="card-ttl">Old Model — Credit Packs Purchased by Coach</div>
           <div class="card-sub">PT rental hours purchased per PAYG coach · attributed from WodBoard Customer Name · re-upload CSVs to populate</div>
         </div>
@@ -1500,12 +1490,6 @@ function renderCoaches() {
   html += `<tr class="tot"><td>Total</td><td></td>${colTotals.map(v=>`<td class="r">${v>0?gbpd(v):'—'}</td>`).join('')}<td class="r">${grandYTD>0?gbpd(grandYTD):'—'}</td></tr>`;
   html += `</tbody>`;
   document.getElementById('coachTbl').innerHTML = html;
-
-  // Self-employed table
-  document.getElementById('selfEmpTbl').innerHTML =
-    `<thead><tr><th>#</th><th>PT Name</th><th>Type</th><th>Cost to ONE LDN</th></tr></thead><tbody>` +
-    SELF_EMP.map((n,i)=>`<tr><td class="lbl">${i+1}</td><td>${n}</td><td><span class="badge bg">PAYG</span></td><td class="r green">£0</td></tr>`).join('') +
-    `</tbody>`;
 
   // ── PAYG credit pack table ─────────────────────────────────────────────
   // Aggregate all coach transactions for PAYG PTs across all months
