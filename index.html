@@ -432,6 +432,27 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
         ‡ Mara Greenwood: appears in March WodBoard export (£960). Not on payroll — status to confirm.
       </div>
     </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">Old Model — Self-Employed PTs</div>
+          <div class="card-sub">PAYG coaches · ONE LDN receives 100% revenue, bears zero cost</div>
+        </div>
+        <span class="badge bg">Zero Cost</span>
+      </div>
+      <table id="selfEmpTbl"></table>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">Old Model — Credit Packs Purchased by Coach</div>
+          <div class="card-sub">PT rental hours purchased per PAYG coach · attributed from WodBoard Customer Name · re-upload CSVs to populate</div>
+        </div>
+        <span class="badge bg">PAYG Revenue</span>
+      </div>
+      <div style="overflow-x:auto"><table id="paygCreditTbl"></table></div>
+      <div class="fn">* Data populates from the next CSV upload. Coach attribution uses the Customer Name column from WodBoard income statement exports. Re-upload historical months to backfill.</div>
+    </div>
   </div>
 
   <!-- ══════════ TAB 4: TRENDS ══════════ -->
@@ -1480,6 +1501,58 @@ function renderCoaches() {
   html += `</tbody>`;
   document.getElementById('coachTbl').innerHTML = html;
 
+  // Self-employed table
+  document.getElementById('selfEmpTbl').innerHTML =
+    `<thead><tr><th>#</th><th>PT Name</th><th>Type</th><th>Cost to ONE LDN</th></tr></thead><tbody>` +
+    SELF_EMP.map((n,i)=>`<tr><td class="lbl">${i+1}</td><td>${n}</td><td><span class="badge bg">PAYG</span></td><td class="r green">£0</td></tr>`).join('') +
+    `</tbody>`;
+
+  // ── PAYG credit pack table ─────────────────────────────────────────────
+  // Aggregate all coach transactions for PAYG PTs across all months
+  const paygNames = Object.values(PAYG_PT_MAP);
+  const paygMonths = MONTHS_H1.filter(mk => DB.coachTxns[mk]?.some(t => paygNames.includes(t.coach_name)));
+
+  if (paygMonths.length === 0) {
+    document.getElementById('paygCreditTbl').innerHTML =
+      `<thead><tr><th>Coach</th><th class="r">Revenue</th></tr></thead>` +
+      `<tbody><tr><td colspan="2" style="color:#444;font-style:italic;padding:18px 11px;">No data yet — re-upload monthly CSVs to populate. Coach attribution now active for future uploads.</td></tr></tbody>`;
+  } else {
+    // Build: { coachName: { monthKey: { packs: [{product, amount}], total } } }
+    const paygData = {};
+    for (const mk of paygMonths) {
+      for (const t of DB.coachTxns[mk]) {
+        if (!paygNames.includes(t.coach_name)) continue;
+        if (!paygData[t.coach_name]) paygData[t.coach_name] = {};
+        if (!paygData[t.coach_name][mk]) paygData[t.coach_name][mk] = { packs: [], total: 0 };
+        paygData[t.coach_name][mk].packs.push({ product: t.product_name, amount: t.amount });
+        paygData[t.coach_name][mk].total += parseFloat(t.amount);
+      }
+    }
+    const mHdrs = paygMonths.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
+    let ph = `<thead><tr><th>Coach</th>${mHdrs.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th></tr></thead><tbody>`;
+    for (const coach of Object.keys(paygData).sort()) {
+      const ytd = paygMonths.reduce((s,mk) => s + (paygData[coach][mk]?.total || 0), 0);
+      ph += `<tr><td>${coach}</td>`;
+      for (const mk of paygMonths) {
+        const d = paygData[coach][mk];
+        if (d) {
+          const tip = d.packs.map(p => `${p.product}: ${gbp(p.amount)}`).join(' · ');
+          ph += `<td class="r green" title="${tip}">${gbp(Math.round(d.total))}</td>`;
+        } else {
+          ph += `<td class="r dim">—</td>`;
+        }
+      }
+      ph += `<td class="r white">${gbp(Math.round(ytd))}</td></tr>`;
+    }
+    // Totals row
+    const totByMonth = paygMonths.map(mk =>
+      Object.values(paygData).reduce((s, cd) => s + (cd[mk]?.total || 0), 0)
+    );
+    const grandTotal = totByMonth.reduce((a,b) => a+b, 0);
+    ph += `<tr class="tot"><td>Total Old Model (PAYG)</td>${totByMonth.map(v=>`<td class="r green">${gbp(Math.round(v))}</td>`).join('')}<td class="r green">${gbp(Math.round(grandTotal))}</td></tr>`;
+    ph += `</tbody>`;
+    document.getElementById('paygCreditTbl').innerHTML = ph;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
