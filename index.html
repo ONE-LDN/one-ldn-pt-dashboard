@@ -810,6 +810,12 @@ const PAYG_PT_MAP = {
   'sam pepys':        'Sam Pepys',
   'annie hall':       'Annie Hall',
   'adam siddle':      'Adam Siddle',
+  'max wade':         'Max Wade',
+};
+
+// Coaches in PAYG_PT_MAP who transitioned to PAYE — stop PAYG attribution from this month onwards
+const PAYG_PAYE_FROM = {
+  'Max Wade': '2026-04',
 };
 
 // ── CSV upload item mapping ──────────────────────────────────────
@@ -2054,7 +2060,8 @@ async function processUpload(filename, rows) {
           // Old Model (PAYG) — attribute by Customer Name if they're a known PAYG PT
           const custName = (row.Name || row.name || '').trim().toLowerCase();
           const paygCoach = PAYG_PT_MAP[custName];
-          if (paygCoach) {
+          const paygUntil = paygCoach && PAYG_PAYE_FROM[paygCoach];
+          if (paygCoach && (!paygUntil || mk < paygUntil)) {
             coachTxns.push({ coach: paygCoach, product: item, amount: gross });
           }
         } else if (rule.line === 'pt_membership') {
