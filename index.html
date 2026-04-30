@@ -1511,6 +1511,8 @@ function renderCoaches() {
     for (const mk of paygMonths) {
       for (const t of DB.coachTxns[mk]) {
         if (!paygNames.includes(t.coach_name)) continue;
+        const paygUntil = PAYG_PAYE_FROM[t.coach_name];
+        if (paygUntil && mk >= paygUntil) continue;
         if (!paygData[t.coach_name]) paygData[t.coach_name] = {};
         if (!paygData[t.coach_name][mk]) paygData[t.coach_name][mk] = { packs: [], total: 0 };
         paygData[t.coach_name][mk].packs.push({ product: t.product_name, amount: t.amount });
