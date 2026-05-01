@@ -35,9 +35,9 @@ body {
 /* colour helpers */
 .white  { color: #fff; }
 .amber  { color: #e8c547; }
-.red    { color: #f87171; }
-.green  { color: #4ade80; }
-.blue   { color: #60a5fa; }
+.red    { color: #d6242d; }
+.green  { color: #c1ff72; }
+.blue   { color: #1150ab; }
 .purple { color: #a78bfa; }
 .muted  { color: #4a4a4a; }
 
@@ -79,8 +79,8 @@ body {
 .upload-btn:hover { opacity: 0.82; }
 .upload-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .upload-status { font-size: 11px; color: #4a4a4a; }
-.upload-status.ok  { color: #4ade80; }
-.upload-status.err { color: #f87171; }
+.upload-status.ok  { color: #c1ff72; }
+.upload-status.err { color: #d6242d; }
 .upload-status.warn { color: #e8c547; }
 #csvFile { display: none; }
 
@@ -111,8 +111,8 @@ body {
 .model-card { background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 12px; padding: 20px 22px; }
 .model-card-ttl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #888; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 .model-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.dot-old { background: #4ade80; }
-.dot-new { background: #60a5fa; }
+.dot-old { background: #c1ff72; }
+.dot-new { background: #1150ab; }
 .dot-mem { background: #a78bfa; }
 .model-rev { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
 .model-cost { font-size: 13px; color: #555; margin-bottom: 8px; }
@@ -140,10 +140,10 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 
 /* ── BADGES ── */
 .badge { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; }
-.bg  { background: #0c1f14; color: #4ade80; }
-.br  { background: #1f0d0d; color: #f87171; }
+.bg  { background: #0c1f14; color: #c1ff72; }
+.br  { background: #1f0d0d; color: #d6242d; }
 .ba  { background: #1a1400; color: #e8c547; }
-.bb  { background: #0c1828; color: #60a5fa; }
+.bb  { background: #0c1828; color: #1150ab; }
 .bp  { background: #130f1f; color: #a78bfa; }
 .bc  { background: #101010; color: #888; }
 
@@ -151,7 +151,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 .coach-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
 .coach-card { background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 10px; padding: 14px 16px; text-align: center; }
 .coach-name { font-size: 11px; font-weight: 700; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em; }
-.coach-rev { font-size: 19px; font-weight: 700; color: #60a5fa; }
+.coach-rev { font-size: 19px; font-weight: 700; color: #1150ab; }
 .coach-cost { font-size: 11px; color: #444; margin-top: 4px; }
 .coach-eff { font-size: 12px; font-weight: 700; margin-top: 6px; }
 
@@ -160,8 +160,8 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 
 /* ── DB STATUS DOT ── */
 .db-status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #333; }
-.db-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
-.db-dot.err { background: #f87171; }
+.db-dot { width: 6px; height: 6px; border-radius: 50%; background: #c1ff72; flex-shrink: 0; }
+.db-dot.err { background: #d6242d; }
 
 /* ── DECISION HEADER ── */
 .decision-header {
@@ -169,7 +169,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
   background: #1e1e1e; border: 1px solid #1e1e1e; border-radius: 12px;
   overflow: hidden; margin-bottom: 10px;
 }
-.decision-header.rag-green { border-color: #14532d; }
+.decision-header.rag-green { border-color: #c1ff72; }
 .decision-header.rag-amber { border-color: #451a03; }
 .decision-header.rag-red   { border-color: #450a0a; }
 .dh-col {
@@ -184,14 +184,14 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 .dh-amount { font-size: 36px; font-weight: 700; line-height: 1; letter-spacing: -1px; color: #fff; margin-bottom: 10px; }
 .dh-progress-track { height: 6px; background: #1e1e1e; border-radius: 3px; margin-bottom: 10px; }
 .dh-progress-fill  { height: 6px; border-radius: 3px; transition: width 0.5s ease; }
-.fill-green { background: #4ade80; }
+.fill-green { background: #c1ff72; }
 .fill-amber { background: #e8c547; }
-.fill-red   { background: #f87171; }
+.fill-red   { background: #d6242d; }
 .dh-rag-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
 .rag-badge  { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-.rag-green  { background: #052e16; color: #4ade80; }
+.rag-green  { background: #052e16; color: #c1ff72; }
 .rag-amber  { background: #1c1500; color: #e8c547; }
-.rag-red    { background: #1c0404; color: #f87171; }
+.rag-red    { background: #1c0404; color: #d6242d; }
 .rag-grey   { background: #111; color: #555; }
 .dh-target-row { font-size: 11px; color: #444; display: flex; align-items: center; gap: 6px; }
 .dh-edit-btn { background: none; border: none; cursor: pointer; color: #444; font-size: 12px; padding: 0 3px; line-height: 1; transition: color 0.15s; }
@@ -202,7 +202,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 .dh-delta { font-size: 24px; font-weight: 700; margin: 6px 0 4px; line-height: 1; }
 .dh-days  { font-size: 40px; font-weight: 700; line-height: 1; margin: 4px 0 4px; }
 .dh-days.urgency-amber { color: #e8c547; }
-.dh-days.urgency-red   { color: #f87171; }
+.dh-days.urgency-red   { color: #d6242d; }
 
 /* ── REVENUE BREAKDOWN STRIP ── */
 .breakdown-strip { margin-bottom: 8px; }
@@ -250,8 +250,8 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 .cost-save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .cost-clear-btn { background: none; border: 1px solid #2a2a2a; color: #555; border-radius: 7px; padding: 9px 14px; font-size: 12px; cursor: pointer; }
 .cost-status { font-size: 11px; color: #4a4a4a; }
-.cost-status.ok  { color: #4ade80; }
-.cost-status.err { color: #f87171; }
+.cost-status.ok  { color: #c1ff72; }
+.cost-status.err { color: #d6242d; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 960px) {
@@ -342,7 +342,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
     <button class="tab"     onclick="showTab('coaches',this)">Coach Breakdown</button>
     <button class="tab"     onclick="showTab('trends',this)">Trends</button>
     <button class="tab"     onclick="showTab('pipeline',this)">PT Pipeline</button>
-    <button class="tab"     onclick="showTab('costs',this)" style="color:#f87171">Costs</button>
+    <button class="tab"     onclick="showTab('costs',this)" style="color:#d6242d">Costs</button>
   </div>
 
   <!-- ══════════ TAB 1: OVERVIEW ══════════ -->
@@ -442,6 +442,17 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
       </div>
       <div style="overflow-x:auto"><table id="paygCreditTbl"></table></div>
       <div class="fn">* Data populates from the next CSV upload. Coach attribution uses the Customer Name column from WodBoard income statement exports. Re-upload historical months to backfill.</div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">PAYG Pack Popularity — by Month</div>
+          <div class="card-sub">Count of each rental pack purchased across all PAYG coaches · from WodBoard transaction data</div>
+        </div>
+        <span class="badge bg">PAYG</span>
+      </div>
+      <div style="overflow-x:auto"><table id="paygPackTbl"></table></div>
+      <div class="fn">* Counts packs by product name match. Re-upload historical CSVs to backfill.</div>
     </div>
   </div>
 
@@ -563,7 +574,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 
   <!-- ══════════ TAB 6: COSTS (INTERNAL) ══════════ -->
   <div class="panel" id="panel-costs">
-    <div class="insight" style="background:#1a0000;border:1px solid #3d0000;color:#f87171">
+    <div class="insight" style="background:#1a0000;border:1px solid #3d0000;color:#d6242d">
       <strong style="color:#fca5a5">Internal use only.</strong> Individual coach payroll and full cost breakdown — not for sharing with coaches or staff.
     </div>
     <div class="g2">
@@ -597,7 +608,8 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
         </div>
         <div class="cost-save-row">
           <button class="cost-save-btn" id="costSaveBtn" onclick="saveCosts()">Save Costs</button>
-          <button class="cost-clear-btn" onclick="clearCostForm()">Clear</button>
+          <button class="cost-clear-btn" onclick="clearCostForm()">Clear Form</button>
+          <button class="cost-clear-btn" style="border-color:#d6242d;color:#d6242d" onclick="hardClearCosts()">Hard Clear DB</button>
           <span class="cost-status" id="costStatus"></span>
         </div>
       </div>
@@ -1164,7 +1176,7 @@ function renderInsight() {
     }
 
     if (paceRatio < 0.7) {
-      msg = `<strong style="color:#f87171">At risk:</strong> You need <strong>${gbp(Math.round(gap))}</strong> in the next ${daysLeft} days to hit target`
+      msg = `<strong style="color:#d6242d">At risk:</strong> You need <strong>${gbp(Math.round(gap))}</strong> in the next ${daysLeft} days to hit target`
           + (dailyNeeded ? ` — that's <strong>${gbp(Math.round(dailyNeeded))}/day</strong>.` : '.')
           + coachGapStr;
     } else if (paceRatio < 0.9) {
@@ -1172,7 +1184,7 @@ function renderInsight() {
           + (gap > 0 ? ` — <strong>${gbp(Math.round(gap))} short</strong> of target.` : '.')
           + coachGapStr;
     } else {
-      msg = `<strong style="color:#4ade80">On track:</strong> Projecting <strong>${gbp(Math.round(projEnd))}</strong> for the month`
+      msg = `<strong style="color:#c1ff72">On track:</strong> Projecting <strong>${gbp(Math.round(projEnd))}</strong> for the month`
           + (projEnd >= tgt ? ` — <strong>${gbp(Math.round(projEnd-tgt))} above target</strong> at this pace.` : '.');
     }
   }
@@ -1243,9 +1255,9 @@ function renderOverviewChart() {
   charts['cOverview'] = new Chart(document.getElementById('cOverview'), {
     type: 'bar',
     data: { labels, datasets: [
-      ...makeDataset('pt_credits',    '#14532d','#14532d55','PT Credits'),
-      ...makeDataset('pt_membership', '#2d1b69','#2d1b6955','PT Membership'),
-      ...makeDataset('new_model',     '#1e3a5f','#1e3a5f55','New Model'),
+      ...makeDataset('pt_credits',    '#c1ff72','#c1ff7244','PT Credits'),
+      ...makeDataset('pt_membership', '#a78bfa','#a78bfa55','PT Membership'),
+      ...makeDataset('new_model',     '#1150ab','#1150ab55','New Model'),
     ]},
     options: {
       responsive: true, maintainAspectRatio: true,
@@ -1302,10 +1314,10 @@ function renderModelCharts() {
   charts['cOldModel'] = new Chart(document.getElementById('cOldModel'), {
     type: 'bar',
     data: { labels: MONTHS_SHORT, datasets: [
-      { label:'PT Credits (act)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?.pt_credits??null), backgroundColor:'#166534', stack:'act' },
-      { label:'PT Rent (act)',    data: MONTHS_H1.map(mk=>DB.revenue[mk]?.pt_rent??null),    backgroundColor:'#1a7a45', stack:'act' },
-      { label:'PT Credits (fct)',data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.pt_credits??null), backgroundColor:'#16653488', stack:'fct' },
-      { label:'PT Rent (fct)',   data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.pt_rent??null),    backgroundColor:'#1a7a4588', stack:'fct' },
+      { label:'PT Credits (act)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?.pt_credits??null), backgroundColor:'#c1ff72', stack:'act' },
+      { label:'PT Rent (act)',    data: MONTHS_H1.map(mk=>DB.revenue[mk]?.pt_rent??null),    backgroundColor:'#86efac', stack:'act' },
+      { label:'PT Credits (fct)',data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.pt_credits??null), backgroundColor:'#c1ff7266', stack:'fct' },
+      { label:'PT Rent (fct)',   data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.pt_rent??null),    backgroundColor:'#86efac66', stack:'fct' },
     ]},
     options: { responsive:true, maintainAspectRatio:true,
       plugins:{ legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${gbp(c.raw)}`}} },
@@ -1321,9 +1333,9 @@ function renderModelCharts() {
   charts['cNewModel'] = new Chart(document.getElementById('cNewModel'), {
     type: 'bar',
     data: { labels: MONTHS_SHORT, datasets: [
-      { label:'Revenue (act)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?.new_model??null),    backgroundColor:'#1e3a5f' },
-      { label:'Total Cost',    data: costData,                                               backgroundColor: MONTHS_H1.map(mk=>DB.costs[mk]?'#5f1e1e':'#5f1e1e88') },
-      { label:'Revenue (fct)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.new_model??null), backgroundColor:'#1e3a5f66' },
+      { label:'Revenue (act)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?.new_model??null),    backgroundColor:'#1150ab' },
+      { label:'Total Cost',    data: costData,                                               backgroundColor: MONTHS_H1.map(mk=>DB.costs[mk]?'#d6242d':'#d6242d88') },
+      { label:'Revenue (fct)', data: MONTHS_H1.map(mk=>DB.revenue[mk]?null:FORECAST[mk]?.new_model??null), backgroundColor:'#1150ab55' },
     ]},
     options: { responsive:true, maintainAspectRatio:true,
       plugins:{ legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${gbp(c.raw)}`}} },
@@ -1353,15 +1365,6 @@ function renderPnLTable() {
   const newYTD = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
   const costYTD = ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
   html += `<tr><td>Revenue</td>${ams.map(mk=>`<td class="r blue">${gbpd(newModelRev(mk))}</td>`).join('')}<td class="r blue">${gbp(Math.round(newYTD))}</td><td class="r">—</td></tr>`;
-  const costLines = [
-    {key:'head_of_fitness', lbl:'Head of Fitness'},
-    ...PAYE_COACHES.map(c=>({key:c.key,lbl:c.name})),
-    {key:'tax_ni',          lbl:'Employer Tax/NI'},
-  ];
-  for (const cl of costLines) {
-    const cYTD = ams.reduce((s,mk)=>s+(DB.costs[mk]?.[cl.key]||0),0);
-    html += `<tr class="sub"><td>${cl.lbl}</td>${ams.map(mk=>{const v=DB.costs[mk]?.[cl.key];return `<td class="r dim">${v?`−${gbpd(v)}`:'—'}</td>`;}).join('')}<td class="r dim">−${gbpd(cYTD)}</td><td class="r dim">—</td></tr>`;
-  }
   html += `<tr class="sub"><td>Total Cost</td>${ams.map(mk=>`<td class="r red">−${gbp(Math.round(totalCost(mk)||0))}</td>`).join('')}<td class="r red">−${gbp(Math.round(costYTD))}</td><td class="r dim">—</td></tr>`;
   const newProfit = newYTD - costYTD;
   const newMarg   = newProfit / newYTD;
@@ -1462,7 +1465,7 @@ function renderCoaches() {
   // Coach revenue bar chart
   charts['cCoachRev'] = new Chart(document.getElementById('cCoachRev'), {
     type:'bar',
-    data:{ labels:coachNames, datasets:[{ label:'Revenue', data:coachNames.map(n=>coachRevMap[n]), backgroundColor:'#1e3a5f', borderRadius:4 }] },
+    data:{ labels:coachNames, datasets:[{ label:'Revenue', data:coachNames.map(n=>coachRevMap[n]), backgroundColor:'#1150ab', borderRadius:4 }] },
     options:{ responsive:true, maintainAspectRatio:true, indexAxis:'y',
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${gbp(c.raw)}`}}},
       scales:{x:{...mkY()},y:{grid:GRID,ticks:{...TICK,color:'#888'}}} },
@@ -1544,6 +1547,74 @@ function renderCoaches() {
     ph += `</tbody>`;
     document.getElementById('paygCreditTbl').innerHTML = ph;
   }
+
+  renderPaygPackTable();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — PAYG PACK POPULARITY TABLE
+// ═══════════════════════════════════════════════════════════════
+
+function renderPaygPackTable() {
+  const PACK_DEFS = [
+    { key: '5hr',  label: 'PT Rental – 5 hrs',  re: /pt rental\s*-\s*5\s*hours?/i  },
+    { key: '10hr', label: 'PT Rental – 10 hrs', re: /pt rental\s*-\s*10\s*hours?/i },
+    { key: '20hr', label: 'PT Rental – 20 hrs', re: /pt rental\s*-\s*20\s*hours?/i },
+  ];
+
+  const paygNames = Object.values(PAYG_PT_MAP);
+  const paygMonths = MONTHS_H1.filter(mk =>
+    DB.coachTxns[mk]?.some(t => paygNames.includes(t.coach_name))
+  );
+
+  const el = document.getElementById('paygPackTbl');
+  if (!el) return;
+
+  if (paygMonths.length === 0) {
+    el.innerHTML =
+      `<thead><tr><th>Pack</th><th class="r">Count</th></tr></thead>` +
+      `<tbody><tr><td colspan="2" style="color:#444;font-style:italic;padding:18px 11px;">No data yet — re-upload monthly CSVs to populate.</td></tr></tbody>`;
+    return;
+  }
+
+  // Build counts: { packKey: { monthKey: count } }
+  const counts = {};
+  for (const p of PACK_DEFS) counts[p.key] = {};
+
+  for (const mk of paygMonths) {
+    for (const t of DB.coachTxns[mk]) {
+      if (!paygNames.includes(t.coach_name)) continue;
+      const paygUntil = PAYG_PAYE_FROM[t.coach_name];
+      if (paygUntil && mk >= paygUntil) continue;
+      for (const p of PACK_DEFS) {
+        if (p.re.test(t.product_name)) {
+          counts[p.key][mk] = (counts[p.key][mk] || 0) + 1;
+        }
+      }
+    }
+  }
+
+  const mHdrs = paygMonths.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
+  let html = `<thead><tr><th>Pack</th>${mHdrs.map(m => `<th class="r">${m}</th>`).join('')}<th class="r">Total</th></tr></thead><tbody>`;
+
+  for (const p of PACK_DEFS) {
+    const rowTotal = paygMonths.reduce((s, mk) => s + (counts[p.key][mk] || 0), 0);
+    html += `<tr><td>${p.label}</td>`;
+    for (const mk of paygMonths) {
+      const n = counts[p.key][mk] || 0;
+      html += `<td class="r ${n > 0 ? 'green' : 'dim'}">${n > 0 ? n : '—'}</td>`;
+    }
+    html += `<td class="r white">${rowTotal > 0 ? rowTotal : '—'}</td></tr>`;
+  }
+
+  // Month totals row
+  const colTotals = paygMonths.map(mk =>
+    PACK_DEFS.reduce((s, p) => s + (counts[p.key][mk] || 0), 0)
+  );
+  const grandTotal = colTotals.reduce((a, b) => a + b, 0);
+  html += `<tr class="tot"><td>Total packs</td>${colTotals.map(n => `<td class="r green">${n > 0 ? n : '—'}</td>`).join('')}<td class="r green">${grandTotal > 0 ? grandTotal : '—'}</td></tr>`;
+  html += `</tbody>`;
+  el.innerHTML = html;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1557,10 +1628,10 @@ function renderTrends() {
   charts['cModelTrend'] = new Chart(document.getElementById('cModelTrend'), {
     type:'line',
     data:{ labels:MONTHS_SHORT, datasets:[
-      { label:'Old Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?oldModelRev(mk):null), borderColor:'#4ade80', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
-      { label:'Old Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?oldModelRev(mk):null):(FORECAST[mk]?.pt_credits||0)+(FORECAST[mk]?.pt_rent||0)), borderColor:'#4ade8055', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
-      { label:'New Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?newModelRev(mk):null), borderColor:'#60a5fa', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
-      { label:'New Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?newModelRev(mk):null):FORECAST[mk]?.new_model), borderColor:'#60a5fa55', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
+      { label:'Old Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?oldModelRev(mk):null), borderColor:'#c1ff72', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
+      { label:'Old Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?oldModelRev(mk):null):(FORECAST[mk]?.pt_credits||0)+(FORECAST[mk]?.pt_rent||0)), borderColor:'#c1ff7255', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
+      { label:'New Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?newModelRev(mk):null), borderColor:'#1150ab', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
+      { label:'New Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?newModelRev(mk):null):FORECAST[mk]?.new_model), borderColor:'#1150ab55', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
     ]},
     options:{ responsive:true, maintainAspectRatio:true,
       plugins:{legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${gbp(c.raw)}`}}},
@@ -1573,8 +1644,8 @@ function renderTrends() {
   charts['cBreakeven'] = new Chart(document.getElementById('cBreakeven'), {
     type:'line',
     data:{ labels:MONTHS_SHORT, datasets:[
-      { label:'New Model Revenue', data:revAll,  borderColor:'#60a5fa', backgroundColor:'#60a5fa11', borderWidth:2.5, pointRadius:4, fill:true, tension:0.3 },
-      { label:'Total Cost',        data:costAll, borderColor:'#f87171', backgroundColor:'#f8717111', borderWidth:2.5, pointRadius:4, fill:true, tension:0.3 },
+      { label:'New Model Revenue', data:revAll,  borderColor:'#1150ab', backgroundColor:'#1150ab22', borderWidth:2.5, pointRadius:4, fill:true, tension:0.3 },
+      { label:'Total Cost',        data:costAll, borderColor:'#d6242d', backgroundColor:'#d6242d22', borderWidth:2.5, pointRadius:4, fill:true, tension:0.3 },
     ]},
     options:{ responsive:true, maintainAspectRatio:true,
       plugins:{legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${gbp(c.raw)}`}}},
@@ -1752,6 +1823,34 @@ async function saveCosts() {
   btn.disabled = false;
 }
 
+async function hardClearCosts() {
+  const mk  = document.getElementById('costMonthPicker').value;
+  const iso = mk + '-01';
+  const lbl = new Date(iso).toLocaleDateString('en-GB', { month: 'short', year: '2-digit' });
+  if (!confirm(`Delete all saved cost records for ${lbl}? This cannot be undone.`)) return;
+
+  const st  = document.getElementById('costStatus');
+  const btn = document.getElementById('costSaveBtn');
+  btn.disabled = true;
+  st.className = 'cost-status';
+  st.textContent = 'Clearing…';
+
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/pt_costs?month=eq.${encodeURIComponent(iso)}`;
+    const res = await fetch(url, { method: 'DELETE', headers: SB_AUTH });
+    if (!res.ok) { const t = await res.text(); throw new Error(t); }
+    clearCostForm();
+    await loadData();
+    renderAll();
+    st.className = 'cost-status ok';
+    st.textContent = `✓ ${lbl} costs cleared from database`;
+  } catch(e) {
+    st.className = 'cost-status err';
+    st.textContent = 'Error: ' + e.message;
+  }
+  btn.disabled = false;
+}
+
 function renderCosts() {
   renderCostTable();
 
@@ -1866,7 +1965,7 @@ function renderPipeline() {
       labels: PIPELINE_MONTHS,
       datasets: [
         { label:'JF Issued',     data: PIPELINE_JF_NEW,   backgroundColor:'#e8c54733', borderColor:'#e8c547', borderWidth:1.5, borderRadius:3 },
-        { label:'PT Redeemed ✓', data: PIPELINE_REDEEMED, backgroundColor:'#4ade80aa', borderColor:'#4ade80', borderWidth:1.5, borderRadius:3 },
+        { label:'PT Redeemed ✓', data: PIPELINE_REDEEMED, backgroundColor:'#c1ff72aa', borderColor:'#c1ff72', borderWidth:1.5, borderRadius:3 },
       ],
     },
     options: {
@@ -1887,7 +1986,7 @@ function renderPipeline() {
     type: 'bar',
     data: {
       labels: PIPELINE_MONTHS,
-      datasets: [{ label:'14 Day Intros', data: PIPELINE_D14, backgroundColor:'#60a5fa55', borderColor:'#60a5fa', borderWidth:1.5, borderRadius:3 }],
+      datasets: [{ label:'14 Day Intros', data: PIPELINE_D14, backgroundColor:'#1150ab55', borderColor:'#1150ab', borderWidth:1.5, borderRadius:3 }],
     },
     options: {
       responsive:true, maintainAspectRatio:true,
