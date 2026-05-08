@@ -32,6 +32,22 @@ body {
 .kpi-val { font-size: 22px; font-weight: 700; line-height: 1; }
 .kpi-sub { font-size: 11px; color: #666; margin-top: 6px; }
 
+/* ── MONTH FILTER BAR ── */
+.month-filter-bar {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.month-filter-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #444;
+}
+.month-filter-select {
+  background: #111; color: #e8c547; border: 1px solid #2a2a2a;
+  border-radius: 7px; padding: 6px 12px; font-size: 12px;
+  font-weight: 600; cursor: pointer; outline: none;
+}
+.month-filter-select:focus { border-color: #e8c547; }
+
 /* colour helpers */
 .white  { color: #fff; }
 .amber  { color: #e8c547; }
@@ -290,6 +306,12 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
       <div class="title">Personal Trainer Dashboard</div>
     </div>
     <div class="header-meta" id="hDate"></div>
+  </div>
+
+  <!-- MONTH FILTER -->
+  <div class="month-filter-bar">
+    <span class="month-filter-label">Viewing</span>
+    <select class="month-filter-select" id="overviewMonthSelect" onchange="onOverviewMonthChange(this.value)"></select>
   </div>
 
   <!-- DECISION HEADER -->
@@ -733,8 +755,8 @@ const FORECAST = {
   '2026-02': { pt_credits: 9040, pt_membership: 1590, pt_rent: 2000, new_model: 4158   },
   '2026-03': { pt_credits: 9180, pt_membership: 1590, pt_rent: 2000, new_model: 10395  },
   '2026-04': { pt_credits: 8520, pt_membership: 1272, pt_rent: 2000, new_model: 19127  },
-  '2026-05': { pt_credits: 6200, pt_membership:  954, pt_rent: 2000, new_model: 29106  },
-  '2026-06': { pt_credits: 4500, pt_membership:  636, pt_rent: 1000, new_model: 39085  },
+  '2026-05': { pt_credits: 1862, pt_membership:  287, pt_rent: 2000, new_model:  8742  },
+  '2026-06': { pt_credits: 1210, pt_membership:  171, pt_rent: 1000, new_model: 10510  },
   // H2 targets TBD — update once post-June forecasts are set
   '2026-07': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
   '2026-08': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
@@ -863,6 +885,41 @@ const gbp = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toL
 const gbpd = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + (v < 0 ? ')' : '');
 const pct = v => v == null ? '—' : (v * 100).toFixed(1) + '%';
 const monthKey = d => d.toISOString().slice(0, 7);     // Date → 'YYYY-MM'
+
+// ── Overview month selector state ────────────────────────────────
+let overviewSelectedMk = null;
+
+function initOverviewMonth() {
+  if (overviewSelectedMk) return; // preserve user selection across re-renders
+  const today = new Date();
+  const currentMk = monthKey(today);
+  const ams = actMonths();
+  const complete = ams.filter(mk => mk !== currentMk);
+  overviewSelectedMk = complete.length > 0
+    ? complete[complete.length - 1]
+    : (ams[ams.length - 1] || currentMk);
+}
+
+function populateOverviewMonthSelect() {
+  const sel = document.getElementById('overviewMonthSelect');
+  if (!sel) return;
+  const today = new Date();
+  const currentMk = monthKey(today);
+  const ams = actMonths();
+  const opts = MONTHS_H1.filter(mk => ams.includes(mk) || mk === currentMk);
+  sel.innerHTML = opts.map(mk => {
+    const lbl = MONTHS_LABELS[MONTHS_H1.indexOf(mk)];
+    return `<option value="${mk}"${mk === overviewSelectedMk ? ' selected' : ''}>${lbl}</option>`;
+  }).join('');
+}
+
+function onOverviewMonthChange(mk) {
+  overviewSelectedMk = mk;
+  renderDecisionHeader();
+  renderRevBreakdown();
+  renderInsight();
+  renderOverviewChart();
+}
 const isoMonth = k => k + '-01';                        // 'YYYY-MM' → 'YYYY-MM-01'
 
 function ptRent(mk) {
@@ -983,13 +1040,15 @@ function workingDaysLeft(today) {
 }
 
 function renderDecisionHeader() {
-  const today      = new Date();
-  const currentMk  = monthKey(today);
-  const daysInMo   = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
-  const daysEl     = today.getDate();
-  const daysLeft   = daysInMo - daysEl;
-  const workLeft   = workingDaysLeft(today);
-  const monthLbl   = today.toLocaleDateString('en-GB',{month:'short',year:'2-digit'});
+  const today       = new Date();
+  const currentMk   = overviewSelectedMk || monthKey(today);
+  const [selY, selM] = currentMk.split('-').map(Number);
+  const isThisMonth  = currentMk === monthKey(today);
+  const daysInMo    = new Date(selY, selM, 0).getDate();
+  const daysEl      = isThisMonth ? today.getDate() : daysInMo;
+  const daysLeft    = isThisMonth ? daysInMo - daysEl : 0;
+  const workLeft    = isThisMonth ? workingDaysLeft(today) : 0;
+  const monthLbl    = new Date(selY, selM - 1, 1).toLocaleDateString('en-GB',{month:'short',year:'2-digit'});
 
   // Revenue data for current & previous month
   const currentRev = totalRev(currentMk);
@@ -1051,9 +1110,9 @@ function renderDecisionHeader() {
         <div class="dh-sub">vs ${gbp(Math.round(prevRev??0))} ${prevLbl}</div>
       </div>
       <div class="dh-col">
-        <div class="dh-label">Days Remaining in ${monthLbl}</div>
-        <div class="dh-days ${daysCls}">${daysLeft}</div>
-        <div class="dh-sub">${workLeft} working days (Mon–Sat)</div>
+        <div class="dh-label">${isThisMonth ? `Days Remaining in ${monthLbl}` : `${monthLbl} — Closed`}</div>
+        <div class="dh-days ${isThisMonth ? daysCls : ''}">${isThisMonth ? daysLeft : '✓'}</div>
+        <div class="dh-sub">${isThisMonth ? `${workLeft} working days (Mon–Sat)` : 'Final result'}</div>
       </div>
     </div>`;
 }
@@ -1081,9 +1140,11 @@ function commitTarget(mk) {
 
 function renderRevBreakdown() {
   const today     = new Date();
-  const currentMk = monthKey(today);
-  const daysInMo  = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
-  const daysEl    = today.getDate();
+  const currentMk = overviewSelectedMk || monthKey(today);
+  const [rbY, rbM] = currentMk.split('-').map(Number);
+  const isThisMonth = currentMk === monthKey(today);
+  const daysInMo  = new Date(rbY, rbM, 0).getDate();
+  const daysEl    = isThisMonth ? today.getDate() : daysInMo;
   const r         = DB.revenue[currentMk];
 
   const lines = [
@@ -1126,10 +1187,12 @@ function renderRevBreakdown() {
 
 function renderInsight() {
   const today     = new Date();
-  const currentMk = monthKey(today);
-  const daysInMo  = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
-  const daysEl    = today.getDate();
-  const daysLeft  = daysInMo - daysEl;
+  const currentMk = overviewSelectedMk || monthKey(today);
+  const [insY, insM] = currentMk.split('-').map(Number);
+  const isThisMonth = currentMk === monthKey(today);
+  const daysInMo  = new Date(insY, insM, 0).getDate();
+  const daysEl    = isThisMonth ? today.getDate() : daysInMo;
+  const daysLeft  = isThisMonth ? daysInMo - daysEl : 0;
 
   const rev       = totalRev(currentMk) ?? 0;
   const tgt       = getTarget(currentMk);
@@ -1239,16 +1302,24 @@ function renderModelCards() {
 function renderOverviewChart() {
   destroyChart('cOverview');
   const labels = MONTHS_SHORT;
+  const hlIdx = overviewSelectedMk ? MONTHS_H1.indexOf(overviewSelectedMk) : -1;
+
+  function barColors(base) {
+    if (hlIdx < 0) return base;
+    const solid = base.slice(0, 7);
+    return MONTHS_H1.map((_, i) => i === hlIdx ? solid : solid + '18');
+  }
+
   const makeDataset = (key, colorAct, colorFct, label) => ([
     {
       label: `${label} (act)`,
       data: MONTHS_H1.map(mk => DB.revenue[mk]?.[key] ?? null),
-      backgroundColor: colorAct, stack: 'act',
+      backgroundColor: barColors(colorAct), stack: 'act',
     },
     {
       label: `${label} (fct)`,
       data: MONTHS_H1.map(mk => DB.revenue[mk] ? null : (FORECAST[mk]?.[key] ?? null)),
-      backgroundColor: colorFct, stack: 'fct',
+      backgroundColor: barColors(colorFct), stack: 'fct',
     }
   ]);
 
@@ -1911,6 +1982,8 @@ function renderCosts() {
 }
 
 function renderAll() {
+  initOverviewMonth();
+  populateOverviewMonthSelect();
   renderHeader();
   renderDecisionHeader();
   renderRevBreakdown();
