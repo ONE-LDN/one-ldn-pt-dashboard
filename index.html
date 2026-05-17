@@ -755,10 +755,10 @@ const FORECAST = {
   '2026-02': { pt_credits: 9040, pt_membership: 1590, pt_rent: 2000, new_model: 4158   },
   '2026-03': { pt_credits: 9180, pt_membership: 1590, pt_rent: 2000, new_model: 10395  },
   '2026-04': { pt_credits: 8520, pt_membership: 1272, pt_rent: 2000, new_model: 19127  },
-  '2026-05': { pt_credits: 1862, pt_membership:  287, pt_rent: 2000, new_model:  8742  },
-  '2026-06': { pt_credits: 1210, pt_membership:  171, pt_rent: 1000, new_model: 10510  },
+  '2026-05': { pt_credits: 1862, pt_membership:  954, pt_rent: 2000, new_model:  8742  },
+  '2026-06': { pt_credits: 1210, pt_membership:  954, pt_rent: 1000, new_model: 10510  },
   // H2 targets TBD — update once post-June forecasts are set
-  '2026-07': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
+  '2026-07': { pt_credits: 0, pt_membership: 954, pt_rent: 0, new_model: 0 },
   '2026-08': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
   '2026-09': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
   '2026-10': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
@@ -2254,6 +2254,27 @@ async function processUpload(filename, rows) {
     statusEl.className = 'upload-status warn';
     statusEl.textContent = `No PT revenue rows found in ${filename}. Is this the right CSV?`;
     return;
+  }
+
+  // ── Guard: warn if upload would reduce an existing revenue line ──
+  const existingRevRows = await sbGet('pt_revenue', `month=eq.${isoDate}`);
+  const existingRevMap = {};
+  for (const row of existingRevRows) existingRevMap[row.line] = parseFloat(row.amount);
+  const reductions = [];
+  for (const [line, amount] of Object.entries(revenueAccum)) {
+    const prev = existingRevMap[line] ?? 0;
+    if (prev > 0 && amount < prev - 0.01) {
+      const lbl = { pt_credits:'PT Credits', pt_membership:'PT Membership', new_model:'New Model', pt_rent:'PT Rent' }[line] || line;
+      reductions.push(`${lbl}: £${prev.toLocaleString('en-GB')} → £${amount.toLocaleString('en-GB')} (−£${(prev - amount).toLocaleString('en-GB', {maximumFractionDigits:0})})`);
+    }
+  }
+  if (reductions.length > 0) {
+    const go = confirm(`⚠ This upload would REDUCE ${monthLabel} revenue:\n\n${reductions.join('\n')}\n\nThis usually means the CSV only covers part of the month. Re-export from WodBoard with the full ${monthLabel} date range.\n\nProceed anyway?`);
+    if (!go) {
+      statusEl.className = 'upload-status warn';
+      statusEl.textContent = `Upload cancelled — re-export the income statement with the full ${monthLabel} date range.`;
+      return;
+    }
   }
 
   // ── Upsert revenue ──
