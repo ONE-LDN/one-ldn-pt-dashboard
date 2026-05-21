@@ -429,12 +429,16 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 
   <!-- ══════════ TAB 3: COACH BREAKDOWN ══════════ -->
   <div class="panel" id="panel-coaches">
+    <div class="month-filter-bar">
+      <span class="month-filter-label">Viewing</span>
+      <select class="month-filter-select" id="coachMonthSelect" onchange="onCoachMonthChange(this.value)"></select>
+    </div>
     <div class="coach-grid" id="coachCards"></div>
     <div class="card">
       <div class="card-head">
         <div>
-          <div class="card-ttl">Most Recent Month — Revenue by Coach</div>
-          <div class="card-sub">New PT Model revenue by coach from latest WodBoard data</div>
+          <div class="card-ttl">Revenue by Coach</div>
+          <div class="card-sub">New PT Model revenue by coach from WodBoard data</div>
         </div>
         <span class="badge bb" id="coachMonthBadge">—</span>
       </div>
@@ -888,16 +892,15 @@ const monthKey = d => d.toISOString().slice(0, 7);     // Date → 'YYYY-MM'
 
 // ── Overview month selector state ────────────────────────────────
 let overviewSelectedMk = null;
+let overviewMonthUserSet = false;
 
 function initOverviewMonth() {
-  if (overviewSelectedMk) return; // preserve user selection across re-renders
-  const today = new Date();
-  const currentMk = monthKey(today);
+  if (overviewMonthUserSet) return;
   const ams = actMonths();
-  const complete = ams.filter(mk => mk !== currentMk);
-  overviewSelectedMk = complete.length > 0
-    ? complete[complete.length - 1]
-    : (ams[ams.length - 1] || currentMk);
+  const fromUpload = DB.uploadLog[0]?.month_covered?.slice(0, 7);
+  overviewSelectedMk = (fromUpload && ams.includes(fromUpload))
+    ? fromUpload
+    : (ams[ams.length - 1] || monthKey(new Date()));
 }
 
 function populateOverviewMonthSelect() {
@@ -914,12 +917,43 @@ function populateOverviewMonthSelect() {
 }
 
 function onOverviewMonthChange(mk) {
+  overviewMonthUserSet = true;
   overviewSelectedMk = mk;
   renderDecisionHeader();
   renderRevBreakdown();
   renderInsight();
   renderOverviewChart();
 }
+
+// ── Coach month selector state ────────────────────────────────
+let coachSelectedMk = null;
+let coachMonthUserSet = false;
+
+function initCoachMonth() {
+  if (coachMonthUserSet) return;
+  const txnMonths = MONTHS_H1.filter(mk => DB.coachTxns[mk]?.length > 0);
+  const fromUpload = DB.uploadLog[0]?.month_covered?.slice(0, 7);
+  coachSelectedMk = (fromUpload && txnMonths.includes(fromUpload))
+    ? fromUpload
+    : (txnMonths[txnMonths.length - 1] || null);
+}
+
+function populateCoachMonthSelect() {
+  const sel = document.getElementById('coachMonthSelect');
+  if (!sel) return;
+  const txnMonths = MONTHS_H1.filter(mk => DB.coachTxns[mk]?.length > 0);
+  sel.innerHTML = txnMonths.map(mk => {
+    const lbl = MONTHS_LABELS[MONTHS_H1.indexOf(mk)];
+    return `<option value="${mk}"${mk === coachSelectedMk ? ' selected' : ''}>${lbl}</option>`;
+  }).join('');
+}
+
+function onCoachMonthChange(mk) {
+  coachMonthUserSet = true;
+  coachSelectedMk = mk;
+  renderCoaches();
+}
+
 const isoMonth = k => k + '-01';                        // 'YYYY-MM' → 'YYYY-MM-01'
 
 function ptRent(mk) {
@@ -1486,24 +1520,25 @@ function renderCostTable() {
 function renderCoaches() {
   destroyChart('cCoachRev');
 
-  // Find most recent month with coach transaction data
-  const txnMonths = MONTHS_H1.filter(mk => DB.coachTxns[mk]?.length > 0);
-  const latestMk  = txnMonths[txnMonths.length - 1] || null;
-  const latestLbl = latestMk ? MONTHS_LABELS[MONTHS_H1.indexOf(latestMk)] : '—';
+  initCoachMonth();
+  populateCoachMonthSelect();
 
-  document.getElementById('coachMonthBadge').textContent = latestLbl;
+  const selMk  = coachSelectedMk;
+  const selLbl = selMk ? (MONTHS_LABELS[MONTHS_H1.indexOf(selMk)] || selMk) : '—';
 
-  // Aggregate coach revenue by name for latest month
+  document.getElementById('coachMonthBadge').textContent = selLbl;
+
+  // Aggregate coach revenue by name for selected month
   const coachRevMap = {};
-  if (latestMk && DB.coachTxns[latestMk]) {
-    for (const t of DB.coachTxns[latestMk]) {
+  if (selMk && DB.coachTxns[selMk]) {
+    for (const t of DB.coachTxns[selMk]) {
       coachRevMap[t.coach_name] = (coachRevMap[t.coach_name] || 0) + parseFloat(t.amount);
     }
   }
 
   const coachNames = Object.keys(coachRevMap).sort((a,b) => coachRevMap[b]-coachRevMap[a]);
 
-  // Coach cards (PAYE coaches)
+  // Coach cards (PAYE coaches) — show revenue for selected month
   const payeCoaches = [
     { name:'Craig Clout',    key:'craig_clout'    },
     { name:'Jess Donehue',   key:'jess_donehue'   },
@@ -1513,27 +1548,21 @@ function renderCoaches() {
     { name:'Kayla Joll',     key:'kayla_joll'      },
     { name:'Grace G',        key:'grace_g'         },
   ];
-  const ams = actMonths();
 
   document.getElementById('coachCards').innerHTML = payeCoaches.map(c => {
-    // Find this coach's most recent month with transaction data
-    let coachRev = 0, coachLbl = '—';
-    for (let i = MONTHS_H1.length - 1; i >= 0; i--) {
-      const mk = MONTHS_H1[i];
-      const txns = DB.coachTxns[mk];
-      if (!txns) continue;
-      const rev = txns.filter(t => t.coach_name === c.name).reduce((s,t) => s + parseFloat(t.amount), 0);
-      if (rev > 0) { coachRev = rev; coachLbl = MONTHS_LABELS[i]; break; }
-    }
+    const txns = selMk ? DB.coachTxns[selMk] : null;
+    const coachRev = txns
+      ? txns.filter(t => t.coach_name === c.name).reduce((s,t) => s + parseFloat(t.amount), 0)
+      : 0;
     return `<div class="coach-card">
       <div class="coach-name">${c.name}</div>
-      <div class="coach-rev">${gbpd(coachRev)}</div>
-      <div class="coach-cost">${coachLbl} revenue</div>
+      <div class="coach-rev">${coachRev > 0 ? gbpd(coachRev) : '—'}</div>
+      <div class="coach-cost">${selLbl} revenue</div>
       <div class="coach-cost">PAYE</div>
     </div>`;
   }).join('');
 
-  // Coach revenue bar chart
+  // Coach revenue bar chart for selected month
   charts['cCoachRev'] = new Chart(document.getElementById('cCoachRev'), {
     type:'bar',
     data:{ labels:coachNames, datasets:[{ label:'Revenue', data:coachNames.map(n=>coachRevMap[n]), backgroundColor:'#1150ab', borderRadius:4 }] },
@@ -2269,12 +2298,26 @@ async function processUpload(filename, rows) {
     }
   }
   if (reductions.length > 0) {
-    const go = confirm(`⚠ This upload would REDUCE ${monthLabel} revenue:\n\n${reductions.join('\n')}\n\nThis usually means the CSV only covers part of the month. Re-export from WodBoard with the full ${monthLabel} date range.\n\nProceed anyway?`);
+    const go = await new Promise(resolve => {
+      statusEl.className = 'upload-status warn';
+      statusEl.innerHTML =
+        `<strong>⚠ This upload would REDUCE ${monthLabel} revenue:</strong><br>` +
+        reductions.map(r => `<span style="display:block;margin:2px 0">${r}</span>`).join('') +
+        `<br><small>This usually means the CSV only covers part of the month. Re-export from WodBoard with the full ${monthLabel} date range.</small>` +
+        `<div style="margin-top:10px;display:flex;gap:8px">` +
+          `<button id="uploadProceedBtn" style="padding:6px 14px;background:#d9262c;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:600">Proceed anyway</button>` +
+          `<button id="uploadCancelBtn"  style="padding:6px 14px;background:#1a1a1a;color:#bbb;border:1px solid #333;border-radius:5px;cursor:pointer">Cancel</button>` +
+        `</div>`;
+      document.getElementById('uploadProceedBtn').onclick = () => resolve(true);
+      document.getElementById('uploadCancelBtn').onclick  = () => resolve(false);
+    });
     if (!go) {
       statusEl.className = 'upload-status warn';
       statusEl.textContent = `Upload cancelled — re-export the income statement with the full ${monthLabel} date range.`;
       return;
     }
+    statusEl.className = 'upload-status';
+    statusEl.textContent = 'Processing…';
   }
 
   // ── Upsert revenue ──
