@@ -48,6 +48,31 @@ body {
 }
 .month-filter-select:focus { border-color: #e8c547; }
 
+/* Date range picker */
+.range-bar { display:flex; align-items:center; gap:10px; margin-bottom:14px; position:relative; }
+.range-bar-label { font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#444; }
+.range-input-btn { background:#111; color:#e8c547; border:1px solid #2a2a2a; border-radius:20px;
+  padding:6px 16px; font-size:12px; font-weight:600; cursor:pointer; outline:none; }
+.range-input-btn:hover, .range-input-btn.active { border-color:#e8c547; }
+.range-clear-btn { background:none; border:none; color:#555; font-size:12px; cursor:pointer; padding:2px 6px; }
+.range-clear-btn:hover { color:#aaa; }
+.cal-panel { position:absolute; top:calc(100% + 6px); left:0; z-index:200;
+  background:#111; border:1px solid #2a2a2a; border-radius:12px; padding:14px 10px;
+  align-items:flex-start; gap:4px; box-shadow:0 8px 32px #000c; }
+.cal-nav-btn { background:none; border:none; color:#555; font-size:20px; cursor:pointer;
+  padding:0 6px; align-self:center; line-height:1; }
+.cal-nav-btn:hover { color:#aaa; }
+.cal-month { width:196px; }
+.cal-mhdr { text-align:center; font-size:11px; font-weight:700; color:#555;
+  text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.cal-dow { font-size:10px; color:#333; text-align:center; padding:3px 0; font-weight:700; }
+.cal-day { font-size:12px; color:#666; text-align:center; padding:5px 2px;
+  border-radius:4px; cursor:pointer; transition:background 0.1s; }
+.cal-day:hover { background:#1a1a1a; color:#fff; }
+.cal-day.in-range { background:#1150ab22; color:#aaa; }
+.cal-day.range-cap { background:#1150ab; color:#fff !important; border-radius:4px; }
+
 /* colour helpers */
 .white  { color: #fff; }
 .amber  { color: #e8c547; }
@@ -365,6 +390,16 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
     <button class="tab"     onclick="showTab('trends',this)">Trends</button>
     <button class="tab"     onclick="showTab('pipeline',this)">PT Pipeline</button>
     <button class="tab"     onclick="showTab('costs',this)" style="color:#d6242d">Costs</button>
+  </div>
+
+  <!-- DATE RANGE FILTER -->
+  <div class="range-bar" id="rangeBar">
+    <span class="range-bar-label">Filter</span>
+    <button class="range-input-btn" id="rangeInputBtn" onclick="toggleCalendar()">
+      <span id="rangeInputText">All months</span>
+    </button>
+    <button class="range-clear-btn" id="rangeClear" onclick="clearRange()" style="display:none">× Clear</button>
+    <div class="cal-panel" id="calPanel" style="display:none"></div>
   </div>
 
   <!-- ══════════ TAB 1: OVERVIEW ══════════ -->
@@ -954,6 +989,103 @@ function onCoachMonthChange(mk) {
   renderCoaches();
 }
 
+// ── Date range filter state ────────────────────────────────────
+let rangeStart  = null; // Date | null
+let rangeEnd    = null; // Date | null
+let calViewDate = new Date(2026, 2, 1); // left-panel view: Mar 2026 initially
+let calOpen     = false;
+
+function monthInRange(mk) {
+  if (!rangeStart && !rangeEnd) return true;
+  const ms = new Date(mk + '-01');
+  const me = new Date(ms.getFullYear(), ms.getMonth() + 1, 0);
+  return (!rangeStart || me >= rangeStart) && (!rangeEnd || ms <= rangeEnd);
+}
+
+function rangeMonths() { return actMonths().filter(monthInRange); }
+
+function fmtDate(d) {
+  return String(d.getDate()).padStart(2,'0') + '/' +
+    String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear();
+}
+
+function updateRangeInput() {
+  document.getElementById('rangeInputText').textContent =
+    (!rangeStart)           ? 'All months' :
+    (!rangeEnd)             ? fmtDate(rangeStart) + ' – …' :
+                              fmtDate(rangeStart) + ' – ' + fmtDate(rangeEnd);
+  document.getElementById('rangeClear').style.display = (rangeStart && rangeEnd) ? '' : 'none';
+}
+
+function toggleCalendar() {
+  calOpen = !calOpen;
+  document.getElementById('calPanel').style.display = calOpen ? 'flex' : 'none';
+  if (calOpen) renderCalPanel();
+}
+
+function clearRange() {
+  rangeStart = null; rangeEnd = null;
+  calOpen = false;
+  document.getElementById('calPanel').style.display = 'none';
+  updateRangeInput();
+  onDateRangeChange();
+}
+
+function calDayClick(y, m, d) {
+  const clicked = new Date(y, m, d);
+  if (!rangeStart || (rangeStart && rangeEnd)) {
+    rangeStart = clicked; rangeEnd = null;
+  } else {
+    if (clicked < rangeStart) { rangeEnd = rangeStart; rangeStart = clicked; }
+    else rangeEnd = clicked;
+    calOpen = false;
+    document.getElementById('calPanel').style.display = 'none';
+    onDateRangeChange();
+  }
+  updateRangeInput();
+  if (calOpen) renderCalPanel();
+}
+
+function calPrev() { calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth()-1, 1); renderCalPanel(); }
+function calNext() { calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth()+1, 1); renderCalPanel(); }
+
+function renderCalPanel() {
+  function buildMonth(firstDay) {
+    const y = firstDay.getFullYear(), mo = firstDay.getMonth();
+    const title = firstDay.toLocaleString('en-GB', {month:'long', year:'numeric'});
+    const daysInMonth = new Date(y, mo+1, 0).getDate();
+    const startDow = (new Date(y, mo, 1).getDay() + 6) % 7;
+    let g = `<div class="cal-month"><div class="cal-mhdr">${title}</div><div class="cal-grid">`;
+    ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach(d => g += `<span class="cal-dow">${d}</span>`);
+    for (let i = 0; i < startDow; i++) g += `<span></span>`;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dt = new Date(y, mo, d);
+      let cls = 'cal-day';
+      if (rangeStart && rangeEnd && dt >= rangeStart && dt <= rangeEnd) cls += ' in-range';
+      if (rangeStart && dt.getTime() === rangeStart.getTime()) cls += ' range-cap';
+      if (rangeEnd   && dt.getTime() === rangeEnd.getTime())   cls += ' range-cap';
+      g += `<span class="${cls}" onclick="calDayClick(${y},${mo},${d})">${d}</span>`;
+    }
+    return g + `</div></div>`;
+  }
+  const left  = new Date(calViewDate.getFullYear(), calViewDate.getMonth(), 1);
+  const right = new Date(calViewDate.getFullYear(), calViewDate.getMonth()+1, 1);
+  document.getElementById('calPanel').innerHTML =
+    `<button class="cal-nav-btn" onclick="calPrev()">‹</button>` +
+    buildMonth(left) + buildMonth(right) +
+    `<button class="cal-nav-btn" onclick="calNext()">›</button>`;
+}
+
+function onDateRangeChange() {
+  renderOverviewChart();
+  renderOverviewTable();
+  renderModelCharts();
+  renderPnLTable();
+  renderTrends();
+  renderH1Table();
+  renderCoaches();
+}
+
 const isoMonth = k => k + '-01';                        // 'YYYY-MM' → 'YYYY-MM-01'
 
 function ptRent(mk) {
@@ -1335,24 +1467,25 @@ function renderModelCards() {
 
 function renderOverviewChart() {
   destroyChart('cOverview');
-  const labels = MONTHS_SHORT;
-  const hlIdx = overviewSelectedMk ? MONTHS_H1.indexOf(overviewSelectedMk) : -1;
+  const filtMks = MONTHS_H1.filter(monthInRange);
+  const labels = filtMks.map(mk => MONTHS_SHORT[MONTHS_H1.indexOf(mk)]);
+  const hlIdx = overviewSelectedMk ? filtMks.indexOf(overviewSelectedMk) : -1;
 
   function barColors(base) {
     if (hlIdx < 0) return base;
     const solid = base.slice(0, 7);
-    return MONTHS_H1.map((_, i) => i === hlIdx ? solid : solid + '18');
+    return filtMks.map((_, i) => i === hlIdx ? solid : solid + '18');
   }
 
   const makeDataset = (key, colorAct, colorFct, label) => ([
     {
       label: `${label} (act)`,
-      data: MONTHS_H1.map(mk => DB.revenue[mk]?.[key] ?? null),
+      data: filtMks.map(mk => DB.revenue[mk]?.[key] ?? null),
       backgroundColor: barColors(colorAct), stack: 'act',
     },
     {
       label: `${label} (fct)`,
-      data: MONTHS_H1.map(mk => DB.revenue[mk] ? null : (FORECAST[mk]?.[key] ?? null)),
+      data: filtMks.map(mk => DB.revenue[mk] ? null : (FORECAST[mk]?.[key] ?? null)),
       backgroundColor: barColors(colorFct), stack: 'fct',
     }
   ]);
@@ -1377,33 +1510,34 @@ function renderOverviewChart() {
 // ═══════════════════════════════════════════════════════════════
 
 function renderOverviewTable() {
+  const filtMks = MONTHS_H1.filter(monthInRange);
   const lines = ['pt_credits','pt_membership','pt_rent','new_model'];
   const lbls  = { pt_credits:'PT Credits', pt_membership:'PT Membership', pt_rent:'PT Rent', new_model:'New PT Model' };
-  let html = `<thead><tr><th>Line</th>${MONTHS_SHORT.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th><th class="r">H1 Fct</th><th class="r">Ach%</th></tr></thead><tbody>`;
+  let html = `<thead><tr><th>Line</th>${filtMks.map(mk => MONTHS_SHORT[MONTHS_H1.indexOf(mk)]).map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th><th class="r">H1 Fct</th><th class="r">Ach%</th></tr></thead><tbody>`;
 
   for (const line of lines) {
-    const vals = MONTHS_H1.map(mk => DB.revenue[mk]?.[line] ?? null);
-    const fcts = MONTHS_H1.map(mk => FORECAST[mk]?.[line] ?? 0);
+    const vals = filtMks.map(mk => DB.revenue[mk]?.[line] ?? null);
+    const fcts = filtMks.map(mk => FORECAST[mk]?.[line] ?? 0);
     const ytd  = vals.reduce((s,v) => s+(v||0), 0);
-    const h1   = fcts.reduce((s,v) => s+v, 0);
+    const h1   = actMonths().reduce((s,mk) => s+(FORECAST[mk]?.[line]||0), 0);
     const ytdF = actMonths().reduce((s,mk) => s+(FORECAST[mk]?.[line]||0), 0);
     const ach  = ytdF > 0 ? ytd/ytdF : null;
-    html += `<tr><td>${lbls[line]}</td>${MONTHS_H1.map((mk,i)=>{
+    html += `<tr><td>${lbls[line]}</td>${filtMks.map((mk,i)=>{
       const v = vals[i];
       return v!=null ? `<td class="r">${gbp(v)}</td>` : `<td class="r dim">${gbp(fcts[i])}</td>`;
     }).join('')}<td class="r white">${gbp(Math.round(ytd))}</td><td class="r">${gbp(Math.round(h1))}</td><td class="r ${ach&&ach>=1?'green':ach&&ach>=0.85?'amber':'red'}">${ach?pct(ach):'—'}</td></tr>`;
   }
 
   // Total row
-  const totAct = MONTHS_H1.map(mk => totalRev(mk));
-  const totFct = MONTHS_H1.map(mk => { const f=FORECAST[mk]; return f?f.pt_credits+f.pt_membership+f.pt_rent+f.new_model:0; });
+  const totAct = filtMks.map(mk => totalRev(mk));
+  const totFct = filtMks.map(mk => { const f=FORECAST[mk]; return f?f.pt_credits+f.pt_membership+f.pt_rent+f.new_model:0; });
   const totYTD = totAct.reduce((s,v)=>s+(v||0),0);
-  const totH1  = totFct.reduce((s,v)=>s+v,0);
-  const totAch = actMonths().reduce((s,mk)=>s+(FORECAST[mk]?Object.values(FORECAST[mk]).reduce((a,b)=>a+b,0):0),0);
-  html += `<tr class="tot"><td>Total</td>${MONTHS_H1.map((mk,i)=>{
+  const totH1  = actMonths().reduce((s,mk)=>s+(FORECAST[mk]?Object.values(FORECAST[mk]).reduce((a,b)=>a+b,0):0),0);
+  const totAch = totH1;
+  html += `<tr class="tot"><td>Total</td>${filtMks.map((mk,i)=>{
     const v=totAct[i];
     return v!=null?`<td class="r">${gbp(Math.round(v))}</td>`:`<td class="r dim">${gbp(Math.round(totFct[i]))}</td>`;
-  }).join('')}<td class="r">${gbp(Math.round(totYTD))}</td><td class="r">${gbp(Math.round(totH1))}</td><td class="r ${totAch>0&&totYTD/totAch>=1?'green':totAch>0&&totYTD/totAch>=0.85?'amber':'red'}">${totAch>0?pct(totYTD/totAch):'—'}</td></tr>`;
+  }).join('')}<td class="r">${gbp(Math.round(totYTD))}</td><td class="r">${gbp(Math.round(totAch))}</td><td class="r ${totAch>0&&totYTD/totAch>=1?'green':totAch>0&&totYTD/totAch>=0.85?'amber':'red'}">${totAch>0?pct(totYTD/totAch):'—'}</td></tr>`;
   html += `</tbody>`;
   document.getElementById('overviewTbl').innerHTML = html;
 }
@@ -1453,7 +1587,7 @@ function renderModelCharts() {
 // ═══════════════════════════════════════════════════════════════
 
 function renderPnLTable() {
-  const ams = actMonths();
+  const ams = rangeMonths();
   const mHdrs = ams.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
   let html = `<thead><tr><th>Line</th>${mHdrs.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th><th class="r">Margin</th></tr></thead><tbody>`;
 
@@ -1574,7 +1708,7 @@ function renderCoaches() {
   // (payroll detail is in the Costs tab — see renderCosts)
 
   // Coach revenue table — revenue only, no payroll figures
-  const actMks = actMonths().filter(mk => MONTHS_H1.includes(mk));
+  const actMks = rangeMonths().filter(mk => MONTHS_H1.includes(mk));
   const actLbls = actMks.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
   let html = `<thead><tr><th>Coach</th><th>Type</th>${actLbls.map(m=>`<th class="r">${m} Rev</th>`).join('')}<th class="r">YTD Rev</th></tr></thead><tbody>`;
   const colTotals = actMks.map(() => 0);
@@ -1753,7 +1887,7 @@ function renderTrends() {
   });
 
   // Margin trend (actuals only)
-  const ams = actMonths();
+  const ams = rangeMonths();
   const margins = ams.map(mk => {
     const r = totalRev(mk), c = totalCost(mk)||0;
     return r ? (r-c)/r*100 : null;
@@ -1775,7 +1909,7 @@ function renderTrends() {
 
 function renderH1Table() {
   let html = `<thead><tr><th>Month</th><th class="r">Old Model</th><th class="r">New Model</th><th class="r">PT Membership</th><th class="r">Total Rev</th><th class="r">Total Cost</th><th class="r">Profit</th><th class="r">Margin</th><th>Status</th></tr></thead><tbody>`;
-  for (const mk of MONTHS_H1) {
+  for (const mk of MONTHS_H1.filter(monthInRange)) {
     const isAct = !!DB.revenue[mk];
     const old  = isAct ? oldModelRev(mk) : (FORECAST[mk]?.pt_credits||0)+(FORECAST[mk]?.pt_rent||0);
     const nw   = isAct ? newModelRev(mk) : (FORECAST[mk]?.new_model||0);
@@ -1796,8 +1930,8 @@ function renderH1Table() {
       <td><span class="badge ${isAct?'bg':'bc'}">${isAct?'Actual':'Forecast'}</span></td>
     </tr>`;
   }
-  const totRev  = MONTHS_H1.reduce((s,mk)=>{const f=FORECAST[mk];return s+(f?f.pt_credits+f.pt_membership+f.pt_rent+f.new_model:0);},0);
-  const totCost = MONTHS_H1.reduce((s,mk)=>s+(DB.costs[mk]?.total||COST_FORECAST[mk]||0),0);
+  const totRev  = MONTHS_H1.filter(monthInRange).reduce((s,mk)=>{const f=FORECAST[mk];return s+(f?f.pt_credits+f.pt_membership+f.pt_rent+f.new_model:0);},0);
+  const totCost = MONTHS_H1.filter(monthInRange).reduce((s,mk)=>s+(DB.costs[mk]?.total||COST_FORECAST[mk]||0),0);
   html += `<tr class="tot"><td>H1 Total</td><td colspan="3"></td><td class="r white">${gbp(Math.round(totRev))}</td><td class="r red">−${gbp(Math.round(totCost))}</td><td class="r ${totRev-totCost>=0?'green':'red'}">${gbp(Math.round(totRev-totCost))}</td><td class="r ${((totRev-totCost)/totRev)>=0.3?'green':'amber'}">${pct((totRev-totCost)/totRev)}</td><td></td></tr>`;
   html += `</tbody>`;
   document.getElementById('h1ForecastTbl').innerHTML = html;
@@ -2385,6 +2519,9 @@ function hideLoading() {
 // ═══════════════════════════════════════════════════════════════
 
 window.addEventListener('load', async function init() {
+  // ── Close calendar when clicking outside ──────────────────────
+  document.addEventListener('click', e => { if (calOpen && !e.target.closest('#rangeBar')) { calOpen = false; document.getElementById('calPanel').style.display = 'none'; } });
+
   // ── Step 1: render instantly from hardcoded fallback ───────────
   setLoading('Loading dashboard…');
   loadFallback();
