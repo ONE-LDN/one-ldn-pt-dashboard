@@ -892,19 +892,17 @@ const PAYG_PAYE_FROM = {
 };
 
 // ── CSV upload item mapping ──────────────────────────────────────
-// Items matched here are credited to the named revenue line.
-// Craig's osteopathy bookings (M.Ost) are excluded — not PT revenue.
-// Intro/joining-fee products are excluded — tracked separately in pipeline data.
 const ITEM_MAP = [
   { re: /pt rental/i,                                       line: 'pt_credits',    coach: null              },
   { re: /personal trainer memb/i,                           line: 'pt_membership', coach: null              },
-  { re: /craig(?!.*\(m\.ost\))/i,                           line: 'new_model',     coach: 'Craig Clout'     },
+  { re: /craig/i,                                           line: 'new_model',     coach: 'Craig Clout'     },
   { re: /jessica?(\s+donehue)?|jess\s*donehue|^jess\b/i,   line: 'new_model',     coach: 'Jess Donehue'    },
   { re: /harry\s*sh?ep/i,                                   line: 'new_model',     coach: 'Harry Sheppard'  },
   { re: /mara\s*(greenwood)?/i,                             line: 'new_model',     coach: 'Mara Greenwood'  },
   { re: /max\s*wade/i,                                      line: 'new_model',     coach: 'Max Wade'        },
   { re: /kayla\s*joll/i,                                    line: 'new_model',     coach: 'Kayla Joll'      },
   { re: /grace\s*g\b/i,                                     line: 'new_model',     coach: 'Grace G'         },
+  { re: /joining fee|pt intro offer|intro pt session/i,     line: 'new_model',     coach: 'Intro / Other'   },
 ];
 
 // ═══════════════════════════════════════════════════════════════
