@@ -384,11 +384,14 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 
   <!-- TABS -->
   <div class="tabs">
-    <button class="tab on"  onclick="showTab('overview',this)">Overview</button>
+    <button class="tab on"  onclick="showTab('coaches',this)">Coach Breakdown</button>
+    <!-- ARCHIVED TABS — hidden from UI per dashboard restructure (panels retained in DOM, unreachable).
+         Overview merged into Coach Breakdown; Model P&amp;L / Trends / PT Pipeline retired.
+    <button class="tab"     onclick="showTab('overview',this)">Overview</button>
     <button class="tab"     onclick="showTab('pnl',this)">Model P&amp;L</button>
-    <button class="tab"     onclick="showTab('coaches',this)">Coach Breakdown</button>
     <button class="tab"     onclick="showTab('trends',this)">Trends</button>
     <button class="tab"     onclick="showTab('pipeline',this)">PT Pipeline</button>
+    -->
     <button class="tab"     onclick="showTab('costs',this)" style="color:#d6242d">Costs</button>
   </div>
 
@@ -402,8 +405,10 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
     <div class="cal-panel" id="calPanel" style="display:none"></div>
   </div>
 
-  <!-- ══════════ TAB 1: OVERVIEW ══════════ -->
-  <div class="panel on" id="panel-overview">
+  <!-- ══════════ ARCHIVED: OVERVIEW TAB (merged into Coach Breakdown) ══════════
+       No tab button → panel is unreachable/hidden. Monthly Revenue Summary moved into #panel-coaches.
+       Model cards (#modelCards) and the "Revenue by Line" stacked chart (#cOverview) retired per restructure. -->
+  <div class="panel" id="panel-overview">
     <div class="g3" id="modelCards"></div>
     <div class="card">
       <div class="card-head">
@@ -414,16 +419,6 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
         <span class="badge ba">FY 2026</span>
       </div>
       <div style="position:relative"><canvas id="cOverview" height="200"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-head">
-        <div>
-          <div class="card-ttl">Monthly Revenue Summary</div>
-          <div class="card-sub">All four PT revenue lines — actuals vs forecast</div>
-        </div>
-      </div>
-      <div style="overflow-x:auto"><table id="overviewTbl"></table></div>
-      <div class="fn">* Apr–Jun = forecast. Upload a WodBoard CSV each month to replace forecast with actuals.</div>
     </div>
   </div>
 
@@ -462,8 +457,19 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
     </div>
   </div>
 
-  <!-- ══════════ TAB 3: COACH BREAKDOWN ══════════ -->
-  <div class="panel" id="panel-coaches">
+  <!-- ══════════ DEFAULT TAB: COACH BREAKDOWN (merged with Overview) ══════════ -->
+  <div class="panel on" id="panel-coaches">
+    <!-- Monthly Revenue Summary — moved from Overview · sits at top of the default tab -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">Monthly Revenue Summary</div>
+          <div class="card-sub">All four PT revenue lines — actuals vs forecast</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto"><table id="overviewTbl"></table></div>
+      <div class="fn">* Apr–Jun = forecast. Upload a WodBoard CSV each month to replace forecast with actuals.</div>
+    </div>
     <div class="month-filter-bar">
       <span class="month-filter-label">Viewing</span>
       <select class="month-filter-select" id="coachMonthSelect" onchange="onCoachMonthChange(this.value)"></select>
