@@ -357,7 +357,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
     </div>
     <div class="upload-info">
       <strong>Update from WodBoard Export</strong>
-      <span>Upload monthly income statement CSV — data syncs to cloud instantly for all users</span>
+      <span>Upload a WodBoard income statement CSV — full month or just the latest days; transactions are de-duplicated, so re-uploads and partial top-ups are safe. Syncs to the cloud instantly.</span>
     </div>
     <select id="monthPicker" style="background:#0d0d0d;color:#888;border:1px solid #2a2a2a;border-radius:7px;padding:8px 12px;font-size:12px;cursor:pointer;">
       <option value="">Auto-detect month</option>
@@ -904,6 +904,17 @@ const ITEM_MAP = [
   { re: /grace\s*g\b/i,                                     line: 'new_model',     coach: 'Grace G'         },
   { re: /joining fee|pt intro offer|intro pt session/i,     line: 'new_model',     coach: 'Intro / Other'   },
 ];
+
+// ── Which WodBoard payment States count toward recognised revenue ──────────
+// null  → count every row with gross > 0 (preserves the figures shown today).
+// To recognise only collected money — RECOMMENDED — set this to ['Settled'].
+// That excludes 'Scheduled' (future debits not yet taken) and 'Written Off'
+// (failed/refunded), which makes an in-progress month stable: the total only
+// ever grows as payments settle, instead of wobbling when scheduled debits fail.
+const COUNTED_STATES = null;
+function stateCounts(state) {
+  return COUNTED_STATES === null || COUNTED_STATES.includes((state || '').trim());
+}
 
 // ═══════════════════════════════════════════════════════════════
 // DATA STORE (populated from Supabase on load)
@@ -2378,48 +2389,97 @@ async function processUpload(filename, rows) {
     await new Promise(r => setTimeout(r, 1200));
   }
 
-  // ── Extract PT revenue from target-month rows only ──
-  const revenueAccum = {};  // { line: total }
-  const coachTxns    = [];  // [{ coach, product, amount }]
+  // ── Build raw PT transaction records from target-month rows ──
+  // Each PT-relevant CSV line is stored individually (in pt_revenue_txn) so
+  // uploads are additive and idempotent. pt_revenue / pt_coach_transactions are
+  // then recomputed from the full raw set for the month, so uploading only the
+  // new days adds correctly and re-uploading the whole month is harmless.
+  function rowIso(row) {
+    const p = (row.Date || row.date || '').trim().split('/');   // DD/MM/YYYY
+    if (p.length !== 3) return isoDate;                          // fall back to month start
+    return `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+  }
 
+  const rawRecords = [];
   for (const row of targetRows) {
     const item   = (row.Item || row.item || '').trim();
     const gross  = parseFloat((row['Gross Amount'] || row['Amount'] || '0').replace(/[£,]/g,''));
-    if (!item || isNaN(gross) || gross <= 0) continue;
+    if (!item || isNaN(gross) || gross <= 0) continue;   // also skips section-header rows (blank gross)
 
     for (const rule of ITEM_MAP) {
       if (rule.re.test(item)) {
-        revenueAccum[rule.line] = (revenueAccum[rule.line] || 0) + gross;
+        let coach = null;
         if (rule.coach) {
-          // PAYE coach — attributed by product name
-          coachTxns.push({ coach: rule.coach, product: item, amount: gross });
+          coach = rule.coach;                            // PAYE coach — attributed by product name
         } else if (rule.line === 'pt_credits') {
           // Old Model (PAYG) — attribute by Customer Name if they're a known PAYG PT
           const custName = (row.Name || row.name || '').trim().toLowerCase();
           const paygCoach = PAYG_PT_MAP[custName];
           const paygUntil = paygCoach && PAYG_PAYE_FROM[paygCoach];
-          if (paygCoach && (!paygUntil || mk < paygUntil)) {
-            coachTxns.push({ coach: paygCoach, product: item, amount: gross });
-          }
+          if (paygCoach && (!paygUntil || mk < paygUntil)) coach = paygCoach;
         } else if (rule.line === 'pt_membership') {
           // PAYG PT membership fee — attribute by customer ID if in known PT list
           const custId = (row['Customer ID'] || row['customer_id'] || '').toString().trim();
-          if (custId && PAYG_PT_MEMBER_IDS[custId]) {
-            coachTxns.push({ coach: PAYG_PT_MEMBER_IDS[custId], product: item, amount: gross });
-          }
+          if (custId && PAYG_PT_MEMBER_IDS[custId]) coach = PAYG_PT_MEMBER_IDS[custId];
         }
+        rawRecords.push({
+          month: isoDate,
+          line: rule.line,
+          customer_id: (row['Customer ID'] || row['customer_id'] || '').toString().trim(),
+          item,
+          txn_date: rowIso(row),
+          gross_amount: Math.round(gross*100)/100,
+          state: (row.State || row.state || '').trim() || null,
+          coach_name: coach,
+        });
         break;
       }
     }
   }
 
-  if (Object.keys(revenueAccum).length === 0) {
+  if (rawRecords.length === 0) {
     statusEl.className = 'upload-status warn';
     statusEl.textContent = `No PT revenue rows found in ${filename}. Is this the right CSV?`;
     return;
   }
 
-  // ── Guard: warn if upload would reduce an existing revenue line ──
+  // Assign a within-file sequence to genuinely-identical rows (same line, customer,
+  // item, date and amount). The WodBoard export has no transaction ID and no
+  // time-of-day, so this gives each row a stable unique key for idempotent upsert.
+  const seqCounter = {};
+  for (const rec of rawRecords) {
+    const k = `${rec.line}|${rec.customer_id}|${rec.item}|${rec.txn_date}|${rec.gross_amount}`;
+    rec.seq = seqCounter[k] = (seqCounter[k] ?? -1) + 1;
+  }
+
+  // ── Predict the recomputed month totals BEFORE writing ──
+  // Merge any raw rows already stored for this month with the new ones (new wins
+  // on identical key), so partial re-uploads and state changes are reflected.
+  const txnKey = r => `${r.month}|${r.line}|${r.customer_id}|${r.item}|${r.txn_date}|${parseFloat(r.gross_amount)}|${r.seq}`;
+  const existingRaw = await sbGet('pt_revenue_txn', `month=eq.${isoDate}`);
+  const merged = new Map();
+  for (const r of existingRaw) merged.set(txnKey(r), r);
+  for (const r of rawRecords)  merged.set(txnKey(r), r);
+  const mergedRows = [...merged.values()];
+
+  // Aggregate revenue per line and coach transactions from the merged raw set.
+  const revenueAccum = {};                 // { line: total }
+  const coachAgg     = {};                  // `${coach}|${item}` -> { coach, item, amount, quantity }
+  for (const r of mergedRows) {
+    if (!stateCounts(r.state)) continue;
+    const amt = parseFloat(r.gross_amount);
+    revenueAccum[r.line] = (revenueAccum[r.line] || 0) + amt;
+    if (r.coach_name) {
+      const k = `${r.coach_name}|${r.item}`;
+      const c = coachAgg[k] || (coachAgg[k] = { coach: r.coach_name, item: r.item, amount: 0, quantity: 0 });
+      c.amount   += amt;
+      c.quantity += 1;
+    }
+  }
+
+  // ── Guard: warn if the recomputed total would REDUCE an existing line ──
+  // With additive uploads this should only fire on the first upload of a month
+  // under the new system if a PARTIAL file is used before a full one.
   const existingRevRows = await sbGet('pt_revenue', `month=eq.${isoDate}`);
   const existingRevMap = {};
   for (const row of existingRevRows) existingRevMap[row.line] = parseFloat(row.amount);
@@ -2437,7 +2497,7 @@ async function processUpload(filename, rows) {
       statusEl.innerHTML =
         `<strong>⚠ This upload would REDUCE ${monthLabel} revenue:</strong><br>` +
         reductions.map(r => `<span style="display:block;margin:2px 0">${r}</span>`).join('') +
-        `<br><small>This usually means the CSV only covers part of the month. Re-export from WodBoard with the full ${monthLabel} date range.</small>` +
+        `<br><small>If this is the first upload for ${monthLabel} since the transaction-level system went live, use the full month-to-date export once — after that, partial top-ups are safe.</small>` +
         `<div style="margin-top:10px;display:flex;gap:8px">` +
           `<button id="uploadProceedBtn" style="padding:6px 14px;background:#d9262c;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:600">Proceed anyway</button>` +
           `<button id="uploadCancelBtn"  style="padding:6px 14px;background:#1a1a1a;color:#bbb;border:1px solid #333;border-radius:5px;cursor:pointer">Cancel</button>` +
@@ -2454,7 +2514,14 @@ async function processUpload(filename, rows) {
     statusEl.textContent = 'Processing…';
   }
 
-  // ── Upsert revenue ──
+  // ── Write raw transactions (idempotent upsert) ──
+  for (const rec of rawRecords) {
+    await sbUpsert('pt_revenue_txn',
+      { ...rec, source_file: filename },
+      'month,line,customer_id,item,txn_date,gross_amount,seq');
+  }
+
+  // ── Recompute & upsert the derived month aggregates ──
   let inserted = 0;
   for (const [line, amount] of Object.entries(revenueAccum)) {
     await sbUpsert('pt_revenue',
@@ -2462,25 +2529,15 @@ async function processUpload(filename, rows) {
       'month,line');
     inserted++;
   }
-
-  // ── Upsert coach transactions ──
-  // Aggregate by coach+product first (sum quantities)
-  const coachAgg = {};
-  for (const t of coachTxns) {
-    const k = `${t.coach}|${t.product}`;
-    coachAgg[k] = (coachAgg[k] || { ...t, quantity: 0, amount: 0 });
-    coachAgg[k].amount   += t.amount;
-    coachAgg[k].quantity += 1;
-  }
   for (const t of Object.values(coachAgg)) {
     await sbUpsert('pt_coach_transactions',
-      { month: isoDate, coach_name: t.coach, product_name: t.product, amount: Math.round(t.amount*100)/100, quantity: t.quantity, source_file: filename },
+      { month: isoDate, coach_name: t.coach, product_name: t.item, amount: Math.round(t.amount*100)/100, quantity: t.quantity, source_file: filename },
       'month,product_name,coach_name');
   }
 
   // ── Log upload ──
   await sbInsert('pt_upload_log',
-    { filename, month_covered: isoDate, rows_inserted: inserted, rows_skipped: 0, uploaded_by: 'web-upload' });
+    { filename, month_covered: isoDate, rows_inserted: rawRecords.length, rows_skipped: skippedRows, uploaded_by: 'web-upload' });
 
   // ── Reload data and re-render ──
   statusEl.textContent = 'Refreshing dashboard…';
@@ -2488,7 +2545,7 @@ async function processUpload(filename, rows) {
   renderAll();
 
   statusEl.className = 'upload-status ok';
-  statusEl.textContent = `✓ ${monthLabel} uploaded — ${inserted} revenue lines, ${Object.keys(coachAgg).length} coach transactions`;
+  statusEl.textContent = `✓ ${monthLabel} updated — ${rawRecords.length} transactions, ${inserted} revenue lines, ${Object.keys(coachAgg).length} coach transactions`;
 }
 
 // ═══════════════════════════════════════════════════════════════
