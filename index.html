@@ -240,6 +240,10 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
 .dh-target-input { background: #0d0d0d; border: 1px solid #e8c547; border-radius: 5px; color: #fff; padding: 3px 7px; font-size: 12px; width: 90px; }
 .dh-sub { font-size: 11px; color: #444; margin-top: 4px; }
 .custom-badge { display: inline-block; font-size: 9px; padding: 1px 5px; background: #1a1400; color: #e8c547; border-radius: 3px; margin-left: 6px; }
+.tgt-note { font-size: 10px; margin-left: 4px; }
+.tgt-note.pending { color: #4a4a4a; }
+.tgt-note.ok      { color: #c1ff72; }
+.tgt-note.warn    { color: #d6242d; }
 .dh-delta { font-size: 24px; font-weight: 700; margin: 6px 0 4px; line-height: 1; }
 .dh-days  { font-size: 40px; font-weight: 700; line-height: 1; margin: 4px 0 4px; }
 .dh-days.urgency-amber { color: #e8c547; }
@@ -765,6 +769,14 @@ async function sbInsert(table, row) {
   if (!res.ok) { const t = await res.text(); throw new Error(`DB insert failed (${table}): ${t}`); }
 }
 
+async function sbDelete(table, params) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+    method: 'DELETE',
+    headers: { ...SB_AUTH, 'Prefer': 'return=minimal' },
+  });
+  if (!res.ok) { const t = await res.text(); throw new Error(`DB delete failed (${table}): ${t}`); }
+}
+
 // ── Hardcoded fallback data (Jan–Mar 2026 actuals) ───────────────
 // Dashboard renders instantly from this; DB data overlays when available
 function loadFallback() {
@@ -792,6 +804,7 @@ function loadFallback() {
     ],
   };
   DB.uploadLog = [];
+  DB.targetOverrides = {};   // overwritten by the DB sync — forecast targets until then
 }
 
 // ── Forecast targets (static from Revenue Tracker sheet) ────────
@@ -916,10 +929,11 @@ const ITEM_MAP = [
 // ═══════════════════════════════════════════════════════════════
 
 let DB = {
-  revenue:      {},  // { 'YYYY-MM': { pt_credits, pt_membership, pt_rent, new_model } }
-  costs:        {},  // { 'YYYY-MM': { head_of_fitness, craig_clout, jess_donehue, harry_sheppard, tax_ni, total } }
-  coachTxns:    {},  // { 'YYYY-MM': [ { coach_name, product_name, amount } ] }
-  uploadLog:    [],  // [ { filename, month_covered, uploaded_at, rows_inserted } ]
+  revenue:         {},  // { 'YYYY-MM': { pt_credits, pt_membership, pt_rent, new_model } }
+  costs:           {},  // { 'YYYY-MM': { head_of_fitness, craig_clout, jess_donehue, harry_sheppard, tax_ni, total } }
+  coachTxns:       {},  // { 'YYYY-MM': [ { coach_name, product_name, amount } ] }
+  uploadLog:       [],  // [ { filename, month_covered, uploaded_at, rows_inserted } ]
+  targetOverrides: {},  // { 'YYYY-MM': amount } — shared across devices via pt_target_override
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -927,6 +941,7 @@ let DB = {
 // ═══════════════════════════════════════════════════════════════
 
 const gbp = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0}) + (v < 0 ? ')' : '');
+const escHtml = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const gbpd = v => v == null ? '—' : (v < 0 ? '(' : '') + '£' + Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + (v < 0 ? ')' : '');
 const pct = v => v == null ? '—' : (v * 100).toFixed(1) + '%';
 const monthKey = d => d.toISOString().slice(0, 7);     // Date → 'YYYY-MM'
@@ -1112,12 +1127,14 @@ function totalRev(mk) {
   return (r.pt_credits||0) + (r.pt_membership||0) + ptRent(mk) + (r.new_model||0);
 }
 
-// Target for a month: localStorage override → FORECAST total
-function getTarget(mk) {
-  const override = localStorage.getItem('pt_target_override_' + mk);
-  if (override !== null) return parseFloat(override);
+// Target for a month: DB override (shared across devices) → FORECAST total
+function hasTargetOverride(mk) { return DB.targetOverrides[mk] != null; }
+function forecastTarget(mk) {
   const f = FORECAST[mk];
   return f ? f.pt_credits + f.pt_membership + f.pt_rent + f.new_model : 0;
+}
+function getTarget(mk) {
+  return hasTargetOverride(mk) ? DB.targetOverrides[mk] : forecastTarget(mk);
 }
 function getTargetLine(mk, line) {
   return FORECAST[mk]?.[line] ?? 0;
@@ -1133,11 +1150,12 @@ const actMonths = () => MONTHS_H1.filter(mk => DB.revenue[mk]);
 async function loadData() {
   setLoading('Fetching revenue data…');
 
-  const [revenue, costs, coachTxns, uploadLog] = await Promise.all([
+  const [revenue, costs, coachTxns, uploadLog, targetOverrides] = await Promise.all([
     sbGet('pt_revenue',            'order=month'),
     sbGet('pt_costs',              'order=month'),
     sbGet('pt_coach_transactions', 'order=month'),
     sbGet('pt_upload_log',         'order=uploaded_at.desc&limit=20'),
+    sbGet('pt_target_override',    'order=month'),
   ]);
 
   // ── Revenue ─────────────────────────────────────────────────
@@ -1167,6 +1185,12 @@ async function loadData() {
 
   // ── Upload log ───────────────────────────────────────────────
   DB.uploadLog = uploadLog;
+
+  // ── Monthly target overrides ─────────────────────────────────
+  DB.targetOverrides = {};
+  for (const row of targetOverrides) {
+    DB.targetOverrides[row.month.slice(0, 7)] = parseFloat(row.amount);
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1243,7 +1267,7 @@ function renderDecisionHeader() {
   const fillPct  = Math.min(100, tgtRatio ? Math.round(tgtRatio*100) : 0);
 
   // Has override?
-  const hasOverride = localStorage.getItem('pt_target_override_' + currentMk) !== null;
+  const hasOverride = hasTargetOverride(currentMk);
 
   // vs last month delta
   const delta    = prevRev !== null ? rev - prevRev : null;
@@ -1267,8 +1291,9 @@ function renderDecisionHeader() {
         <div class="dh-rag-row">
           <span class="rag-badge rag-${rag}">${ragLabel}</span>
           <span class="dh-target-row">vs <span id="dhTargetAmt">${gbp(Math.round(monthTgt))}</span> target
-            ${hasOverride?'<span class="custom-badge">custom</span>':''}
+            ${hasOverride?'<span class="custom-badge" title="Custom target — saved to the database, shared across devices">custom</span>':''}
             <button class="dh-edit-btn" onclick="startEditTarget('${currentMk}')" title="Edit target">✏</button>
+            ${targetNote?`<span class="tgt-note ${targetNote.cls}">${escHtml(targetNote.text)}</span>`:''}
           </span>
         </div>
         <div class="dh-sub">
@@ -1289,21 +1314,62 @@ function renderDecisionHeader() {
     </div>`;
 }
 
+// Transient save feedback shown next to the target. Held in a variable rather than
+// the DOM so it survives the re-renders that follow a commit.
+let targetNote = null;   // { text, cls }
+let targetNoteTimer = null;
+function setTargetNote(text, cls, ttl = 4000) {
+  targetNote = text ? { text, cls } : null;
+  clearTimeout(targetNoteTimer);
+  if (text && ttl) targetNoteTimer = setTimeout(() => { targetNote = null; renderDecisionHeader(); }, ttl);
+  renderDecisionHeader();
+}
+function renderTargetViews() {
+  renderDecisionHeader();
+  renderRevBreakdown();
+  renderInsight();
+}
+
 function startEditTarget(mk) {
   const current = getTarget(mk);
   const el = document.getElementById('dhTargetAmt');
   if (!el) return;
-  el.innerHTML = `<input id="dhTargetInput" class="dh-target-input" type="number" value="${current}" onblur="commitTarget('${mk}')" onkeydown="if(event.key==='Enter')commitTarget('${mk}');if(event.key==='Escape')renderDecisionHeader();">`;
+  el.innerHTML = `<input id="dhTargetInput" class="dh-target-input" type="number" value="${current}" title="Clear the box and press Enter to reset to the forecast target" onblur="commitTarget('${mk}')" onkeydown="if(event.key==='Enter')commitTarget('${mk}');if(event.key==='Escape')renderDecisionHeader();">`;
   document.getElementById('dhTargetInput')?.focus();
 }
-function commitTarget(mk) {
-  const val = parseFloat(document.getElementById('dhTargetInput')?.value);
-  if (!isNaN(val) && val > 0) {
-    localStorage.setItem('pt_target_override_' + mk, val);
+
+// Writes the override to Supabase so it is shared across devices.
+// Renders optimistically, then reverts if the write fails.
+async function commitTarget(mk) {
+  const input = document.getElementById('dhTargetInput');
+  if (!input || input.dataset.committed) return;   // Enter then blur must not double-fire
+  input.dataset.committed = '1';
+
+  const raw      = input.value.trim();
+  const clearing = raw === '';
+  const val      = parseFloat(raw);
+  if (!clearing && (isNaN(val) || val <= 0)) { renderDecisionHeader(); return; }
+
+  const prev = DB.targetOverrides[mk];
+  if (clearing) delete DB.targetOverrides[mk]; else DB.targetOverrides[mk] = val;
+  renderTargetViews();
+  setTargetNote('saving…', 'pending', 0);
+
+  try {
+    if (clearing) {
+      await sbDelete('pt_target_override', `month=eq.${mk}-01`);
+      setTargetNote('reset to forecast', 'ok');
+    } else {
+      await sbUpsert('pt_target_override',
+        { month: `${mk}-01`, amount: val, updated_at: new Date().toISOString() }, 'month');
+      setTargetNote('saved for all devices', 'ok');
+    }
+  } catch (err) {
+    if (prev == null) delete DB.targetOverrides[mk]; else DB.targetOverrides[mk] = prev;
+    renderTargetViews();
+    setTargetNote('not saved: ' + err.message, 'warn', 8000);
+    console.warn('Target save failed:', err);
   }
-  renderDecisionHeader();
-  renderRevBreakdown();
-  renderInsight();
 }
 
 // ═══════════════════════════════════════════════════════════════
