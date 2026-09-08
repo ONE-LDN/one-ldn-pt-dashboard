@@ -432,7 +432,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-ttl">Old Model (PAYG) — Monthly Revenue</div>
+            <div class="card-ttl">PAYG Model — Monthly Revenue</div>
             <div class="card-sub">PT Credits + PT Rent · zero cost · 100% margin</div>
           </div>
           <span class="badge bg">Pure Margin</span>
@@ -442,7 +442,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-ttl">New Model (PAYE) — Revenue vs Cost</div>
+            <div class="card-ttl">PAYE Model — Revenue vs Cost</div>
             <div class="card-sub">Named PT packages vs payroll + Head of Fitness</div>
           </div>
           <span class="badge bb">Investment Phase</span>
@@ -483,7 +483,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
       <div class="card-head">
         <div>
           <div class="card-ttl">Revenue by Coach</div>
-          <div class="card-sub">New PT Model revenue by coach from WodBoard data</div>
+          <div class="card-sub">PAYE Model revenue by coach from WodBoard data</div>
         </div>
         <span class="badge bb" id="coachMonthBadge">—</span>
       </div>
@@ -499,20 +499,32 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
       <div style="overflow-x:auto"><table id="coachTbl"></table></div>
       <div class="fn">
         * Revenue attribution uses WodBoard transaction data. Jan/Feb breakdown not available (transaction-level data starts Mar 26).<br>
-        † Harry Sheppard transitioned Self-Employed → PAYE February 2026.<br>
+        † Harry Sheppard transitioned Self-Employed → PAYE February 2026 (since left).<br>
+        § Craig Clout and Max Wade moved PAYE → PAYG from September 2026 (PT Roster Master). Their PAYE revenue shows to Aug 26; from Sep 26 they appear in the PAYG tables below.<br>
         ‡ Mara Greenwood: appears in March WodBoard export (£960). Not on payroll — status to confirm.
       </div>
     </div>
     <div class="card">
       <div class="card-head">
         <div>
-          <div class="card-ttl">Old Model — Credit Packs Purchased by Coach</div>
+          <div class="card-ttl">PAYG Model — Credit Packs Purchased by Coach</div>
           <div class="card-sub">PT rental hours purchased per PAYG coach · attributed from WodBoard Customer Name · re-upload CSVs to populate</div>
         </div>
         <span class="badge bg">PAYG Revenue</span>
       </div>
       <div style="overflow-x:auto"><table id="paygCreditTbl"></table></div>
       <div class="fn">* Data populates from the next CSV upload. Coach attribution uses the Customer Name column from WodBoard income statement exports. Re-upload historical months to backfill.</div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-ttl">PAYG PT Membership — £159/month Collection</div>
+          <div class="card-sub" id="paygMemSub">Every PAYG PT pays a £159 PT membership · expected collection per month vs collected · attributed from WodBoard Customer ID</div>
+        </div>
+        <span class="badge bp">PT Membership</span>
+      </div>
+      <div style="overflow-x:auto"><table id="paygMemTbl"></table></div>
+      <div class="fn">* Paid = a "Personal Trainer Membership" transaction for that PT in the month's WodBoard export. Unpaid = PAYG PT on the roster that month with no membership transaction. ID needed = PT not yet mapped to a WodBoard Customer ID, so payment cannot be attributed until the ID is added. "Expected" = active PAYG PTs that month × £159.</div>
     </div>
     <div class="card">
       <div class="card-head">
@@ -533,7 +545,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-ttl">Old vs New Model — Monthly Revenue Trend</div>
+            <div class="card-ttl">PAYG vs PAYE — Monthly Revenue Trend</div>
             <div class="card-sub">Actuals (solid) · forecast (dashed)</div>
           </div>
         </div>
@@ -542,7 +554,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-ttl">New Model: Revenue vs Cost — Path to Break-Even</div>
+            <div class="card-ttl">PAYE Model — Revenue vs Cost — Path to Break-Even</div>
             <div class="card-sub">Lines cross = break-even point</div>
           </div>
         </div>
@@ -553,7 +565,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
       <div class="card-head">
         <div>
           <div class="card-ttl">Blended Margin % Trend</div>
-          <div class="card-sub">Overall PT margin (all revenue vs New Model costs) · actuals only</div>
+          <div class="card-sub">Overall PT margin (all revenue vs PAYE Model costs) · actuals only</div>
         </div>
         <span class="badge ba">Actuals</span>
       </div>
@@ -700,7 +712,7 @@ tr.fct td { color: #2e2e2e; font-style: italic; }
     <div class="card">
       <div class="card-head">
         <div>
-          <div class="card-ttl">New Model Cost Breakdown — All Months</div>
+          <div class="card-ttl">PAYE Model Cost Breakdown — All Months</div>
           <div class="card-sub">Head of Fitness + PAYE payroll + Employer Tax/NI</div>
         </div>
         <span class="badge bb">Actuals</span>
@@ -818,10 +830,11 @@ const FORECAST = {
   // H2 targets TBD — update once post-June forecasts are set
   '2026-07': { pt_credits: 0, pt_membership: 954, pt_rent: 0, new_model: 0 },
   '2026-08': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
-  '2026-09': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
-  '2026-10': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
-  '2026-11': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
-  '2026-12': { pt_credits: 0, pt_membership: 0, pt_rent: 0, new_model: 0 },
+  // PT membership from Sep 2026 = 11 PAYG PTs × £159 = £1,749 (PT Roster Master; see PAYG_MEMBERSHIP_EXPECTED)
+  '2026-09': { pt_credits: 0, pt_membership: 1749, pt_rent: 1000, new_model: 0 },
+  '2026-10': { pt_credits: 0, pt_membership: 1749, pt_rent: 1000, new_model: 0 },
+  '2026-11': { pt_credits: 0, pt_membership: 1749, pt_rent: 1000, new_model: 0 },
+  '2026-12': { pt_credits: 0, pt_membership: 1749, pt_rent: 1000, new_model: 0 },
 };
 
 // ── Projected costs (PAYE at last actual run-rate; HoF £0 from May) ─
@@ -833,7 +846,7 @@ const COST_FORECAST = {
 };
 
 // ── PT Rent — flat facility fee, not in WodBoard CSV (no upload rule) ─
-// One flat-rent PT leaving after May 2026: £2,000 → £1,000 from June.
+// One flat-rent PT leaving after May 2026: £2,000 → £1,000 from June (Rickel White, RENT model — see OTHER_ROSTER).
 const FIXED_PT_RENT = {
   '2026-01': 1740, '2026-02': 2000, '2026-03': 2000,
   '2026-04': 2000, '2026-05': 2000, '2026-06': 1000,
@@ -867,17 +880,72 @@ const MONTHS_H1     = ['2026-01','2026-02','2026-03','2026-04','2026-05','2026-0
 const MONTHS_LABELS = ['Jan 26','Feb 26','Mar 26','Apr 26','May 26','Jun 26','Jul 26','Aug 26','Sep 26','Oct 26','Nov 26','Dec 26'];
 const MONTHS_SHORT  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-const SELF_EMP = [
-  'Alice Farrow','Adrian Canaveral','Rich Harris','Lucas Cloves',
-  'Aimee Jeffs','Luke Mehson','Sam Pepys','Annie Hall','Adam Siddle',
-  'Daniel Arase',
-];
+// ═══════════════════════════════════════════════════════════════
+// PT ROSTER MASTER — source: "ONE LDN | PT Roster Master" (Sep 2026)
+// Two models: PAYE (employed coaches, ONE LDN sells the packs, pays payroll)
+//             PAYG (self-employed PTs, pay £159/month PT membership + buy PT rental credits)
+// ═══════════════════════════════════════════════════════════════
+const PT_MEMBERSHIP_FEE = 159;   // £/month — every PAYG PT must hold an up-to-date PT membership
 
-// ── PAYG PT membership — customer ID → coach name ──────────────────────────
-// "Personal Trainer Membership" product — monthly fee paid by PAYG PTs to ONE LDN.
-// WodBoard Customer IDs confirmed by Saffron 2026-04-21.
-// Note: Harry Sheppard (192919) transitioned SE → PAYE Feb 2026; membership may have lapsed.
-// Note: Rich Harris is not on the membership (PAYG rental only).
+// Internal coach_name (as stored in Supabase pt_coach_transactions) → roster display name
+const COACH_LABEL = {
+  'Jess Donehue': 'Jessica Donehue',
+  'Grace G':      'Grace India Gordon',
+  'Mara G':       'Mara Greenwood',
+  'Daniel Arase': 'Dan Arase',
+};
+const coachLabel = n => COACH_LABEL[n] || n;
+
+// Active roster by model (internal coach_name values)
+const PAYE_ROSTER = ['Jess Donehue', 'Mara Greenwood', 'Grace G', 'Kayla Joll'];
+const PAYG_ROSTER = [
+  'Craig Clout', 'Max Wade', 'Alice Farrow', 'Aimee Jeffs', 'Adrian Canaveral',
+  'Sam Pepys', 'Adam Siddle', 'Lucas Cloves', 'Annie Hall', 'Daniel Arase', 'Pelé Zac',
+];
+// Not on either model — no PT membership, no PAYE payroll
+const OTHER_ROSTER = [
+  { name: 'Chris Barker', model: 'Class exchange', fee: 0    },
+  { name: 'Rickel White', model: 'Rent',           fee: 1000 },  // flat £1,000/month — see FIXED_PT_RENT
+];
+// Expected monthly PT membership collection: 11 PAYG × £159 = £1,749
+const PAYG_MEMBERSHIP_EXPECTED = PAYG_ROSTER.length * PT_MEMBERSHIP_FEE;
+
+// Model transitions — coach → [[fromMonth, model], ...] in date order.
+// Coaches not listed here are on their roster model for all months.
+const MODEL_HISTORY = {
+  'Craig Clout':    [['2026-01', 'PAYE'], ['2026-09', 'PAYG']],                       // PAYE → PAYG Sep 2026 (roster master)
+  'Max Wade':       [['2026-01', 'PAYG'], ['2026-04', 'PAYE'], ['2026-09', 'PAYG']],  // PAYG → PAYE Apr 26 → PAYG Sep 26
+  'Harry Sheppard': [['2026-01', 'PAYG'], ['2026-02', 'PAYE']],                       // left; PAYE from Feb 2026 while active
+};
+// Former PTs kept for historical attribution only (not on the Sep 2026 roster)
+const FORMER_PAYG = ['Rich Harris', 'Luke Mehson'];
+const FORMER_PAYE = ['Harry Sheppard'];
+const NO_MEMBERSHIP = ['Rich Harris'];   // historical: PAYG rental only, never on the £159 membership
+const ROSTER_MASTER_FROM = '2026-09';    // month the Sep 2026 PT Roster Master takes effect
+
+// Which model was a coach on in a given month ('PAYE' | 'PAYG' | null)
+function coachModelAt(name, mk) {
+  const hist = MODEL_HISTORY[name];
+  if (hist) {
+    let model = null;
+    for (const [from, m] of hist) if (mk >= from) model = m;
+    return model;
+  }
+  if (PAYE_ROSTER.includes(name) || FORMER_PAYE.includes(name)) return 'PAYE';
+  if (PAYG_ROSTER.includes(name) || FORMER_PAYG.includes(name)) return 'PAYG';
+  return null;
+}
+// PAYG PTs expected to pay the £159 membership in a given month
+function paygRosterAt(mk) {
+  return [...new Set([...PAYG_ROSTER, ...FORMER_PAYG, ...Object.keys(MODEL_HISTORY)])]
+    .filter(n => coachModelAt(n, mk) === 'PAYG'
+              && !NO_MEMBERSHIP.includes(n)
+              && (PAYG_ROSTER.includes(n) || mk < ROSTER_MASTER_FROM));
+}
+
+// ── PAYG PT membership — WodBoard customer ID → coach name ──────────────────
+// "Personal Trainer Membership" product — £159/month paid by every PAYG PT.
+// WodBoard Customer IDs confirmed by Saffron 2026-04-21 unless noted.
 const PAYG_PT_MEMBER_IDS = {
   '256755': 'Aimee Jeffs',
   '16280':  'Sam Pepys',
@@ -885,32 +953,36 @@ const PAYG_PT_MEMBER_IDS = {
   '64591':  'Alice Farrow',
   '64590':  'Adrian Canaveral',
   '64589':  'Adam Siddle',
-  '98486':  'Luke Mehson',
   '28121':  'Annie Hall',
-  // TODO: Daniel Arase confirmed on membership 2026-09-04 — add WodBoard Customer ID once known
-  // Max Wade (64599) removed Apr 2026 — transitioned to PAYE New Model
-  // Harry Sheppard (192919) removed — transitioned PAYE Feb 2026
+  '64599':  'Max Wade',        // back on PAYG from Sep 2026
+  '98486':  'Luke Mehson',     // former PAYG — historical attribution only
+  '192919': 'Harry Sheppard',  // former — historical attribution only
+  // TODO: Craig Clout — PAYG from Sep 2026, add WodBoard Customer ID
+  // TODO: Daniel Arase — confirmed on membership 2026-09-04, add WodBoard Customer ID
+  // TODO: Pelé Zac — new PAYG PT Sep 2026, add WodBoard Customer ID
 };
+// PAYG PTs whose membership can't yet be attributed (no Customer ID) — shown as "ID needed"
+const PAYG_MEMBER_ID_MISSING = PAYG_ROSTER.filter(n => !Object.values(PAYG_PT_MEMBER_IDS).includes(n));
 
 // ── PAYG PT name lookup — used to attribute "PT rental" transactions by coach ──
 // Keys are lowercased for case-insensitive matching against WodBoard Name column
 const PAYG_PT_MAP = {
-  'alice farrow':     'Alice Farrow',
-  'adrian canaveral': 'Adrian Canaveral',
-  'rich harris':      'Rich Harris',
-  'lucas cloves':     'Lucas Cloves',
-  'aimee jeffs':      'Aimee Jeffs',
-  'luke mehson':      'Luke Mehson',
-  'sam pepys':        'Sam Pepys',
-  'annie hall':       'Annie Hall',
-  'adam siddle':      'Adam Siddle',
+  'craig clout':      'Craig Clout',
   'max wade':         'Max Wade',
+  'alice farrow':     'Alice Farrow',
+  'aimee jeffs':      'Aimee Jeffs',
+  'adrian canaveral': 'Adrian Canaveral',
+  'sam pepys':        'Sam Pepys',
+  'adam siddle':      'Adam Siddle',
+  'lucas cloves':     'Lucas Cloves',
+  'annie hall':       'Annie Hall',
   'daniel arase':     'Daniel Arase',
-};
-
-// Coaches in PAYG_PT_MAP who transitioned to PAYE — stop PAYG attribution from this month onwards
-const PAYG_PAYE_FROM = {
-  'Max Wade': '2026-04',
+  'dan arase':        'Daniel Arase',
+  'pelé zac':         'Pelé Zac',
+  'pele zac':         'Pelé Zac',
+  // former PAYG PTs — historical attribution only
+  'rich harris':      'Rich Harris',
+  'luke mehson':      'Luke Mehson',
 };
 
 // ── CSV upload item mapping ──────────────────────────────────────
@@ -1389,7 +1461,7 @@ function renderRevBreakdown() {
   const r         = DB.revenue[currentMk];
 
   const lines = [
-    { key:'new_model',    lbl:'New Model',        actual: r?.new_model ?? null,        action:'Book intro sessions / follow up with matched leads' },
+    { key:'new_model',    lbl:'PAYE Model',        actual: r?.new_model ?? null,        action:'Book intro sessions / follow up with matched leads' },
     { key:'pt_credits',   lbl:'PT Credits (PAYG)',actual: r?.pt_credits ?? null,        action:'Chase PAYG coaches re pack renewals' },
     { key:'pt_rent',      lbl:'PT Rent',          actual: ptRent(currentMk),            action:'Check facility booking utilisation', fixed:true },
     { key:'pt_membership',lbl:'PT Membership',    actual: r?.pt_membership ?? null,    action:'Review which PAYG PTs haven\'t renewed' },
@@ -1453,8 +1525,8 @@ function renderInsight() {
     const costYTD= ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
     const newProfit = newYTD - costYTD;
     const newMargin = newYTD > 0 ? newProfit / newYTD : 0;
-    msg = `<strong>No data uploaded for this month yet.</strong> YTD: Old Model generating <strong>${gbp(Math.round(oldYTD))} at 100% margin</strong>. `
-        + `New Model at <strong>${pct(newMargin)} margin (${gbp(Math.round(newProfit))} YTD)</strong>. `
+    msg = `<strong>No data uploaded for this month yet.</strong> YTD: PAYG Model generating <strong>${gbp(Math.round(oldYTD))} at 100% margin</strong>. `
+        + `PAYE Model at <strong>${pct(newMargin)} margin (${gbp(Math.round(newProfit))} YTD)</strong>. `
         + `Upload this month's WodBoard CSV to see live pace tracking.`;
   } else {
     // Build gap attribution — find underperforming line
@@ -1475,7 +1547,7 @@ function renderInsight() {
       }
       const lowest = Object.entries(coachRevMap).sort((a,b)=>a[1]-b[1]).slice(0,2);
       if (lowest.length > 0) {
-        coachGapStr = ` New Model gap led by: ${lowest.map(([n,v])=>`<strong>${n} (${gbp(Math.round(v))})</strong>`).join(' and ')}.`;
+        coachGapStr = ` PAYE Model gap led by: ${lowest.map(([n,v])=>`<strong>${n} (${gbp(Math.round(v))})</strong>`).join(' and ')}.`;
       }
     }
 
@@ -1511,7 +1583,7 @@ function renderModelCards() {
 
   document.getElementById('modelCards').innerHTML = `
     <div class="model-card">
-      <div class="model-card-ttl"><span class="model-dot dot-old"></span>Old Model (PAYG)</div>
+      <div class="model-card-ttl"><span class="model-dot dot-old"></span>PAYG Model</div>
       <div class="model-rev green">${gbp(Math.round(oldRev))}</div>
       <div class="model-cost">Revenue · ${ams.length} months actuals</div>
       <div class="model-cost">Cost: £0 · independent contractors</div>
@@ -1519,7 +1591,7 @@ function renderModelCards() {
       <div class="model-margin green">100% margin</div>
     </div>
     <div class="model-card">
-      <div class="model-card-ttl"><span class="model-dot dot-new"></span>New Model (PAYE)</div>
+      <div class="model-card-ttl"><span class="model-dot dot-new"></span>PAYE Model</div>
       <div class="model-rev blue">${gbp(Math.round(newRev))}</div>
       <div class="model-cost">Revenue · ${ams.length} months actuals</div>
       <div class="model-cost">Cost: ${gbp(Math.round(costTotal))} · payroll + HoF + tax</div>
@@ -1570,7 +1642,7 @@ function renderOverviewChart() {
     data: { labels, datasets: [
       ...makeDataset('pt_credits',    '#c1ff72','#c1ff7244','PT Credits'),
       ...makeDataset('pt_membership', '#a78bfa','#a78bfa55','PT Membership'),
-      ...makeDataset('new_model',     '#1150ab','#1150ab55','New Model'),
+      ...makeDataset('new_model',     '#1150ab','#1150ab55','PAYE Model'),
     ]},
     options: {
       responsive: true, maintainAspectRatio: true,
@@ -1587,7 +1659,7 @@ function renderOverviewChart() {
 function renderOverviewTable() {
   const filtMks = MONTHS_H1.filter(monthInRange);
   const lines = ['pt_credits','pt_membership','pt_rent','new_model'];
-  const lbls  = { pt_credits:'PT Credits', pt_membership:'PT Membership', pt_rent:'PT Rent', new_model:'New PT Model' };
+  const lbls  = { pt_credits:'PT Credits', pt_membership:'PT Membership', pt_rent:'PT Rent', new_model:'PAYE Model' };
   let html = `<thead><tr><th>Line</th>${filtMks.map(mk => MONTHS_SHORT[MONTHS_H1.indexOf(mk)]).map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th><th class="r">H1 Fct</th><th class="r">Ach%</th></tr></thead><tbody>`;
 
   for (const line of lines) {
@@ -1624,7 +1696,7 @@ function renderOverviewTable() {
 function renderModelCharts() {
   destroyChart('cOldModel'); destroyChart('cNewModel');
 
-  // Old Model
+  // PAYG Model
   charts['cOldModel'] = new Chart(document.getElementById('cOldModel'), {
     type: 'bar',
     data: { labels: MONTHS_SHORT, datasets: [
@@ -1638,7 +1710,7 @@ function renderModelCharts() {
       scales:{ x:{stacked:true,grid:GRID,ticks:TICK}, y:{stacked:true,...mkY()} } },
   });
 
-  // New Model
+  // PAYE Model
   const costData = MONTHS_H1.map(mk => {
     if (DB.costs[mk]) return DB.costs[mk].total;
     if (COST_FORECAST[mk]) return COST_FORECAST[mk];
@@ -1666,23 +1738,23 @@ function renderPnLTable() {
   const mHdrs = ams.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
   let html = `<thead><tr><th>Line</th>${mHdrs.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th><th class="r">Margin</th></tr></thead><tbody>`;
 
-  // OLD MODEL
-  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">OLD MODEL (PAYG) — Self-Employed PTs</td></tr>`;
+  // PAYG MODEL
+  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">PAYG MODEL — Self-Employed PTs</td></tr>`;
   html += `<tr><td>PT Credits</td>${ams.map(mk=>`<td class="r">${gbp(DB.revenue[mk]?.pt_credits??null)}</td>`).join('')}<td class="r white">${gbp(Math.round(ams.reduce((s,mk)=>s+(DB.revenue[mk]?.pt_credits||0),0)))}</td><td class="r">—</td></tr>`;
   html += `<tr><td>PT Rent</td>${ams.map(mk=>`<td class="r">${gbp(ptRent(mk)||null)}</td>`).join('')}<td class="r white">${gbp(Math.round(ams.reduce((s,mk)=>s+(ptRent(mk)||0),0)))}</td><td class="r">—</td></tr>`;
   const oldYTD = ams.reduce((s,mk)=>s+(oldModelRev(mk)||0),0);
   html += `<tr class="sub"><td>Cost</td>${ams.map(()=>`<td class="r dim">—</td>`).join('')}<td class="r dim">£0</td><td class="r">—</td></tr>`;
-  html += `<tr class="tot"><td>Old Model Profit</td>${ams.map(mk=>`<td class="r green">${gbp(Math.round(oldModelRev(mk)||0))}</td>`).join('')}<td class="r green">${gbp(Math.round(oldYTD))}</td><td class="r green">100.0%</td></tr>`;
+  html += `<tr class="tot"><td>PAYG Model Profit</td>${ams.map(mk=>`<td class="r green">${gbp(Math.round(oldModelRev(mk)||0))}</td>`).join('')}<td class="r green">${gbp(Math.round(oldYTD))}</td><td class="r green">100.0%</td></tr>`;
 
-  // NEW MODEL
-  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">NEW MODEL (PAYE) — Employed Coaches</td></tr>`;
+  // PAYE MODEL
+  html += `<tr class="sec-hdr"><td colspan="${3+ams.length}">PAYE MODEL — Employed Coaches</td></tr>`;
   const newYTD = ams.reduce((s,mk)=>s+(newModelRev(mk)||0),0);
   const costYTD = ams.reduce((s,mk)=>s+(totalCost(mk)||0),0);
   html += `<tr><td>Revenue</td>${ams.map(mk=>`<td class="r blue">${gbpd(newModelRev(mk))}</td>`).join('')}<td class="r blue">${gbp(Math.round(newYTD))}</td><td class="r">—</td></tr>`;
   html += `<tr class="sub"><td>Total Cost</td>${ams.map(mk=>`<td class="r red">−${gbp(Math.round(totalCost(mk)||0))}</td>`).join('')}<td class="r red">−${gbp(Math.round(costYTD))}</td><td class="r dim">—</td></tr>`;
   const newProfit = newYTD - costYTD;
   const newMarg   = newProfit / newYTD;
-  html += `<tr class="tot"><td>New Model Profit</td>${ams.map(mk=>{const p=(newModelRev(mk)||0)-(totalCost(mk)||0);return `<td class="r ${p>=0?'green':'red'}">${gbp(Math.round(p))}</td>`;}).join('')}<td class="r ${newProfit>=0?'green':'red'}">${gbp(Math.round(newProfit))}</td><td class="r ${newProfit>=0?'green':'red'}">${pct(newMarg)}</td></tr>`;
+  html += `<tr class="tot"><td>PAYE Model Profit</td>${ams.map(mk=>{const p=(newModelRev(mk)||0)-(totalCost(mk)||0);return `<td class="r ${p>=0?'green':'red'}">${gbp(Math.round(p))}</td>`;}).join('')}<td class="r ${newProfit>=0?'green':'red'}">${gbp(Math.round(newProfit))}</td><td class="r ${newProfit>=0?'green':'red'}">${pct(newMarg)}</td></tr>`;
 
   // PT MEMBERSHIP
   const memYTD = ams.reduce((s,mk)=>s+(memRev(mk)||0),0);
@@ -1707,7 +1779,7 @@ function renderCostTable() {
   const mHdrs = ams.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
   const costLines = [
     {key:'head_of_fitness', lbl:'Head of Fitness †'},
-    ...PAYE_COACHES.map(c => ({key:c.key, lbl:c.name})),
+    ...PAYE_COACHES.map(c => ({key:c.key, lbl:coachLabel(c.name)})),
     {key:'tax_ni',          lbl:'Employer Tax / NI'},
   ];
   let html = `<thead><tr><th>Cost Line</th>${mHdrs.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th></tr></thead><tbody>`;
@@ -1748,26 +1820,31 @@ function renderCoaches() {
   const coachNames = Object.keys(coachRevMap).sort((a,b) => coachRevMap[b]-coachRevMap[a]);
 
   // Coach cards (PAYE coaches) — show revenue for selected month
+  // Current PAYE roster first, then coaches who were PAYE in earlier months (kept for history)
   const payeCoaches = [
-    { name:'Craig Clout',    key:'craig_clout'    },
     { name:'Jess Donehue',   key:'jess_donehue'   },
-    { name:'Harry Sheppard', key:'harry_sheppard'  },
     { name:'Mara Greenwood', key:'mara_greenwood'  },
-    { name:'Max Wade',       key:'max_wade',        payeFrom:'2026-04' },
-    { name:'Kayla Joll',     key:'kayla_joll'      },
     { name:'Grace G',        key:'grace_g'         },
+    { name:'Kayla Joll',     key:'kayla_joll'      },
+    { name:'Craig Clout',    key:'craig_clout'    },   // PAYE → PAYG Sep 2026
+    { name:'Max Wade',       key:'max_wade'        },  // PAYG → PAYE Apr 26 → PAYG Sep 26
+    { name:'Harry Sheppard', key:'harry_sheppard'  },  // former
   ];
 
-  document.getElementById('coachCards').innerHTML = payeCoaches.map(c => {
+  // Cards: current PAYE roster always; transitioned coaches only for months they were PAYE
+  const cardCoaches = payeCoaches.filter(c => !selMk || PAYE_ROSTER.includes(c.name)
+    || (coachModelAt(c.name, selMk) === 'PAYE' && DB.coachTxns[selMk]?.some(t => t.coach_name === c.name)));
+  document.getElementById('coachCards').innerHTML = cardCoaches.map(c => {
     const txns = selMk ? DB.coachTxns[selMk] : null;
     const coachRev = txns
       ? txns.filter(t => t.coach_name === c.name).reduce((s,t) => s + parseFloat(t.amount), 0)
       : 0;
+    const model = selMk ? coachModelAt(c.name, selMk) : 'PAYE';
     return `<div class="coach-card">
-      <div class="coach-name">${c.name}</div>
+      <div class="coach-name">${coachLabel(c.name)}</div>
       <div class="coach-rev">${coachRev > 0 ? gbpd(coachRev) : '—'}</div>
       <div class="coach-cost">${selLbl} revenue</div>
-      <div class="coach-cost">PAYE</div>
+      <div class="coach-cost">${model || 'PAYE'}${model === 'PAYG' ? ' · see PAYG tables' : ''}</div>
     </div>`;
   }).join('');
 
@@ -1790,7 +1867,7 @@ function renderCoaches() {
   let grandYTD = 0;
   for (const c of payeCoaches) {
     const revByMonth = actMks.map((mk, i) => {
-      if (c.payeFrom && mk < c.payeFrom) return 'payg';
+      if (coachModelAt(c.name, mk) !== 'PAYE') return 'payg';
       const txns = DB.coachTxns[mk];
       if (!txns) return null;
       return txns.filter(t => t.coach_name === c.name).reduce((s,t) => s + parseFloat(t.amount), 0) || null;
@@ -1798,7 +1875,7 @@ function renderCoaches() {
     const ytdRev = revByMonth.reduce((s,v) => s+(typeof v === 'number' ? v : 0), 0);
     revByMonth.forEach((v, i) => { if (typeof v === 'number') colTotals[i] += v; });
     grandYTD += ytdRev;
-    html += `<tr><td>${c.name}</td><td><span class="badge bb">PAYE</span></td>
+    html += `<tr><td>${coachLabel(c.name)}</td><td><span class="badge bb">PAYE</span></td>
       ${revByMonth.map(v => v === 'payg'
         ? `<td class="r"><span class="dim">PAYG</span></td>`
         : `<td class="r blue">${v!=null&&v>0?gbpd(v):'<span class="dim">—</span>'}</td>`).join('')}
@@ -1823,8 +1900,7 @@ function renderCoaches() {
     for (const mk of paygMonths) {
       for (const t of DB.coachTxns[mk]) {
         if (!paygNames.includes(t.coach_name)) continue;
-        const paygUntil = PAYG_PAYE_FROM[t.coach_name];
-        if (paygUntil && mk >= paygUntil) continue;
+        if (coachModelAt(t.coach_name, mk) !== 'PAYG') continue;
         if (!paygData[t.coach_name]) paygData[t.coach_name] = {};
         if (!paygData[t.coach_name][mk]) paygData[t.coach_name][mk] = { packs: [], total: 0 };
         paygData[t.coach_name][mk].packs.push({ product: t.product_name, amount: t.amount });
@@ -1835,7 +1911,7 @@ function renderCoaches() {
     let ph = `<thead><tr><th>Coach</th>${mHdrs.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">YTD</th></tr></thead><tbody>`;
     for (const coach of Object.keys(paygData).sort()) {
       const ytd = paygMonths.reduce((s,mk) => s + (paygData[coach][mk]?.total || 0), 0);
-      ph += `<tr><td>${coach}</td>`;
+      ph += `<tr><td>${coachLabel(coach)}</td>`;
       for (const mk of paygMonths) {
         const d = paygData[coach][mk];
         if (d) {
@@ -1852,12 +1928,66 @@ function renderCoaches() {
       Object.values(paygData).reduce((s, cd) => s + (cd[mk]?.total || 0), 0)
     );
     const grandTotal = totByMonth.reduce((a,b) => a+b, 0);
-    ph += `<tr class="tot"><td>Total Old Model (PAYG)</td>${totByMonth.map(v=>`<td class="r green">${gbp(Math.round(v))}</td>`).join('')}<td class="r green">${gbp(Math.round(grandTotal))}</td></tr>`;
+    ph += `<tr class="tot"><td>Total PAYG Model</td>${totByMonth.map(v=>`<td class="r green">${gbp(Math.round(v))}</td>`).join('')}<td class="r green">${gbp(Math.round(grandTotal))}</td></tr>`;
     ph += `</tbody>`;
     document.getElementById('paygCreditTbl').innerHTML = ph;
   }
 
   renderPaygPackTable();
+  renderPaygMembershipTable();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER — PAYG PT MEMBERSHIP COLLECTION (£159 × PAYG roster)
+// ═══════════════════════════════════════════════════════════════
+
+function renderPaygMembershipTable() {
+  const el = document.getElementById('paygMemTbl');
+  const sub = document.getElementById('paygMemSub');
+  if (!el) return;
+  const isMem = t => /personal trainer memb/i.test(t.product_name || '');
+  // Months in the selected range with uploaded actuals
+  const months = rangeMonths().filter(mk => MONTHS_H1.includes(mk) && DB.revenue[mk]);
+  if (sub) sub.textContent = `Every PAYG PT pays a £${PT_MEMBERSHIP_FEE} PT membership · current roster ${PAYG_ROSTER.length} PAYG PTs = ${gbp(PAYG_MEMBERSHIP_EXPECTED)} expected per month · attributed from WodBoard Customer ID`;
+  if (months.length === 0) {
+    el.innerHTML = `<thead><tr><th>PT</th><th class="r">Expected</th></tr></thead>`
+      + `<tbody><tr><td colspan="2" style="color:#444;font-style:italic;padding:18px 11px;">No uploaded months in range. Expected collection is ${gbp(PAYG_MEMBERSHIP_EXPECTED)}/month (${PAYG_ROSTER.length} × £${PT_MEMBERSHIP_FEE}).</td></tr></tbody>`;
+    return;
+  }
+  // PTs to show: anyone PAYG in any month of the range
+  const pts = [...new Set(months.flatMap(paygRosterAt))];
+  const paidBy = {};  // pt → mk → amount
+  for (const mk of months) {
+    for (const t of (DB.coachTxns[mk] || [])) {
+      if (!isMem(t)) continue;
+      if (!paidBy[t.coach_name]) paidBy[t.coach_name] = {};
+      paidBy[t.coach_name][mk] = (paidBy[t.coach_name][mk] || 0) + parseFloat(t.amount);
+    }
+  }
+  const mHdrs = months.map(mk => MONTHS_LABELS[MONTHS_H1.indexOf(mk)]);
+  let h = `<thead><tr><th>PAYG PT</th>${mHdrs.map(m=>`<th class="r">${m}</th>`).join('')}<th class="r">Collected</th></tr></thead><tbody>`;
+  const order = pts.sort((a,b) => coachLabel(a).localeCompare(coachLabel(b)));
+  const collected = months.map(() => 0);
+  const expected  = months.map(mk => paygRosterAt(mk).length * PT_MEMBERSHIP_FEE);
+  for (const pt of order) {
+    let ytd = 0;
+    h += `<tr><td>${coachLabel(pt)}</td>`;
+    months.forEach((mk, i) => {
+      const onRoster = coachModelAt(pt, mk) === 'PAYG' && paygRosterAt(mk).includes(pt);
+      const paid = paidBy[pt]?.[mk] || 0;
+      if (paid > 0) { collected[i] += paid; ytd += paid; h += `<td class="r green">${gbp(Math.round(paid))}</td>`; }
+      else if (!onRoster) h += `<td class="r dim">—</td>`;
+      else if (PAYG_MEMBER_ID_MISSING.includes(pt)) h += `<td class="r amber" title="Add WodBoard Customer ID to PAYG_PT_MEMBER_IDS">ID needed</td>`;
+      else h += `<td class="r red">Unpaid</td>`;
+    });
+    h += `<td class="r white">${ytd > 0 ? gbp(Math.round(ytd)) : '<span class="dim">—</span>'}</td></tr>`;
+  }
+  const expTot = expected.reduce((a,b)=>a+b,0), colTot = collected.reduce((a,b)=>a+b,0);
+  h += `<tr><td>Expected (PAYG PTs × £${PT_MEMBERSHIP_FEE})</td>${expected.map(v=>`<td class="r purple">${gbp(v)}</td>`).join('')}<td class="r purple">${gbp(expTot)}</td></tr>`;
+  h += `<tr class="tot"><td>Collected</td>${collected.map((v,i)=>`<td class="r ${v>=expected[i]?'green':'red'}">${gbp(Math.round(v))}</td>`).join('')}<td class="r ${colTot>=expTot?'green':'red'}">${gbp(Math.round(colTot))}</td></tr>`;
+  h += `<tr><td>Gap vs expected</td>${collected.map((v,i)=>{const g=expected[i]-v;return `<td class="r ${g>0?'red':'green'}">${g>0?'−'+gbp(Math.round(g)):'✓'}</td>`;}).join('')}<td class="r ${expTot-colTot>0?'red':'green'}">${expTot-colTot>0?'−'+gbp(Math.round(expTot-colTot)):'✓'}</td></tr>`;
+  h += `</tbody>`;
+  el.innerHTML = h;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1893,8 +2023,7 @@ function renderPaygPackTable() {
   for (const mk of paygMonths) {
     for (const t of DB.coachTxns[mk]) {
       if (!paygNames.includes(t.coach_name)) continue;
-      const paygUntil = PAYG_PAYE_FROM[t.coach_name];
-      if (paygUntil && mk >= paygUntil) continue;
+      if (coachModelAt(t.coach_name, mk) !== 'PAYG') continue;
       for (const p of PACK_DEFS) {
         if (p.re.test(t.product_name)) {
           counts[p.key][mk] = (counts[p.key][mk] || 0) + 1;
@@ -1937,10 +2066,10 @@ function renderTrends() {
   charts['cModelTrend'] = new Chart(document.getElementById('cModelTrend'), {
     type:'line',
     data:{ labels:MONTHS_SHORT, datasets:[
-      { label:'Old Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?oldModelRev(mk):null), borderColor:'#c1ff72', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
-      { label:'Old Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?oldModelRev(mk):null):(FORECAST[mk]?.pt_credits||0)+(FORECAST[mk]?.pt_rent||0)), borderColor:'#c1ff7255', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
-      { label:'New Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?newModelRev(mk):null), borderColor:'#1150ab', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
-      { label:'New Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?newModelRev(mk):null):FORECAST[mk]?.new_model), borderColor:'#1150ab55', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
+      { label:'PAYG Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?oldModelRev(mk):null), borderColor:'#c1ff72', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
+      { label:'PAYG Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?oldModelRev(mk):null):(FORECAST[mk]?.pt_credits||0)+(FORECAST[mk]?.pt_rent||0)), borderColor:'#c1ff7255', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
+      { label:'PAYE Model (act)', data:MONTHS_H1.map(mk=>DB.revenue[mk]?newModelRev(mk):null), borderColor:'#1150ab', borderWidth:2.5, pointRadius:4, fill:false, tension:0.3 },
+      { label:'PAYE Model (fct)', data:MONTHS_H1.map((mk,i)=>DB.revenue[mk]?(i===actMonths().length-1?newModelRev(mk):null):FORECAST[mk]?.new_model), borderColor:'#1150ab55', borderDash:[5,4], borderWidth:2, pointRadius:3, fill:false, tension:0.3 },
     ]},
     options:{ responsive:true, maintainAspectRatio:true,
       plugins:{legend:{display:true,position:'bottom',labels:{color:'#555',font:{size:11},boxWidth:12,padding:12}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${gbp(c.raw)}`}}},
@@ -1953,7 +2082,7 @@ function renderTrends() {
   charts['cBreakeven'] = new Chart(document.getElementById('cBreakeven'), {
     type:'line',
     data:{ labels:MONTHS_SHORT, datasets:[
-      { label:'New Model Revenue', data:revAll,  borderColor:'#1150ab', backgroundColor:'#1150ab22', borderWidth:2.5, pointRadius:4, fill:true, tension:0.3 },
+      { label:'PAYE Model Revenue', data:revAll,  borderColor:'#1150ab', backgroundColor:'#1150ab22', borderWidth:2.5, pointRadius:4, fill:true, tension:0.3 },
       { label:'Total Cost',        data:costAll, borderColor:'#d6242d', backgroundColor:'#d6242d22', borderWidth:2.5, pointRadius:4, fill:true, tension:0.3 },
     ]},
     options:{ responsive:true, maintainAspectRatio:true,
@@ -1983,7 +2112,7 @@ function renderTrends() {
 // ═══════════════════════════════════════════════════════════════
 
 function renderH1Table() {
-  let html = `<thead><tr><th>Month</th><th class="r">Old Model</th><th class="r">New Model</th><th class="r">PT Membership</th><th class="r">Total Rev</th><th class="r">Total Cost</th><th class="r">Profit</th><th class="r">Margin</th><th>Status</th></tr></thead><tbody>`;
+  let html = `<thead><tr><th>Month</th><th class="r">PAYG Model</th><th class="r">PAYE Model</th><th class="r">PT Membership</th><th class="r">Total Rev</th><th class="r">Total Cost</th><th class="r">Profit</th><th class="r">Margin</th><th>Status</th></tr></thead><tbody>`;
   for (const mk of MONTHS_H1.filter(monthInRange)) {
     const isAct = !!DB.revenue[mk];
     const old  = isAct ? oldModelRev(mk) : (FORECAST[mk]?.pt_credits||0)+(FORECAST[mk]?.pt_rent||0);
@@ -2469,11 +2598,10 @@ async function processUpload(filename, rows) {
           // PAYE coach — attributed by product name
           coachTxns.push({ coach: rule.coach, product: item, amount: gross });
         } else if (rule.line === 'pt_credits') {
-          // Old Model (PAYG) — attribute by Customer Name if they're a known PAYG PT
+          // PAYG Model — attribute by Customer Name if they're a known PAYG PT
           const custName = (row.Name || row.name || '').trim().toLowerCase();
           const paygCoach = PAYG_PT_MAP[custName];
-          const paygUntil = paygCoach && PAYG_PAYE_FROM[paygCoach];
-          if (paygCoach && (!paygUntil || mk < paygUntil)) {
+          if (paygCoach && coachModelAt(paygCoach, mk) === 'PAYG') {
             coachTxns.push({ coach: paygCoach, product: item, amount: gross });
           }
         } else if (rule.line === 'pt_membership') {
@@ -2502,7 +2630,7 @@ async function processUpload(filename, rows) {
   for (const [line, amount] of Object.entries(revenueAccum)) {
     const prev = existingRevMap[line] ?? 0;
     if (prev > 0 && amount < prev - 0.01) {
-      const lbl = { pt_credits:'PT Credits', pt_membership:'PT Membership', new_model:'New Model', pt_rent:'PT Rent' }[line] || line;
+      const lbl = { pt_credits:'PT Credits', pt_membership:'PT Membership', new_model:'PAYE Model', pt_rent:'PT Rent' }[line] || line;
       reductions.push(`${lbl}: £${prev.toLocaleString('en-GB')} → £${amount.toLocaleString('en-GB')} (−£${(prev - amount).toLocaleString('en-GB', {maximumFractionDigits:0})})`);
     }
   }
