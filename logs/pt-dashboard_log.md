@@ -4,6 +4,110 @@ Rolling log of Claude sessions on the PT Dashboard project. Newest entry at the 
 
 ---
 
+# Oct 2026 roster fixes
+**Date:** 2026-10-05
+**Project:** PT Dashboard — PT roster / PAYG membership / rental packs
+**Mode:** Rolling Log + Git Push
+**Status:** Complete (follow-ups: FORECAST Oct–Dec still 1,749; Daniel Arase Customer ID outstanding)
+
+---
+
+## Project Context
+See 2026-09-08 entry for the PT Roster Master block (`PAYG_ROSTER`, `MODEL_HISTORY`,
+`coachModelAt`, `paygRosterAt`, `renderPaygMembershipTable`) and 2026-09-04 for the
+codebase overview. This session applied a pre-written patch supplied as a colleague
+prompt (file `colleague-prompt.txt`) that updates the roster for October 2026.
+
+## Session Goal
+Apply the supplied `roster.patch` (index.html only) on branch `claude/pt-roster-oct26`
+from main @ 94f609b, verify it (syntax + headless load, read-only), log it, PR and merge.
+
+## State Before This Session
+Main @ 94f609b. `PAYG_ROSTER` had 11 PTs incl. Daniel Arase (not started) and Pelé Zac.
+Rich Harris was in `FORMER_PAYG` and `NO_MEMBERSHIP`. WodBoard Customer ID TODOs open
+for Craig Clout, Daniel Arase, Pelé Zac. `PAYG_MEMBERSHIP_EXPECTED` was a static
+`PAYG_ROSTER.length × £159` = £1,749. `PACK_DEFS` covered 5/10/20 hr rental packs only.
+
+## What Was Done
+- Patch applied cleanly (`git apply --check` then `git apply`); no conflicts, main was
+  at the expected 94f609b.
+- **Customer IDs** added to `PAYG_PT_MEMBER_IDS`: 360245 Craig Clout, 243170 Pelé Zac,
+  106642 Rich Harris. Craig and Pelé TODOs removed; Daniel Arase TODO kept.
+  `PAYG_MEMBER_ID_MISSING` is now empty.
+- **Rich Harris** back on PAYG: added to `PAYG_ROSTER`, removed from `FORMER_PAYG` and
+  `NO_MEMBERSHIP` (now `[]`). New `MEMBERSHIP_FROM` map (`'Rich Harris': '2026-09'`) so he
+  is not expected / shown Unpaid before Sep 2026. `'richard harris'` added to `PAYG_PT_MAP`.
+- **Daniel Arase** removed from `PAYG_ROSTER` (commented placeholder left). His
+  `PAYG_PT_MAP` / `COACH_LABEL` entries remain.
+- **Pelé Zac** paused: new `PAUSED` map (`2026-10`..`2026-12`) + `isPaused(name, mk)`.
+  `paygRosterAt` excludes paused months; membership table shows a dim "Paused" cell
+  (checked before the "—"/Unpaid branches). `'pelé zachariah'` / `'pele zachariah'`
+  added to `PAYG_PT_MAP`.
+- **Expected collection** is now month-aware: `paygMembershipExpectedAt(mk)`,
+  `CURRENT_MK` (from the viewer's clock), `PAYG_ACTIVE_NOW`, and
+  `PAYG_MEMBERSHIP_EXPECTED = paygMembershipExpectedAt(CURRENT_MK)`. Oct 2026 = 10 × £159
+  = £1,590; Sep 2026 still £1,749. Subtitle / empty-state copy updated to "active PAYG
+  PTs this month".
+- **Rental packs**: `PACK_DEFS` gained 30 hrs (£660) and 40 hrs (£800); `price` added on
+  all five rows (140/260/480/660/800).
+- **Verification** (all read-only, nothing written to Supabase):
+  - Inline `<script>` extracted, `node --check` passes.
+  - Headless Chromium (Playwright): zero page errors. The container's egress policy
+    denies cdnjs and the Supabase host, so Chart.js 4.4.1 / PapaParse 5.4.1 were served
+    from npm copies and Supabase GETs were answered locally with synthetic rows; any
+    non-GET to Supabase was set to abort (none occurred).
+  - Synthetic-data render: Oct expected £1,590, Pelé "Paused" in Oct, Rich "—" in Aug,
+    Craig "Unpaid" when no Oct payment; pack table shows 30 hrs / 40 hrs rows and counts
+    a "PT Rental - 30 hours" txn.
+
+## Artifacts Produced / Modified
+
+| File | What it is | Status | Location |
+|------|------------|--------|----------|
+| index.html | Roster constants, PAUSED / MEMBERSHIP_FROM, month-aware expected, PACK_DEFS | Modified | /index.html |
+| logs/pt-dashboard_log.md | This entry | Modified | /logs/ |
+| roster.patch | Supplied patch | Not committed (working copy only) | repo root, untracked |
+
+## Decisions & Reasoning
+- **Applied the patch verbatim, no edits**: the brief said stop rather than resolve
+  conflicts and to apply exactly as written; it applied cleanly so nothing was changed.
+- **Did not touch `FORECAST` Sep–Dec `pt_membership` (still 1,749)**: out of the patch's
+  scope. Oct–Dec forecast now overstates the dashboard's own expected (£1,590) by £159/mo
+  while Pelé is paused. Flagged for a follow-up rather than widening the change.
+- **Mocked CDN/Supabase in the browser check** rather than skip it: the network block is
+  an environment policy, not a code issue, and the mock exercised the new render paths.
+
+## Current State (end of session)
+Patch merged to main via PR (link in the session report). Dashboard computes expected
+PT membership per month; Oct 2026 = £1,590.
+
+## Next Steps
+1. Decide whether `FORECAST['2026-10'..'2026-12'].pt_membership` should drop to 1590
+   (index.html ~line 833–837) to match the Pelé pause; update the comment there too.
+2. When Daniel Arase starts: re-add him to `PAYG_ROSTER` and add his WodBoard Customer ID
+   to `PAYG_PT_MEMBER_IDS` (TODO still in place).
+3. When Pelé resumes: remove the resumed months from `PAUSED['Pelé Zac']`.
+
+## Open Questions / Blockers
+- Forecast vs expected mismatch for Oct–Dec (see Next Steps 1).
+- `PACK_DEFS[].price` is stored but not yet read by any render code; if the pack table
+  should show £ values, that is a separate change.
+
+## Environment & Config Notes
+Repo ONE-LDN/one-ldn-pt-dashboard, branch `claude/pt-roster-oct26` from main @ 94f609b.
+Supabase project host is denied by this container's egress policy, so live data could
+not be loaded. No credentials used.
+
+## Notes & Gotchas
+- `CURRENT_MK` uses the viewer's local clock, so the subtitle's "this month" figure
+  changes on the 1st of each month without a deploy. Historical months in the table use
+  `paygRosterAt(mk)` per column, so they are unaffected.
+- `isPaused` is checked before `onRoster` in the table, so a paused PT shows "Paused"
+  rather than "—" even though `paygRosterAt` excludes them for that month.
+- A payment from a paused PT still shows green and counts toward Collected.
+
+---
+
 # PT Roster Master (Sep 2026): PAYE/PAYG relabel, roster reclassification, £159 membership collection table
 **Date:** 2026-09-08
 **Project:** PT Dashboard — Coach Breakdown / model labels / PAYG membership

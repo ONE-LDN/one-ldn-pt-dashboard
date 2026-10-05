@@ -900,15 +900,15 @@ const coachLabel = n => COACH_LABEL[n] || n;
 const PAYE_ROSTER = ['Jess Donehue', 'Mara Greenwood', 'Grace G', 'Kayla Joll'];
 const PAYG_ROSTER = [
   'Craig Clout', 'Max Wade', 'Alice Farrow', 'Aimee Jeffs', 'Adrian Canaveral',
-  'Sam Pepys', 'Adam Siddle', 'Lucas Cloves', 'Annie Hall', 'Daniel Arase', 'Pelé Zac',
+  'Sam Pepys', 'Adam Siddle', 'Lucas Cloves', 'Annie Hall', 'Pelé Zac',
+  'Rich Harris',   // back on PAYG — took out a Personal Trainer Membership 25 Sep 2026
+  // 'Daniel Arase' — not started yet; re-add here once he starts (PAYG_PT_MAP / COACH_LABEL entries already in place)
 ];
 // Not on either model — no PT membership, no PAYE payroll
 const OTHER_ROSTER = [
   { name: 'Chris Barker', model: 'Class exchange', fee: 0    },
   { name: 'Rickel White', model: 'Rent',           fee: 1000 },  // flat £1,000/month — see FIXED_PT_RENT
 ];
-// Expected monthly PT membership collection: 11 PAYG × £159 = £1,749
-const PAYG_MEMBERSHIP_EXPECTED = PAYG_ROSTER.length * PT_MEMBERSHIP_FEE;
 
 // Model transitions — coach → [[fromMonth, model], ...] in date order.
 // Coaches not listed here are on their roster model for all months.
@@ -918,9 +918,18 @@ const MODEL_HISTORY = {
   'Harry Sheppard': [['2026-01', 'PAYG'], ['2026-02', 'PAYE']],                       // left; PAYE from Feb 2026 while active
 };
 // Former PTs kept for historical attribution only (not on the Sep 2026 roster)
-const FORMER_PAYG = ['Rich Harris', 'Luke Mehson'];
+const FORMER_PAYG = ['Luke Mehson'];
 const FORMER_PAYE = ['Harry Sheppard'];
-const NO_MEMBERSHIP = ['Rich Harris'];   // historical: PAYG rental only, never on the £159 membership
+const NO_MEMBERSHIP = [];   // PAYG PTs who rent but are never on the £159 membership
+// First month a PAYG PT owes the £159 — earlier months aren't expected or shown as unpaid
+const MEMBERSHIP_FROM = {
+  'Rich Harris': '2026-09',   // rental only before; membership from 25 Sep 2026
+};
+// Paused memberships — PT stays on the roster but isn't expected to pay (or shown as unpaid) in these months
+const PAUSED = {
+  'Pelé Zac': ['2026-10', '2026-11', '2026-12'],   // paused from Oct 2026 — remove months once he resumes
+};
+const isPaused = (name, mk) => (PAUSED[name] || []).includes(mk);
 const ROSTER_MASTER_FROM = '2026-09';    // month the Sep 2026 PT Roster Master takes effect
 
 // Which model was a coach on in a given month ('PAYE' | 'PAYG' | null)
@@ -940,8 +949,16 @@ function paygRosterAt(mk) {
   return [...new Set([...PAYG_ROSTER, ...FORMER_PAYG, ...Object.keys(MODEL_HISTORY)])]
     .filter(n => coachModelAt(n, mk) === 'PAYG'
               && !NO_MEMBERSHIP.includes(n)
+              && !isPaused(n, mk)
+              && !(MEMBERSHIP_FROM[n] && mk < MEMBERSHIP_FROM[n])
               && (PAYG_ROSTER.includes(n) || mk < ROSTER_MASTER_FROM));
 }
+// Expected monthly PT membership collection = active, non-paused PAYG PTs × £159
+// (Oct 2026: 10 × £159 = £1,590 — Pelé paused, Dan Arase not started)
+const paygMembershipExpectedAt = mk => paygRosterAt(mk).length * PT_MEMBERSHIP_FEE;
+const CURRENT_MK = (d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`)(new Date());
+const PAYG_ACTIVE_NOW = paygRosterAt(CURRENT_MK);
+const PAYG_MEMBERSHIP_EXPECTED = paygMembershipExpectedAt(CURRENT_MK);
 
 // ── PAYG PT membership — WodBoard customer ID → coach name ──────────────────
 // "Personal Trainer Membership" product — £159/month paid by every PAYG PT.
@@ -955,11 +972,12 @@ const PAYG_PT_MEMBER_IDS = {
   '64589':  'Adam Siddle',
   '28121':  'Annie Hall',
   '64599':  'Max Wade',        // back on PAYG from Sep 2026
+  '360245': 'Craig Clout',     // PAYG from Sep 2026
+  '243170': 'Pelé Zac',        // PAYG from Sep 2026 (membership paused from Oct 2026)
+  '106642': 'Rich Harris',     // back on PAYG membership from 25 Sep 2026
   '98486':  'Luke Mehson',     // former PAYG — historical attribution only
   '192919': 'Harry Sheppard',  // former — historical attribution only
-  // TODO: Craig Clout — PAYG from Sep 2026, add WodBoard Customer ID
   // TODO: Daniel Arase — confirmed on membership 2026-09-04, add WodBoard Customer ID
-  // TODO: Pelé Zac — new PAYG PT Sep 2026, add WodBoard Customer ID
 };
 // PAYG PTs whose membership can't yet be attributed (no Customer ID) — shown as "ID needed"
 const PAYG_MEMBER_ID_MISSING = PAYG_ROSTER.filter(n => !Object.values(PAYG_PT_MEMBER_IDS).includes(n));
@@ -980,8 +998,11 @@ const PAYG_PT_MAP = {
   'dan arase':        'Daniel Arase',
   'pelé zac':         'Pelé Zac',
   'pele zac':         'Pelé Zac',
-  // former PAYG PTs — historical attribution only
+  'pelé zachariah':   'Pelé Zac',
+  'pele zachariah':   'Pelé Zac',
   'rich harris':      'Rich Harris',
+  'richard harris':   'Rich Harris',
+  // former PAYG PTs — historical attribution only
   'luke mehson':      'Luke Mehson',
 };
 
@@ -1948,10 +1969,10 @@ function renderPaygMembershipTable() {
   const isMem = t => /personal trainer memb/i.test(t.product_name || '');
   // Months in the selected range with uploaded actuals
   const months = rangeMonths().filter(mk => MONTHS_H1.includes(mk) && DB.revenue[mk]);
-  if (sub) sub.textContent = `Every PAYG PT pays a £${PT_MEMBERSHIP_FEE} PT membership · current roster ${PAYG_ROSTER.length} PAYG PTs = ${gbp(PAYG_MEMBERSHIP_EXPECTED)} expected per month · attributed from WodBoard Customer ID`;
+  if (sub) sub.textContent = `Every PAYG PT pays a £${PT_MEMBERSHIP_FEE} PT membership · ${PAYG_ACTIVE_NOW.length} active PAYG PTs this month = ${gbp(PAYG_MEMBERSHIP_EXPECTED)} expected · attributed from WodBoard Customer ID`;
   if (months.length === 0) {
     el.innerHTML = `<thead><tr><th>PT</th><th class="r">Expected</th></tr></thead>`
-      + `<tbody><tr><td colspan="2" style="color:#444;font-style:italic;padding:18px 11px;">No uploaded months in range. Expected collection is ${gbp(PAYG_MEMBERSHIP_EXPECTED)}/month (${PAYG_ROSTER.length} × £${PT_MEMBERSHIP_FEE}).</td></tr></tbody>`;
+      + `<tbody><tr><td colspan="2" style="color:#444;font-style:italic;padding:18px 11px;">No uploaded months in range. Expected collection this month is ${gbp(PAYG_MEMBERSHIP_EXPECTED)} (${PAYG_ACTIVE_NOW.length} × £${PT_MEMBERSHIP_FEE}).</td></tr></tbody>`;
     return;
   }
   // PTs to show: anyone PAYG in any month of the range
@@ -1976,6 +1997,7 @@ function renderPaygMembershipTable() {
       const onRoster = coachModelAt(pt, mk) === 'PAYG' && paygRosterAt(mk).includes(pt);
       const paid = paidBy[pt]?.[mk] || 0;
       if (paid > 0) { collected[i] += paid; ytd += paid; h += `<td class="r green">${gbp(Math.round(paid))}</td>`; }
+      else if (isPaused(pt, mk)) h += `<td class="r dim" title="Membership paused">Paused</td>`;
       else if (!onRoster) h += `<td class="r dim">—</td>`;
       else if (PAYG_MEMBER_ID_MISSING.includes(pt)) h += `<td class="r amber" title="Add WodBoard Customer ID to PAYG_PT_MEMBER_IDS">ID needed</td>`;
       else h += `<td class="r red">Unpaid</td>`;
@@ -1996,9 +2018,11 @@ function renderPaygMembershipTable() {
 
 function renderPaygPackTable() {
   const PACK_DEFS = [
-    { key: '5hr',  label: 'PT Rental – 5 hrs',  re: /pt rental\s*-\s*5\s*hours?/i  },
-    { key: '10hr', label: 'PT Rental – 10 hrs', re: /pt rental\s*-\s*10\s*hours?/i },
-    { key: '20hr', label: 'PT Rental – 20 hrs', re: /pt rental\s*-\s*20\s*hours?/i },
+    { key: '5hr',  label: 'PT Rental – 5 hrs',  price: 140, re: /pt rental\s*-\s*5\s*hours?/i  },
+    { key: '10hr', label: 'PT Rental – 10 hrs', price: 260, re: /pt rental\s*-\s*10\s*hours?/i },
+    { key: '20hr', label: 'PT Rental – 20 hrs', price: 480, re: /pt rental\s*-\s*20\s*hours?/i },
+    { key: '30hr', label: 'PT Rental – 30 hrs', price: 660, re: /pt rental\s*-\s*30\s*hours?/i },
+    { key: '40hr', label: 'PT Rental – 40 hrs', price: 800, re: /pt rental\s*-\s*40\s*hours?/i },
   ];
 
   const paygNames = Object.values(PAYG_PT_MAP);
